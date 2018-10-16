@@ -1,0 +1,29 @@
+{
+	"name": "elements-game",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": " ./node_modules/nodemon/bin/nodemon.js ./server/index.js",
+		"start": "concurrently --kill-others \"cd client/ && npm run start\" \"npm run dev\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Montana-Code-School/elements-game.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Montana-Code-School/elements-game/issues"
+	},
+	"homepage": "https://github.com/Montana-Code-School/elements-game#readme",
+	"dependencies": {
+		"body-parser": "^1.18.3",
+		"concurrently": "^4.0.1",
+		"express": "^4.16.4",
+		"nodemon": "^1.18.4",
+		"socket.io": "^2.1.1"
+	}
+}
