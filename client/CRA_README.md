@@ -3,17 +3,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 Below you will find some information on how to perform common tasks.<br>
 You can find the most recent version of this guide [here](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
-Link to step by step play
-https://docs.google.com/document/d/1JQxqQrbuJDWj34yKoTPfnvf_VqLtdoJZmtWjyL4ehmM/edit?usp=sharing
-
-Mockup
-https://xd.adobe.com/view/78e6d6ad-575f-463f-7dc1-92bab791e05e-0ed7/?hints=off
-
-Styleguide_Text:
-Component filenames & Name of components: PascalCase
-Everything else: lowercase_with_underscores
-
-
 ## Table of Contents
 
 - [Updating to New Releases](#updating-to-new-releases)
