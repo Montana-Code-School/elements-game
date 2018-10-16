@@ -1,0 +1,17 @@
+.Landing_container {
+  background: url('../../images/MTG_board.jpg') no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+.Landing_button {
+position: absolute;
+left: 35%;
+top: 45%;
+width: 400px;
+height: 100px;
+font-size: 50px;
+background-color: White;
+text-align: center;
+}
