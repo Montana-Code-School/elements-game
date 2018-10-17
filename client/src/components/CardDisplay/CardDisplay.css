@@ -1,0 +1,7 @@
+.card_display_container {
+display: flex;
+height: 10vh;
+width: 50vw;
+bottom: 0;
+margin: 2%;
+}

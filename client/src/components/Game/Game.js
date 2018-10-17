@@ -1,4 +1,8 @@
 import React, {Component} from "react";
+import CardDisplay from "../CardDisplay/CardDisplay"
+import "./Game.css"
+import Card from "../Card/Card"
+
 
 
 class Game extends Component{
@@ -6,20 +10,34 @@ class Game extends Component{
     deck: [],
     opponentsDeck: [],
     myHand: [],
-    oppoentsHand: [],
+    opponentsHand: [],
     myPlayingBoard: [],
     oppentsPlayingBoard: [],
     stagedCard: null,
     opponentStagedCard: null
   }
-  onPlayCard() {
-    socket.do
-  }
+  // onPlayCard() {
+  // }
   render() {
     return (
-      <Card type="" count={this.state.deck.length} />
-      <Hand playCard={this.onPlayCard}/>
-      <Board />
+      <div>
+        <div className="opponent">
+          <Card className="opponents_stack"/>
+          <CardDisplay className="opponents_hand"/>
+          <Card className="opponents_deck"/>
+          <Card className="opponents_discard"/>
+        </div>
+        <div className="field">
+          <CardDisplay className="opponents_field"/>
+          <CardDisplay className="player_field"/>
+        </div>
+        <div className="player">
+          <Card className="player_discard"/>
+          <Card className="player_deck"/>
+          <CardDisplay className="player_hand"/>
+          <Card className="player_stack"/>
+        </div>
+      </div>
     )
 
   }
