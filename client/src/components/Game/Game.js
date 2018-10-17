@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import CardDisplay from "../CardDisplay/CardDisplay"
 import "./Game.css"
-import Card from "../Card/Card"
-import Grid from "@material-ui/core/Grid";
-
+import GameCard from "../GameCard/GameCard"
+import { Grid, Card, withStyles, } from "@material-ui/core";
+import { AllStyles as styles } from "./AllStyles"
 class Game extends Component {
 	state = {
 		deck: [],
@@ -13,46 +13,59 @@ class Game extends Component {
 		myPlayingBoard: [],
 		oppentsPlayingBoard: [],
 		stagedCard: null,
-		opponentStagedCard: null,
+		opponentStagedCard: null
 	}
 	render() {
+		const { classes } = this.props;
+		console.log( "class", classes );
 		return ( <div>
-			<Grid container="container" direction="column" justify="space-evenly" alignItems="center">
-				<Grid container="container" direction="row" justify="space-evenly" alignItems="center">
-					<div className="opponents_stack_area">
-						<Card className="opponents_stack"/>
-					</div>
-					<div className="opponents_hand_area">
-						<CardDisplay className="opponents_hand"/>
-					</div>
-					<div className="opponents_deck_area">
-						<Card className="opponents_deck"/>
-						<Card className="opponents_discard"/>
-					</div>
-				</Grid>
+			<Grid container={true} direction="column" justify="space-around" alignItems="center">
+				<Card className={classes.main_div}>
+					<Grid container={true} direction="row" justify="space-around" alignItems="flex-start">
+						<Card className={classes.card}>
+							<GameCard className="card_back"/>
+						</Card>
+						<Card className={classes.card_display}>
+							<CardDisplay className="opponents_hand"/>
+						</Card>
 
-				<div className="field">
-					<CardDisplay className="opponents_field"/>
-					<CardDisplay className="player_field"/>
-				</div>
-				<Grid container="container" direction="row" justify="space-evenly" alignItems="center">
+						<Card className={classes.card}>
+							<GameCard className="card_back"/>
+						</Card>
+						<Card className={classes.card}>
+							<GameCard className="card_back"/>
+						</Card>
+					</Grid>
+				</Card>
+				<Card className={classes.main_div}>
+					<Grid container={true} direction="row" justify="center" alignItems="center">
+						<Card className={classes.card_display}>
+							<CardDisplay className="opponents_field"/>
+							<CardDisplay className="player_field"/>
+						</Card>
+					</Grid>
+				</Card>
+				<Card className={classes.main_div}>
+					<Grid container={true} direction="row" justify="space-evenly" alignItems="flex-end">
+						<Card className={classes.card}>
+							<GameCard className="card_back"/>
+						</Card>
+						<Card className={classes.card}>
+							<GameCard className="card_back"/>
+						</Card>
 
-					<div className="player_deck_area">
-						<Card className="player_discard"/>
-						<Card className="player_deck"/>
-					</div>
-					<div className="player_hand_area">
-						<CardDisplay className="player_hand"/>
-					</div>
-					<div className="player_stack_area">
-						<Card className="player_stack"/>
-					</div>
-
-				</Grid>
+						<Card className={classes.card_display}>
+							<Grid container={true} direction="row" justify="space-evenly" alignItems="center">
+								<CardDisplay className="player_hand"/>
+							</Grid>
+						</Card>
+						<Card className={classes.card}>
+							<GameCard className="card_back"/>
+						</Card>
+					</Grid>
+				</Card>
 			</Grid>
 		</div> )
-
 	}
 }
-
-export default Game
+export default withStyles( styles )( Game );
