@@ -1,34 +1,31 @@
-import React, {Component} from "react";
-import Card from "../Card/Card"
+import React, { Component } from "react";
+import GameCard from "../GameCard/GameCard"
 import "./CardDisplay.css"
 
 export default class CardDisplay extends Component {
-  clickHandler = ( e ) => {
+	clickHandler = ( e ) => {
 		this
-      .state
+			.state
 			.socket
 			.emit( 'click', e.currentTarget.className )
 	}
-  render() {
-    if (this.props.className === "opponents_hand") {
-      return (
-        <div className="card_display_container">
-          <Card className="card_back" />
-          <Card className="card_back" />
-          <Card className="card_back" />
-          <Card className="card_back" />
-          <Card className="card_back" />
-        </div>
-      )
-    } else {
-      return(
-      <div className="card_display_container">
-        <Card className="water" />
-        <Card className="earth" />
-        <Card className="light" />
-        <Card className="shadow" />
-        <Card className="fire" />
-      </div>
-  ) }
-  }
+	render() {
+		if ( this.props.className === "opponents_hand" ) {
+			return ( <div className="card_display_container">
+				<GameCard className="card_back"/>
+				<GameCard className="card_back"/>
+				<GameCard className="card_back"/>
+				<GameCard className="card_back"/>
+				<GameCard className="card_back"/>
+			</div> )
+		} else {
+			return ( <div className="card_display_container">
+				<GameCard className="water"/>
+				<GameCard className="earth"/>
+				<GameCard className="light"/>
+				<GameCard className="shadow"/>
+				<GameCard className="fire"/>
+			</div> )
+		}
+	}
 }
