@@ -1,0 +1,32 @@
+.card {
+  width:19%;
+  height: 95%;
+  margin: .5%;
+}
+.water {
+  background-color: blue;
+}
+.fire {
+  background-color: red;
+}
+.light {
+  background-color: yellow;
+}
+.shadow {
+  background-color: black;
+}
+.earth {
+  background-color: green;
+}
+.card_back,
+.opponents_stack,
+.opponents_deck,
+.opponents_discard,
+.player_deck,
+.player_discard,
+.player_stack {
+  width:19%;
+  height: 95%;
+  margin: .5%;
+  background-color: silver;
+}
