@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import openSocket from 'socket.io-client'
+import Landing from './components/Landing/Landing';
+import Game from './components/Game/Game';
+import {Route, BrowserRouter as Router, Switch} from "react-router-dom";
 
 class App extends Component {
 	constructor() {
@@ -20,9 +23,14 @@ class App extends Component {
 	}
 
 	render() {
-		return ( <div className="App">
-			<h1 className="tag" onClick={this.click}>Hi</h1>
-		</div> );
+	  return (
+      <Router>
+        <Switch>
+          <Route path="/game" component={Game} />
+          <Route path="/" component={Landing} />
+        </Switch>
+      </Router>
+    )
 	}
 }
 
