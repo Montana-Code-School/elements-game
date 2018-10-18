@@ -2,13 +2,8 @@ import React, { Component } from "react";
 import { CardMedia, withStyles } from '@material-ui/core'
 import { Card as styles } from "../Game/AllStyles"
 class GameCard extends Component {
-	clickHandler = ( e ) => {
-		console.log( this.props.className, " clicked" )
-		// this
-		//   .state
-		// 	.socket
-		// 	.emit( 'click', e.currentTarget.className )
-	}
+
+
 	render() {
 		const { classes, count } = this.props;
 		const deckOrStack = this.props.className === "player_deck" || this.props.className === "opponents_deck" || this.props.className === "player_stack" || this.props.className === "opponents_stack"
@@ -19,7 +14,6 @@ class GameCard extends Component {
 					component="img"
 					alt={this.props.className}
 					className={`${ this.props.className} ${ classes.card }`}
-					onClick={this.clickHandler}
 					image={require( `../../images/card_back.png` )}
 				/>
 			)
@@ -29,7 +23,6 @@ class GameCard extends Component {
 					component="img"
 					alt={this.props.className}
 					className={`${ this.props.className} ${ classes.card }`}
-					onClick={this.clickHandler}
 					image={require( `../../images/discard.png` )}
 				/>
 			)
@@ -39,11 +32,16 @@ class GameCard extends Component {
 					component="img"
 					alt={this.props.className}
 					className={`${ this.props.className} ${ classes.card }`}
-					onClick={this.clickHandler}
 					image={require( `../../images/${ this.props.className }.png` )}
+					onClick={this.props.onClick}
 				/>
+
 		)
 		if (!!count) {
+			if(this.props.className==="player_stack"){
+				console.log({count})
+			}
+			// console.log(this.props)
 			card = (
 				<div>
 					{card}
