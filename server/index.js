@@ -6,7 +6,7 @@ const io = require( 'socket.io' )( server )
 
 const ClientManager = require( './ClientManager' )
 // const makeHandlers = require( './handlers' )
-
+let counter = 0;
 const players = {
 	player1: null,
 	player2: null,
@@ -25,13 +25,24 @@ io.on( 'connection', function ( client ) {
 	clientManager.addClient( client )
 
 	client.on( 'join', function () {
+		// if ( Object.keys( io.sockets.adapter.rooms ) ) {
+		// 	io
+		// 		.sockets
+		// 		.adapter
+		// 		.rooms
+		// 		.map( ( room, index ) => {
+		// 			console.log( room );
+		// 		} )
+		// } else {
+		client.join( `room${ counter }` );
+		// console.log( 'new room created client joined: ', `room${ counter }` );
+		console.log( io.sockets.adapter )
+		// }
 
-		// client.join( room );
-
-		console.log( "join the room", io.sockets.rooms )
+		// console.log( "join the room", io.sockets.adapter.rooms )
 	} )
 	client.on( 'disconnect', function () {
-		console.log( 'client disconnect...', client.id )
+		console.log( 'client disconnect...', client.id );
 		// remove user profile
 		clientManager.removeClient( client )
 	} )
