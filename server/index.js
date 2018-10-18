@@ -5,7 +5,7 @@ const server = require( 'http' ).createServer()
 const io = require( 'socket.io' )( server )
 
 const ClientManager = require( './ClientManager' )
-// const makeHandlers = require( './handlers' )
+
 let counter = 0;
 const players = {
 	player1: null,
@@ -24,35 +24,42 @@ io.on( 'connection', function ( client ) {
 	console.log( 'client connected...', client.id )
 	clientManager.addClient( client )
 
-	client.on( 'join', function () {
-		// if ( Object.keys( io.sockets.adapter.rooms ) ) {
-		// 	io
-		// 		.sockets
-		// 		.adapter
-		// 		.rooms
-		// 		.map( ( room, index ) => {
-		// 			console.log( room );
-		// 		} )
-		// } else {
-		client.join( `room${ counter }` );
-		// console.log( 'new room created client joined: ', `room${ counter }` );
-		console.log( io.sockets.adapter )
-		// }
+	client.on( 'join', async function () {
 
-		// console.log( "join the room", io.sockets.adapter.rooms )
+		for ( let i = 0; i <= counter; i++ ) {
+			if ( !!io.sockets.adapter.rooms[ `room${ i }` ] ) {
+				if ( io.sockets.adapter.rooms[ `room${ i }` ].length === 1 ) {
+					await new Promise( ( resolve ) => {
+						client.join( `room${ i }`, function () {
+							resolve();
+						} );
+					} )
+				} else {
+					counter++;
+				}
+			} else {
+				await new Promise( ( resolve ) => {
+					client.join( `room${ i }`, function () {
+						resolve();
+					} );
+				} )
+				console.log( 'new room created client joined: ', `room${ counter }` );
+			}
+		}
+		console.log( "all rooms", io.sockets.adapter.rooms )
 	} )
+	// console.log( "rooms", playing_room ), });
 	client.on( 'disconnect', function () {
 		console.log( 'client disconnect...', client.id );
-		// remove user profile
+		// remove user
 		clientManager.removeClient( client )
-	} )
-
+		console.log( io.sockets.adapter.rooms )
+	} );
 	client.on( 'error', function ( err ) {
 		console.log( 'received error from client:', client.id )
 		console.log( err )
 	} )
-} )
-
+} );
 server.listen( port, function ( err ) {
 	if ( err ) 
 		throw err

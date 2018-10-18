@@ -46,7 +46,6 @@ class Game extends Component {
 			earth: 0,
 		},
 		playerStagedCard: null,
-
 	}
 
 	componentDidMount() {
@@ -55,23 +54,27 @@ class Game extends Component {
 		this.draw_card()
 		this.draw_card()
 	}
-	 draw_card = () => {
+	draw_card = () => {
 		let random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
 		Object
 			.keys( this.state.playerDeck )
-			.map(  ( key, index ) => {
+			.forEach( ( key, index ) => {
 				if ( index === random ) {
 					if ( this.state.playerDeck[ key ] === 0 ) {
 						this.draw_card();
 					} else {
 						this.setState( {
-							[	`playerDeck['${key}']`] : this.state.playerDeck[key]--,
-						[	`playerDeck['${key}']`]: this.state.playerHand[key]++
-					} );
+							[ `playerDeck['${ key }']` ]: this
+								.state
+								.playerDeck[ key ] - 1,
+							[ `playerDeck['${ key }']` ]: this
+								.state
+								.playerHand[ key ] + 1
+						} );
 					}
 				}
 			} )
-		}
+	}
 	render() {
 		const { classes } = this.props;
 		console.log( this.state.playerDeck, this.state.playerHand );
