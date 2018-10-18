@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./GameCard.css"
 import { CardMedia, withStyles } from '@material-ui/core'
 import { Card as styles } from "../Game/AllStyles"
 class GameCard extends Component {
@@ -12,7 +11,13 @@ class GameCard extends Component {
 	}
 	render() {
 		const { classes } = this.props;
-		return ( <CardMedia component="img" alt={this.props.className} className={`${ this.props.className} ${ classes.multicard_display }`} onClick={this.clickHandler} image={require( `../../images/${ this.props.className }.png` )}/> )
+		if ( this.props.className === "player_deck" || this.props.className === "opponents_deck" || this.props.className === "player_stack" || this.props.className === "opponents_stack" ) 
+			return ( <CardMedia component="img" alt={this.props.className} className={`${ this.props.className} ${ classes.card }`} onClick={this.clickHandler} image={require( `../../images/card_back.png` )}/> )
+		else if ( this.props.className === "opponents_discard" || this.props.className === "player_discard" ) 
+			return ( <CardMedia component="img" alt={this.props.className} className={`${ this.props.className} ${ classes.card }`} onClick={this.clickHandler} image={require( `../../images/discard.png` )}/> )
+		else 
+			return ( <CardMedia component="img" alt={this.props.className} className={`${ this.props.className} ${ classes.card }`} onClick={this.clickHandler} image={require( `../../images/${ this.props.className }.png` )}/> )
+
 	}
 }
 export default withStyles( styles )( GameCard );

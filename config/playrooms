@@ -1,0 +1,14 @@
+module.exports = [
+  {
+    name: 'Terminus',
+  },
+  {
+    name: 'Alexandria',
+  },
+  {
+    name: 'Sanctuary',
+  },
+  {
+    name: 'Hilltop',
+  }
+]

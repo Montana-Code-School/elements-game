@@ -1,28 +1,31 @@
 const AllStyles = {
-	card: {
-		maxWidth: "30%",
-		marginTop: "5%",
-		marginBottom: "5%"
-	},
-	main_div: {
-		minWidth: "100%",
-		marginTop: "2%",
-		marginBottom: "2%"
-	},
-	card_display: {
-		minWidth: "50%",
-		marginTop: "5%",
-		marginBottom: "5%"
-	}
+	// card: {
+	//   width: "50%",
+	//
+	// },
+	//  main_div: {
+	//  	width: "100%",
+	//  	marginTop: "2%",
+	//  	marginBottom: "2%",
+	//  },
+	// card_display: {
+	// 	minWidth: "40%",
+	// 	marginTop: "5%",
+	// 	marginBottom: "5%"
+	// }
+
 };
 const Card = {
+
 	card: {
-		maxWidth: "50px",
-		margin: "1%",
+		width: "6%",
+		height: "100%",
+		margin: ".5%"
 	},
 	multicard_display: {
-		maxWidth: "20px",
-		height: "80px"
+		width: "70%",
+		height: "100%",
+		marginLeft: ".5%",
 	},
 };
 export {
