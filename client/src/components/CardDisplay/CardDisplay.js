@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import GameCard from "../GameCard/GameCard"
-import "./CardDisplay.css"
+import Grid from "@material-ui/core/Grid"
 
 export default class CardDisplay extends Component {
 	clickHandler = ( e ) => {
@@ -11,21 +11,22 @@ export default class CardDisplay extends Component {
 	}
 	render() {
 		if ( this.props.className === "opponents_hand" ) {
-			return ( <div className="card_display_container">
+			return ( <Grid container={true} direction="row" justify="space-around" alignItems="center">
 				<GameCard className="card_back"/>
 				<GameCard className="card_back"/>
 				<GameCard className="card_back"/>
 				<GameCard className="card_back"/>
 				<GameCard className="card_back"/>
-			</div> )
+			</Grid> )
 		} else {
-			return ( <div className="card_display_container">
+			return ( <Grid container={true} direction="row" justify="space-around" alignItems="center">
+
 				<GameCard className="water"/>
 				<GameCard className="earth"/>
 				<GameCard className="light"/>
 				<GameCard className="shadow"/>
 				<GameCard className="fire"/>
-			</div> )
+			</Grid> )
 		}
 	}
 }

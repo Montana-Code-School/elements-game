@@ -24,6 +24,12 @@ io.on( 'connection', function ( client ) {
 	console.log( 'client connected...', client.id )
 	clientManager.addClient( client )
 
+	client.on( 'join', function () {
+
+		// client.join( room );
+
+		console.log( "join the room", io.sockets.rooms )
+	} )
 	client.on( 'disconnect', function () {
 		console.log( 'client disconnect...', client.id )
 		// remove user profile
