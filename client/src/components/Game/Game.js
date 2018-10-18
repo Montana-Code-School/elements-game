@@ -5,35 +5,93 @@ import { Grid, Card, withStyles, } from "@material-ui/core";
 import { Card as styles } from "./AllStyles"
 class Game extends Component {
 	state = {
-		deck: [],
-		opponentsDeck: [],
-		myHand: [],
-		opponentsHand: [],
-		myPlayingBoard: [],
-		oppentsPlayingBoard: [],
-		stagedCard: null,
-		opponentStagedCard: null
+		opponentsDeck: 25,
+		opponentsHand: 0,
+		opponentsDiscard: 0,
+		opponentsStagedCard: null,
+		opponentsBoard: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0,
+		},
+
+		playerDeck: {
+			fire: 5,
+			water: 5,
+			light: 5,
+			shadow: 5,
+			earth: 5,
+		},
+		playerHand: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0,
+		},
+		playerBoard: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0,
+		},
+		playerDiscard: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0,
+		},
+		playerStagedCard: null,
+
 	}
+
+	componentDidMount() {
+		this.draw_card()
+		this.draw_card()
+		this.draw_card()
+		this.draw_card()
+	}
+	 draw_card = () => {
+		let random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
+		Object
+			.keys( this.state.playerDeck )
+			.map(  ( key, index ) => {
+				if ( index === random ) {
+					if ( this.state.playerDeck[ key ] === 0 ) {
+						this.draw_card();
+					} else {
+						this.setState( {
+							[	`playerDeck['${key}']`] : this.state.playerDeck[key]--,
+						[	`playerDeck['${key}']`]: this.state.playerHand[key]++
+					} );
+					}
+				}
+			} )
+		}
 	render() {
 		const { classes } = this.props;
-		console.log( "class", classes );
+		console.log( this.state.playerDeck, this.state.playerHand );
 		return ( <div>
 			<Grid container={true} direction="column" justify="space-evenly" alignItems="center">
 				<Grid container={true} direction="row" justify="space-around" alignItems="flex-start">
 					<GameCard className="opponents_stack"/>
 					<Card className={classes.multicard_display}>
-						<CardDisplay className="opponents_hand"/>
+						<CardDisplay className="opponents_hand" count={this.state}/>
 					</Card>
-					<GameCard className="opponents_discard"/>
-					<GameCard className="opponents_deck"/>
+					<GameCard className="opponents_discard" count={this.state.opponentsDiscard.length}/>
+					<GameCard className="opponents_deck" count={this.state.opponentsDeck.length}/>
 				</Grid>
 
 				<CardDisplay className="opponents_field"/>
 				<CardDisplay className="player_field"/>
 
 				<Grid container={true} direction="row" justify="space-around" alignItems="flex-end">
-					<GameCard className="player_deck"/>
-					<GameCard className="player_discard"/>
+					<GameCard className="player_deck" count={this.state.playerDeck.length}/>
+					<GameCard className="player_discard" count={this.state.playerDiscard.length}/>
 					<Card className={classes.multicard_display}>
 						<CardDisplay className="player_hand"/>
 					</Card>
