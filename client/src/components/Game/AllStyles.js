@@ -1,31 +1,17 @@
-const AllStyles = {
-	// card: {
-	//   width: "50%",
-	//
-	// },
-	//  main_div: {
-	//  	width: "100%",
-	//  	marginTop: "2%",
-	//  	marginBottom: "2%",
-	//  },
-	// card_display: {
-	// 	minWidth: "40%",
-	// 	marginTop: "5%",
-	// 	marginBottom: "5%"
-	// }
-
-};
+const AllStyles = {};
 const Card = {
-
 	card: {
-		width: "6%",
-		height: "100%",
-		margin: ".5%"
+		width: "10%",
+		marginTop: "1%",
+		marginBottom: "1%",
+		margin: ".1%"
 	},
 	multicard_display: {
-		width: "70%",
-		height: "100%",
-		marginLeft: ".5%",
+		marginTop: "1%",
+		marginBottom: "1%",
+		width: "50%",
+		height: "40%",
+		margin: "1%",
 	},
 };
 export {

@@ -3,7 +3,8 @@ import CardDisplay from "../CardDisplay/CardDisplay"
 import GameCard from "../GameCard/GameCard"
 import { Grid, Card, withStyles, } from "@material-ui/core";
 import { Card as styles } from "./AllStyles"
-
+import openSocket from 'socket.io-client'
+const socket = openSocket( 'http://localhost:5000' )
 function getCount( cards ) {
 	let count = 0
 	for ( let cardType in cards ) {
@@ -18,7 +19,7 @@ class Game extends Component {
 		opponentsDeck: 25,
 		opponentsHand: 0,
 		opponentsDiscard: 0,
-		opponentsStagedCard: null,
+		opponentsStagedCard: 0,
 		opponentsField: {
 			fire: 0,
 			water: 0,
@@ -59,10 +60,13 @@ class Game extends Component {
 	}
 
 	componentDidMount() {
+		socket.emit( "join" );
+
 		this.draw_card()
 		this.draw_card()
 		this.draw_card()
 		this.draw_card()
+
 	}
 	draw_card = () => {
 		let random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
@@ -105,7 +109,7 @@ class Game extends Component {
 				break;
 			case "shadow":
 				this.state.afterFlip = "opponent discards card"
-				//propmpt oppont to click the card to discard
+				//propmpt opponent to click the card to discard
 				break;
 		}
 	}
@@ -131,30 +135,152 @@ class Game extends Component {
 	}
 	render() {
 		const { classes } = this.props;
-		// console.log( this.state.playerDeck, this.state.playerHand );
 		return ( <div>
 			<Grid container={true} direction="column" justify="space-evenly" alignItems="center">
-				<Grid container={true} direction="row" justify="space-around" alignItems="flex-start">
+				<Grid container={true} direction="row" justify="space-around" alignItems="center">
+					<p>{
+							this.state.opponentsStagedCard === 0
+								? "0"
+								: "1"
+						}</p>
 					<GameCard className="opponents_stack"/>
 					<Card className={classes.multicard_display}>
-						<CardDisplay className="opponents_hand" count={getCount( this.state.opponentsHand )}/>
+						<CardDisplay className="opponents_hand"/>
+						<p>{getCount( this.state.opponentsHand )}</p>
 					</Card>
-					<GameCard className="opponents_discard" count={getCount( this.state.opponentsDiscard )}/>
-					<GameCard className="opponents_deck" count={this.state.opponentsDeck}/>
+					<p>{this.state.opponentsDiscard}</p>
+					<GameCard className="opponents_discard"/>
+					<p>{this.state.opponentsDeck}</p>
+					<GameCard className="opponents_deck"/>
 				</Grid>
-
-				<CardDisplay className="opponents_field" count={getCount( this.state.opponentsField )} onClick={this.clickHandler}/>
-				<CardDisplay className="player_field" count={getCount( this.state.playerField )} onClick={this.clickHandler}/>
-
-				<Grid container={true} direction="row" justify="space-around" alignItems="flex-end">
-					<GameCard className="player_deck" count={getCount( this.state.playerDeck )}/>
-					<GameCard className="player_discard" count={getCount( this.state.playerDiscard.length )} onClick={this.clickHandler}/>
+				<Grid container={true} direction="row" justify="space-around" alignItems="center">
+					<p>
+						{
+							this
+								.state
+								.opponentsField[ 'water' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.opponentsField[ 'earth' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.opponentsField[ 'light' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.opponentsField[ 'shadow' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.opponentsField[ 'fire' ]
+						}
+					</p>
+				</Grid>
+				<CardDisplay className="opponents_field" onClick={this.clickHandler}/>
+				<CardDisplay className="player_field" onClick={this.clickHandler}/>
+				<Grid container={true} direction="row" justify="space-around" alignItems="center">
+					<p>
+						{
+							this
+								.state
+								.playerField[ 'water' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.playerField[ 'earth' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.playerField[ 'light' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.playerField[ 'shadow' ]
+						}
+					</p>
+					<p>
+						{
+							this
+								.state
+								.playerField[ 'fire' ]
+						}
+					</p>
+				</Grid>
+				<Grid container={true} direction="row" justify="space-around" alignItems="center">
+					<p>{getCount( this.state.playerDeck )}</p>
+					<GameCard className="player_deck"/>
+					<p>{getCount( this.state.playerDiscard )}</p>
+					<GameCard className="player_discard" onClick={this.clickHandler}/>
 					<Card className={classes.multicard_display}>
-						<CardDisplay className="player_hand" count={getCount( this.state.playerHand )} onClick={this.clickHandler}/>
+						<CardDisplay className="player_hand" onClick={this.clickHandler}/>
+						<Grid container={true} direction="row" justify="space-around" alignItems="center">
+							<p>
+								{
+									this
+										.state
+										.playerHand[ 'water' ]
+								}
+							</p>
+							<p>
+								{
+									this
+										.state
+										.playerHand[ 'earth' ]
+								}
+							</p>
+							<p>
+								{
+									this
+										.state
+										.playerHand[ 'light' ]
+								}
+							</p>
+							<p>
+								{
+									this
+										.state
+										.playerHand[ 'shadow' ]
+								}
+							</p>
+							<p>
+								{
+									this
+										.state
+										.playerHand[ 'fire' ]
+								}
+							</p>
+						</Grid>
 					</Card>
-					<GameCard className="player_stack" count={this.state.playerStagedCard === 0
-							? "0"
-							: "1"}/>
+					<p>{
+							this.state.playerStagedCard === 0
+								? "0"
+								: "1"
+						}</p>
+					<GameCard className="player_stack"/>
+
 				</Grid>
 			</Grid>
 		</div> )
