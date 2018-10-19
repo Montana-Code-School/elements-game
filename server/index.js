@@ -1,5 +1,5 @@
-const express = require( 'express' );
-const app = express();
+const connect = require( 'connect' );
+const serveStatic = require('serve-static');
 const port = process.env.PORT || 5000;
 const server = require( 'http' ).createServer();
 const io = require( 'socket.io' )( server );
@@ -90,8 +90,11 @@ io.on( 'connection', function ( client ) {
 		console.log( err )
 	} )
 } );
+if (process.env.NODE_ENV === 'production') {
+	connect().use(serveStatic(__dirname, 'client/build'))
+}
 server.listen( port, function ( err ) {
-	if ( err ) 
+	if ( err )
 		throw err
 	console.log( 'listening on port' + port )
 } )
