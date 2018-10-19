@@ -68,6 +68,12 @@ class Game extends Component {
 		this.draw_card()
 
 	}
+	get_victory = (field) => {
+	  if (!Object.values(field).includes(0))
+	    return "victory"
+	else
+	  return null
+	}
 	draw_card = () => {
 		let random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
 		Object
