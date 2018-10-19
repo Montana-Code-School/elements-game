@@ -61,43 +61,7 @@ class Game extends Component {
 
 	componentDidMount() {
 		socket.emit( "join" );
-<<<<<<< HEAD
-
-		this.draw_card()
-		this.draw_card()
-		this.draw_card()
-		this.draw_card()
-
-	}
-	get_victory = (field) => {
-	  if (!Object.values(field).includes(0))
-	    return "victory"
-	else
-	  return null
-	}
-	draw_card = () => {
-		let random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
-		Object
-			.keys( this.state.playerDeck )
-			.forEach( ( key, index ) => {
-				if ( index === random ) {
-					if ( this.state.playerDeck[ key ] === 0 ) {
-						this.draw_card();
-					} else {
-						this.setState( {
-							[ `playerDeck['${ key }']` ]: this
-								.state
-								.playerDeck[ key ]--,
-							[ `playerDeck['${ key }']` ]: this
-								.state
-								.playerHand[ key ]++,
-						} );
-					}
-				}
-			} )
-=======
 		socket.emit( "initialDraw" )
->>>>>>> 12ec5e074a500e91eb0416892c6b4f8cd53178ab
 	}
 	onFlip = ( e ) => {
 		this.setState( {
