@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import CardDisplay from "../CardDisplay/CardDisplay"
 import GameCard from "../GameCard/GameCard"
-import { Grid, Card, withStyles, } from "@material-ui/core";
+import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles"
 import openSocket from 'socket.io-client'
 const socket = openSocket( 'http://localhost:5000' )
@@ -25,7 +25,7 @@ class Game extends Component {
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0,
+			earth: 0
 		},
 
 		playerDeck: {
@@ -33,34 +33,35 @@ class Game extends Component {
 			water: 5,
 			light: 5,
 			shadow: 5,
-			earth: 5,
+			earth: 5
 		},
 		playerHand: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0,
+			earth: 0
 		},
 		playerField: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0,
+			earth: 0
 		},
 		playerDiscard: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0,
+			earth: 0
 		},
-		playerStagedCard: 0,
+		playerStagedCard: 0
 	}
 
 	componentDidMount() {
 		socket.emit( "join" );
+<<<<<<< HEAD
 
 		this.draw_card()
 		this.draw_card()
@@ -94,13 +95,16 @@ class Game extends Component {
 					}
 				}
 			} )
+=======
+		socket.emit( "initialDraw" )
+>>>>>>> 12ec5e074a500e91eb0416892c6b4f8cd53178ab
 	}
 	onFlip = ( e ) => {
 		this.setState( {
 			'playerStack': null,
 			[ `playerField['${ e.currentTarget.alt }']` ]: this
 				.state
-				.playerField[ `'${ e.currentTarget.alt }'` ]
+				.playerField[`'${ e.currentTarget.alt }'`],
 		} )
 		switch ( e.currentTarget.alt ) {
 			case "fire":
@@ -126,7 +130,7 @@ class Game extends Component {
 					[ `opponentsField['${ e.currentTarget.alt }']` ]: this
 						.state
 						.opponentsField[ `'${ e.currentTarget.alt }'` ]--,
-					'opponentsDiscard': this.state.opponentsDiscard++,
+					'opponentsDiscard': this.state.opponentsDiscard++
 				} )
 
 				break;
