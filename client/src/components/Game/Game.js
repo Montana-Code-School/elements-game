@@ -135,7 +135,7 @@ class Game extends Component {
 	}
 	render() {
 		const { classes } = this.props;
-		return ( <div>
+		return ( <Card className={classes.page} alignItems="center">
 			<Grid container={true} direction="column" justify="space-evenly" alignItems="center">
 				<Grid container={true} direction="row" justify="space-around" alignItems="center">
 					<p>{
@@ -283,7 +283,7 @@ class Game extends Component {
 
 				</Grid>
 			</Grid>
-		</div> )
+		</Card> )
 	}
 }
 export default withStyles( styles )( Game );
