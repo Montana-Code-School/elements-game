@@ -101,4 +101,4 @@ console.log(deck.deal( ))
 
     }
 
-}
+};
