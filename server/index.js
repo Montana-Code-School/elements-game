@@ -92,7 +92,7 @@ io.on( 'connection', function ( client ) {
 	} )
 } );
 if (process.env.NODE_ENV === 'production') {
-	connect().use(serveStatic(path.join(__dirname, 'client/build'))
+	connect().use(serveStatic(path.join(__dirname, 'client/build')))
 }
 server.listen( port, function ( err ) {
 	if ( err )
