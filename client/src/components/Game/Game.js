@@ -56,11 +56,13 @@ class Game extends Component {
 			shadow: 0,
 			earth: 0
 		},
-		playerStagedCard: 0
+		playerStagedCard: {
+			counter: 0,
+			card: undefined
+		}
 	}
 
 	drawCard = ( n = 1 ) => {
-		console.log( n )
 		let random;
 		for ( let i = 0; i < n; i++ ) {
 			random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
@@ -89,61 +91,76 @@ class Game extends Component {
 		socket.emit( "join" );
 		this.drawCard(4)
 	}
-	onFlip = ( e ) => {
-		this.setState( {
-			'playerStack': null,
-			[ `playerField['${ e.currentTarget.alt }']` ]: this
-				.state
-				.playerField[`'${ e.currentTarget.alt }'`],
-		} )
-		switch ( e.currentTarget.alt ) {
-			case "fire":
-				this.state.afterFlip = "destroy opponent's card"
-				break;
-			case "earth":
-				this.draw_card()
-				break;
-			case "light":
-				this.state.afterFlip = "select card from discard"
-				//open discard pile
-				break;
-			case "shadow":
-				this.state.afterFlip = "opponent discards card"
-				//propmpt opponent to click the card to discard
-				break;
-		}
-	}
+	// onFlip = ( e ) => {
+	// 	this.setState( {
+	// 		'playerStack': null,
+	// 		[ `playerField['${ e.currentTarget.alt }']` ]: this
+	// 			.state
+	// 			.playerField[`'${ e.currentTarget.alt }'`],
+	// 	} )
+	// 	switch ( e.currentTarget.alt ) {
+	// 		case "fire":
+	// 			this.state.afterFlip = "destroy opponent's card"
+	// 			break;
+	// 		case "earth":
+	// 			this.draw_card()
+	// 			break;
+	// 		case "light":
+	// 			this.state.afterFlip = "select card from discard"
+	// 			//open discard pile
+	// 			break;
+	// 		case "shadow":
+	// 			this.state.afterFlip = "opponent discards card"
+	// 			//propmpt opponent to click the card to discard
+	// 			break;
+	// 	}
+	// }
 	playCard = (e) => {
 	const cardType = e.currentTarget.className.split(" ")[2]
 	const currentState = this.state
 	if (currentState.playerHand[cardType] === 0)
 		return
 	currentState.playerHand[cardType]--
-	currentState.playerStagedCard++
+	if (this.state.playerStagedCard.counter === 1)
+		return
+	currentState.playerStagedCard.counter++
+	currentState.playerStagedCard.card = cardType
 	this.setState(currentState)
 	// this.setState({
 	// 	[`playerHand['${cardType}']`]: this.state.playerHand[cardType]--
 	// })
+	console.log(this.state.playerStagedCard)
+	if (window.confirm("Would you like to counter?")) {
+    window.alert("This doesn't work yet, fuck off!")
+} else {
+    this.flipCard()
 }
+}
+
+flipCard = () => {
+	const currentState = this.state
+	const stagedCardType = this.state.playerStagedCard.card
+	console.log(stagedCardType + " was flipped.")
+	currentState.playerStagedCard.counter = 0
+	currentState.playerField[stagedCardType]++
+	this.setState(currentState)
+	switch (stagedCardType) {
+		case "earth":
+			this.drawCard(1)
+			break;
+		case "fire":
+			break;
+		case "shadow":
+			break;
+		case "light":
+			break;
+		case "water":
+			break;
+	}
+}
+
+
 	clickHandler = ( e ) => {
-		// switch ( this.state.afterFlip ) {
-		// 	case "destroy opponent's card":
-		// 		this.setState( {
-		// 			[ `opponentsField['${ e.currentTarget.alt }']` ]: this
-		// 				.state
-		// 				.opponentsField[ `'${ e.currentTarget.alt }'` ]--,
-		// 			'opponentsDiscard': this.state.opponentsDiscard++
-		// 		} )
-		//
-		// 		break;
-		// 	case "select card from hand":
-		// 		break;
-		// 	case "select card from discard":
-		// 		break;
-		// 	case "opponent discards card":
-		// 		break;
-				// this.props.playerHand[e.currentTarget.className]
-		//}
 		this.playCard(e)
 	}
 	render() {
@@ -288,7 +305,7 @@ class Game extends Component {
 						</Grid>
 					</Card>
 					<p>{
-							this.state.playerStagedCard === 0
+							this.state.playerStagedCard.counter === 0
 								? "0"
 								: "1"
 						}</p>
