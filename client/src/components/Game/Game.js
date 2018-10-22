@@ -59,9 +59,35 @@ class Game extends Component {
 		playerStagedCard: 0
 	}
 
+	drawCard = ( n = 1 ) => {
+		console.log( n )
+		let random;
+		for ( let i = 0; i < n; i++ ) {
+			random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
+			Object
+				.keys( this.state.playerDeck )
+				.forEach( ( key, index ) => {
+					if ( index === random ) {
+						if ( this.state.playerDeck[ key ] === 0 ) {
+							this.draw_card();
+						} else {
+							this.setState( {
+								[ `playerDeck['${ key }']` ]: this
+									.state
+									.playerDeck[ key ]--,
+								[ `playerDeck['${ key }']` ]: this
+									.state
+									.playerHand[ key ]++,
+							} );
+						}
+					}
+				} )
+		}
+	}
+
 	componentDidMount() {
 		socket.emit( "join" );
-		socket.emit( "initialDraw" )
+		this.drawCard(4)
 	}
 	onFlip = ( e ) => {
 		this.setState( {
@@ -87,25 +113,38 @@ class Game extends Component {
 				break;
 		}
 	}
+	playCard = (e) => {
+	const cardType = e.currentTarget.className.split(" ")[2]
+	const currentState = this.state
+	if (currentState.playerHand[cardType] === 0)
+		return
+	currentState.playerHand[cardType]--
+	currentState.playerStagedCard++
+	this.setState(currentState)
+	// this.setState({
+	// 	[`playerHand['${cardType}']`]: this.state.playerHand[cardType]--
+	// })
+}
 	clickHandler = ( e ) => {
-		switch ( this.state.afterFlip ) {
-			case "destroy opponent's card":
-				this.setState( {
-					[ `opponentsField['${ e.currentTarget.alt }']` ]: this
-						.state
-						.opponentsField[ `'${ e.currentTarget.alt }'` ]--,
-					'opponentsDiscard': this.state.opponentsDiscard++
-				} )
-
-				break;
-			case "select card from hand":
-				break;
-			case "select card from discard":
-				break;
-			case "opponent discards card":
-				break;
+		// switch ( this.state.afterFlip ) {
+		// 	case "destroy opponent's card":
+		// 		this.setState( {
+		// 			[ `opponentsField['${ e.currentTarget.alt }']` ]: this
+		// 				.state
+		// 				.opponentsField[ `'${ e.currentTarget.alt }'` ]--,
+		// 			'opponentsDiscard': this.state.opponentsDiscard++
+		// 		} )
+		//
+		// 		break;
+		// 	case "select card from hand":
+		// 		break;
+		// 	case "select card from discard":
+		// 		break;
+		// 	case "opponent discards card":
+		// 		break;
 				// this.props.playerHand[e.currentTarget.className]
-		}
+		//}
+		this.playCard(e)
 	}
 	render() {
 		const { classes } = this.props;
