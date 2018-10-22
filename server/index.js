@@ -1,8 +1,10 @@
 const connect = require( 'connect' );
 const serveStatic = require('serve-static');
+const express = require('express')
+const app = express()
 const path = require('path')
 const port = process.env.PORT || 5000;
-const server = require( 'http' ).createServer();
+const server = require('http').createServer(app);
 const io = require( 'socket.io' )( server );
 const _ = require( "underscore" );
 const ClientManager = require( './ClientManager' );
@@ -92,7 +94,12 @@ io.on( 'connection', function ( client ) {
 	} )
 } );
 if (process.env.NODE_ENV === 'production') {
-	connect().use(serveStatic(path.join(__dirname, 'client/build')))
+	app.use(express.static(path.join(__dirname, '../client/build')));
+
+	app.get('/', function(req, res) {
+  	res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+	});
+
 }
 server.listen( port, function ( err ) {
 	if ( err )
