@@ -19,11 +19,11 @@ class Game extends Component {
 		opponentsDiscard: 0,
 		opponentsStagedCard: 0,
 		opponentsField: {
-			fire: 1,
-			water: 1,
-			light: 1,
-			shadow: 1,
-			earth: 1
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
 		},
 
 		playerDeck: {
