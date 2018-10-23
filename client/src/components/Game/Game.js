@@ -13,6 +13,7 @@ function getCount( cards ) {
 	return count
 }
 let afterFlip = ""
+const room="";
 class Game extends Component {
 	state = {
 		opponentsDeck: 25,
@@ -60,34 +61,35 @@ class Game extends Component {
 			card: undefined
 		}
 	}
-	drawCard = ( n = 1 ) => {
-		let random;
-		for ( let i = 0; i < n; i++ ) {
-			random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
-			Object
-				.keys( this.state.playerDeck )
-				.forEach( ( key, index ) => {
-					if ( index === random ) {
-						if ( this.state.playerDeck[ key ] === 0 ) {
-							this.draw_card();
-						} else {
-							let playerDeck = this.state.playerDeck
-							let playerHand = this.state.playerHand
-							this.setState({
-								[ `playerDeck['${ key }']` ]: playerDeck[key]--,
-								[ `playerHand['${ key }']` ]: playerHand[key]++,
-							});
-
-						}
-					}
-				} )
-		}
-
-	}
+	// drawCard = ( n = 1 ) => {
+	// 	let random;
+	// 	for ( let i = 0; i < n; i++ ) {
+	// 		random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
+	// 		Object
+	// 			.keys( this.state.playerDeck )
+	// 			.forEach( ( key, index ) => {
+	// 				if ( index === random ) {
+	// 					if ( this.state.playerDeck[ key ] === 0 ) {
+	// 						this.draw_card();
+	// 					} else {
+	// 						let playerDeck = this.state.playerDeck
+	// 						let playerHand = this.state.playerHand
+	// 						this.setState({
+	// 							[ `playerDeck['${ key }']` ]: playerDeck[key]--,
+	// 							[ `playerHand['${ key }']` ]: playerHand[key]++,
+	// 						});
+	//
+	// 					}
+	// 				}
+	// 			} )
+	// 	}
+	//
+	// }
 
 	componentDidMount() {
-		socket.emit( "join" );
-		this.drawCard(4)
+		//check how to pass info about which room you are in
+		socket.emit( "join");
+		socket.emit("initialDraw",room)
 	}
 
 flipCard = () => {
