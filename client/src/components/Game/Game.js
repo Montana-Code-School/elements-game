@@ -12,11 +12,12 @@ function getCount( cards ) {
 	}
 	return count
 }
+let afterFlip = ""
 class Game extends Component {
 	state = {
-		afterFlip: "",
 		opponentsDeck: 25,
 		opponentsDiscard: 0,
+		//check to see if we need to use and object instead
 		opponentsStagedCard: 0,
 		opponentsField: {
 			fire: 0,
@@ -88,58 +89,9 @@ class Game extends Component {
 		socket.emit( "join" );
 		this.drawCard(4)
 	}
-	// onFlip = ( e ) => {
-	// 	this.setState( {
-	// 		'playerStack': null,
-	// 		[ `playerField['${ e.currentTarget.alt }']` ]: this
-	// 			.state
-	// 			.playerField[`'${ e.currentTarget.alt }'`],
-	// 	} )
-	// 	switch ( e.currentTarget.alt ) {
-	// 		case "fire":
-	// 			this.state.afterFlip = "destroy opponent's card"
-	// 			break;
-	// 		case "earth":
-	// 			this.draw_card()
-	// 			break;
-	// 		case "light":
-	// 			this.state.afterFlip = "select card from discard"
-	// 			//open discard pile
-	// 			break;
-	// 		case "shadow":
-	// 			this.state.afterFlip = "opponent discards card"
-	// 			//propmpt opponent to click the card to discard
-	// 			break;
-	// 	}
-	// }
-	playCard = (e) => {
-	const cardType = e.currentTarget.className.split(" ")[2]
-	const currentState = this.state
-	if (currentState.playerHand[cardType] === 0)
-		return
-	currentState.playerHand[cardType]--
-	if (this.state.playerStagedCard.counter === 1)
-		return
-	currentState.playerStagedCard.counter++
-	currentState.playerStagedCard.card = cardType
-	this.setState(currentState)
-	// this.setState({
-	// 	[`playerHand['${cardType}']`]: this.state.playerHand[cardType]--
-	// })
-	if (window.confirm("Would you like to counter?")) {
-    window.alert("This doesn't work yet, fuck off!")
-} else {
-    this.flipCard()
-		// const oppCard = {fire: 1, water: 1, light: 1, shadow: 1, earth: 1}
-		// console.log(this.state.opponentsField)
-}
-}
 
 flipCard = () => {
-	const {
-		playerHand, playerField, playerDiscard, opponentsField, playerStagedCard,
-	}= this.state
-	let pick;
+	const {playerHand, playerStagedCard, playerField, opponentsField, opponentsDiscard,opponentStagedCard}= {...this.state}
 	playerStagedCard.counter = 0
 	playerField[playerStagedCard.card]++
 	switch (playerStagedCard.card) {
@@ -147,31 +99,73 @@ flipCard = () => {
 			this.drawCard(1)
 			break;
 		case "fire":
-			const destroyString = `Available cards - Water: ${opponentsField.water}, Earth: ${opponentsField.earth}, Light ${opponentsField.light}, Shadow: ${opponentsField.shadow}, Fire: ${opponentsField.fire}`;
-			pick = prompt(`Please type the name of the card you'd like to destroy. ${destroyString.toLowerCase()}`)
-			opponentsField[pick]--
-			playerDiscard[pick]++
+			afterFlip="fireAction"
 		break;
 		case "shadow":
-			const handString = `Available cards - Water: ${playerHand.water}, Earth: ${playerHand.earth}, Light ${playerHand.light}, Shadow: ${playerHand.shadow}, Fire: ${playerHand.fire}`;
-			pick = prompt(`Please type the name of the card you'd like to discard from your hand. ${handString.toLowerCase()}`)
-			playerHand[pick]--
-			playerDiscard[pick]++
+			afterFlip="shadowAction"
 		break;
 		case "light":
-			const discardString = `Available cards - Water: ${playerDiscard.water}, Earth: ${playerDiscard.earth}, Light ${playerDiscard.light}, Shadow: ${playerDiscard.shadow}, Fire: ${playerDiscard.fire}`;
-			pick = prompt(`Please type the name of the card you'd like to return to your hand. ${discardString.toLowerCase()}`)
-			playerDiscard[pick]--
-			playerHand[pick]++
+			afterFlip="lightAction"
 		break;
 	}
-	this.setState({playerHand, playerField, playerDiscard, opponentsField, playerStagedCard
-	})
+	this.setState({playerHand, playerStagedCard, playerField, opponentsField, opponentsDiscard, opponentStagedCard})
 }
 
 	clickHandler = ( e ) => {
-		this.playCard(e)
-	}
+		const {playerHand, playerStagedCard, playerField, opponentsField, opponentsDiscard, opponentStagedCard, playerDiscard}= {...this.state}
+		const cardType = e.currentTarget.className.split(" ")[2]
+		let pick;
+		switch (afterFlip) {
+			case "fireAction":
+				opponentsField[cardType]--;
+				playerDiscard[cardType]++;
+				afterFlip = "";
+			break;
+			case "earthAction":
+				this.drawCard(1);
+				afterFlip = "";
+			break;
+			case "counterAction":
+				playerHand[cardType]--
+				playerHand.water--
+				playerDiscard[cardType]++
+				playerDiscard.water++
+				opponentStagedCard--;
+				opponentsDiscard++;
+				afterFlip = ""
+			break;
+			case "lightAction":
+				//call for discard pile component
+				pick = prompt(`Available cards - Earth: ${playerDiscard.earth}, Fire: ${playerDiscard.fire}, Water: ${playerDiscard.water}, Shadow: ${playerDiscard.shadow}, Light: ${playerDiscard.light}`)
+				playerDiscard[pick]--
+				playerHand[pick]++
+				afterFlip = ""
+			break;
+			case "shadowAction":
+			//pass turn to opponnent
+				playerHand[pick]--
+				playerDiscard[pick]++
+				afterFlip = ""
+			break;
+			default:
+				if (playerHand[cardType] === 0 || this.state.playerStagedCard.counter === 1)
+					return
+				else{
+				playerHand[cardType]--
+				playerStagedCard.counter++
+				playerStagedCard.card = cardType
+				if (window.confirm("Would you like to counter?")) {
+					//check for water card and additional card in playerhand
+					afterFlip = "counterAction"
+					window.alert("Pick a second card to discard in addition to your water")
+				} else {
+					this.flipCard()
+				}
+			}
+			break;
+		}
+	this.setState({playerHand, playerStagedCard, playerField, opponentsField, opponentsDiscard, opponentStagedCard, playerDiscard})
+}
 	render() {
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
