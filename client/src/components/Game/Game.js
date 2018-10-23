@@ -38,7 +38,7 @@ class Game extends Component {
 		playerHand: {
 			fire: 0,
 			water: 0,
-			light: 1,
+			light: 0,
 			shadow: 0,
 			earth: 0
 		},
@@ -50,11 +50,11 @@ class Game extends Component {
 			earth: 0
 		},
 		playerDiscard: {
-			fire: 1,
-			water: 1,
-			light: 1,
-			shadow: 1,
-			earth: 1
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
 		},
 		playerStagedCard: {
 			counter: 0,
@@ -85,6 +85,7 @@ class Game extends Component {
 					}
 				} )
 		}
+
 	}
 
 	componentDidMount() {
@@ -149,6 +150,7 @@ flipCard = () => {
 		case "fire":
 		break;
 		case "shadow":
+				this.shadowFlip()
 		break;
 		case "light":
 				this.lightFlip()
@@ -157,12 +159,24 @@ flipCard = () => {
 		break;
 	}
 }
+	shadowFlip = () => {
+		const currentState = this.state
+		const discard = this.state.PlayerDiscard
+		const hand = this.state.playerHand
+		console.log(hand)
+		const handString = `Available cards - Water: ${hand.water}, Earth: ${hand.earth}, Light ${hand.light}, Shadow: ${hand.shadow}, Fire: ${hand.fire}`;
+		const pick = prompt(`Please type the name of the card you'd like to discard from your hand. ${handString.toLowerCase()}`)
+		currentState.playerHand[pick]--
+		currentState.playerDiscard[pick]++
+		this.setState(currentState)
+	}
+
 
 	lightFlip = () => {
 		const currentState = this.state
 		const discard = this.state.playerDiscard
-		const discardString = "Available cards - Water: " + discard.water + ", Earth: " + discard.earth + ", Light: " + discard.light + ", Shadow: " + discard.shadow + ", Fire: " + discard.fire;
-		const choice = prompt("Please type the name of the card you'd like to return to your hand. " + discardString).toLowerCase()
+		const discardString = `Available cards - Water: ${discard.water}, Earth: ${discard.earth}, Light ${discard.light}, Shadow: ${discard.shadow}, Fire: ${discard.fire}`;
+		const choice = prompt(`Please type the name of the card you'd like to return to your hand. ${discardString.toLowerCase()}`)
 		currentState.playerDiscard[choice]--
 		currentState.playerHand[choice]++
 		this.setState(currentState)
