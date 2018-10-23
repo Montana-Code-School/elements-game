@@ -161,9 +161,7 @@ flipCard = () => {
 }
 	shadowFlip = () => {
 		const currentState = this.state
-		const discard = this.state.PlayerDiscard
 		const hand = this.state.playerHand
-		console.log(hand)
 		const handString = `Available cards - Water: ${hand.water}, Earth: ${hand.earth}, Light ${hand.light}, Shadow: ${hand.shadow}, Fire: ${hand.fire}`;
 		const pick = prompt(`Please type the name of the card you'd like to discard from your hand. ${handString.toLowerCase()}`)
 		currentState.playerHand[pick]--
