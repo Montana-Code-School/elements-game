@@ -38,7 +38,7 @@ class Game extends Component {
 		playerHand: {
 			fire: 0,
 			water: 0,
-			light: 0,
+			light: 1,
 			shadow: 0,
 			earth: 0
 		},
@@ -50,11 +50,11 @@ class Game extends Component {
 			earth: 0
 		},
 		playerDiscard: {
-			fire: 0,
-			water: 0,
-			light: 0,
-			shadow: 0,
-			earth: 0
+			fire: 1,
+			water: 1,
+			light: 1,
+			shadow: 1,
+			earth: 1
 		},
 		playerStagedCard: {
 			counter: 0,
@@ -129,7 +129,6 @@ class Game extends Component {
 	// this.setState({
 	// 	[`playerHand['${cardType}']`]: this.state.playerHand[cardType]--
 	// })
-	console.log(this.state.playerStagedCard)
 	if (window.confirm("Would you like to counter?")) {
     window.alert("This doesn't work yet, fuck off!")
 } else {
@@ -140,7 +139,6 @@ class Game extends Component {
 flipCard = () => {
 	const currentState = this.state
 	const stagedCardType = this.state.playerStagedCard.card
-	console.log(stagedCardType + " was flipped.")
 	currentState.playerStagedCard.counter = 0
 	currentState.playerField[stagedCardType]++
 	this.setState(currentState)
@@ -149,16 +147,26 @@ flipCard = () => {
 			this.drawCard(1)
 			break;
 		case "fire":
-			break;
+		break;
 		case "shadow":
-			break;
+		break;
 		case "light":
-			break;
+				this.lightFlip()
+		break;
 		case "water":
-			break;
+		break;
 	}
 }
 
+	lightFlip = () => {
+		const currentState = this.state
+		const discard = this.state.playerDiscard
+		const discardString = "Available cards - Water: " + discard.water + ", Earth: " + discard.earth + ", Light: " + discard.light + ", Shadow: " + discard.shadow + ", Fire: " + discard.fire;
+		const choice = prompt("Please type the name of the card you'd like to return to your hand. " + discardString).toLowerCase()
+		currentState.playerDiscard[choice]--
+		currentState.playerHand[choice]++
+		this.setState(currentState)
+	}
 
 	clickHandler = ( e ) => {
 		this.playCard(e)
