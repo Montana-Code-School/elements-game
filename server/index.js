@@ -92,35 +92,40 @@ io.on( 'connection', function ( client ) {
 		game.player1.clientInfo = client
 	} else if ( game.player2.clientInfo == null ) {
 		game.player2.clientInfo = client
+	} else {
+		client.disconnect()
 	}
-} else {
-	client.disconnect()
-}
 
-console.log( 'client connected...', client.id )clientManager.addClient( client )client.on( 'join', function () {
-	let room = handleJoin()
-	client.emit( "join", room )
-} )client.on( 'initialDraw', function () {
-	drawCard( 4, game )
-} )client.on( 'disconnect', function () {
-	console.log( 'client disconnect...', client.id );
-	// remove user
-	clientManager.removeClient( client )
-	console.log( "all rooms", io.sockets.adapter.rooms )
+	console
+		.log( 'client connected...', client.id )clientManager
+		.addClient( client )client
+		.on( 'join', function () {
+			let room = handleJoin()
+			client.emit( "join", room )
+		} )client
+		.on( 'initialDraw', function () {
+			drawCard( 4, game )
+		} )client
+		.on( 'disconnect', function () {
+			console.log( 'client disconnect...', client.id );
+			// remove user
+			clientManager.removeClient( client )
+			console.log( "all rooms", io.sockets.adapter.rooms )
+		} );
+	client.on( 'error', function ( err ) {
+		console.log( 'received error from client:', client.id )
+		console.log( err )
+	} )
 } );
-client.on( 'error', function ( err ) {
-	console.log( 'received error from client:', client.id )
-	console.log( err )
-} ), } );
 if ( process.env.NODE_ENV === 'production' ) {
-app.use( express.static( path.join( __dirname, '../client/build' ) ) );
+	app.use( express.static( path.join( __dirname, '../client/build' ) ) );
 
-app.get( '/', function ( req, res ) {
-	res.sendFile( path.join( __dirname, '../client/build', 'index.html' ) );
-} );
+	app.get( '/', function ( req, res ) {
+		res.sendFile( path.join( __dirname, '../client/build', 'index.html' ) );
+	} );
 }
 server.listen( port, function ( err ) {
-if ( err ) 
-	throw err
-console.log( 'listening on port' + port )
+	if ( err ) 
+		throw err
+	console.log( 'listening on port' + port )
 } )

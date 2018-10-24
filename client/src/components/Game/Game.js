@@ -66,10 +66,10 @@ class Game extends Component {
 		}
 		return count
 	};
-	socket.on( "join", room => {
-		this.setState( ...self.state, { room: room } );
-		console.log( this.state.room )
-	} )
+	// socket.on( "join", room => {
+	// 	this.setState( ...self.state, { room: room } );
+	// 	console.log( this.state.room )
+	// } )
 	flipCard = () => {
 		const {
 			playerHand,
@@ -144,9 +144,18 @@ class Game extends Component {
 				afterFlip = ""
 				break;
 			case "lightAction":
-				call for  discard pile component pick = prompt( `Available cards - Earth: ${ playerDiscard.earth}, Fire: ${ playerDiscard.fire}, Water: ${ playerDiscard.water}, Shadow: ${ playerDiscard.shadow}, Light: ${ playerDiscard.light }` )playerDiscard[ pick ]--playerHand[ pick ]++afterFlip = "" break; case "shadowAction" : pass turn to opponnent playerHand[ pick ]--playerDiscard[ pick ]++afterFlip = "" break; default : if ( playerHand[ cardType ] === 0 || this.state.playerStagedCard.counter === 1 ) 
+				// call for  discard pile component
+				pick = prompt( `Available cards - Earth: ${ playerDiscard.earth}, Fire: ${ playerDiscard.fire}, Water: ${ playerDiscard.water}, Shadow: ${ playerDiscard.shadow}, Light: ${ playerDiscard.light }` );
+				playerDiscard[ pick ]--;
+				playerHand[ pick ]++;
+				afterFlip = "";
+				break;
+			case "shadowAction":
+				pass turn to opponnent playerHand[ pick ]--playerDiscard[ pick ]++afterFlip = "" break;
+			default:
+				if ( playerHand[ cardType ] === 0 || this.state.playerStagedCard.counter === 1 ) 
 					return
-				else  {
+				else {
 					playerHand[ cardType ]--
 					playerStagedCard.counter++
 					playerStagedCard.card = cardType
