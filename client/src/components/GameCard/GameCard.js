@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { CardMedia, withStyles } from '@material-ui/core'
+import { CardMedia, withStyles } from "@material-ui/core"
 import { Card as styles } from "../Game/AllStyles"
 import DiscardPile from "../DiscardPile/DiscardPile"
 class GameCard extends Component {

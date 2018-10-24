@@ -1,5 +1,5 @@
 .Landing_container {
-  background: url('../../images/MTG_board.jpg') no-repeat;
+  background: url("../../images/MTG_board.jpg") no-repeat;
   background-size: cover;
   height: 100%;
   width: 100%;

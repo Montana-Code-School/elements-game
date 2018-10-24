@@ -20,7 +20,7 @@ const Card = theme => ( {
 		[
 			theme
 				.breakpoints
-				.between( 'xs', 'sm' )
+				.between( "xs", "sm" )
 		]: {
 			paddingLeft: "14%",
 			paddingRight: "10%",
@@ -29,7 +29,7 @@ const Card = theme => ( {
 		},
 		[ theme
 				.breakpoints
-				.only( 'md' ) ]: {
+				.only( "md" ) ]: {
 			maxWidth: "900px",
 			maxHeight: "800px",
 			paddingLeft: "14%",
@@ -40,7 +40,7 @@ const Card = theme => ( {
 		[
 			theme
 				.breakpoints
-				.between( 'lg', 'xl' )
+				.between( "lg", "xl" )
 		]: {
 			maxWidth: "1000px",
 			maxHeight: "750px",
