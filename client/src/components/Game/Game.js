@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import CardDisplay from "../CardDisplay/CardDisplay"
-import GameCard from "../GameCard/GameCard"
-import { Grid, Card, withStyles } from "@material-ui/core";
-import { Card as styles } from "./AllStyles"
-import openSocket from 'socket.io-client'
-const socket = openSocket( 'http://localhost:5000' )
-let afterFlip = ""
+import CardDisplay from "../CardDisplay/CardDisplay";
+import GameCard from "../GameCard/GameCard";
+import { Grid, Card, withStyles, } from "@material-ui/core";
+import { Card as styles } from "./AllStyles";
+import openSocket from 'socket.io-client';
+const socket = openSocket( 'http://localhost:5000' );
+let afterFlip = "";
 class Game extends Component {
 	state = {
 		room: "",
@@ -18,7 +18,7 @@ class Game extends Component {
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 
 		playerDeck: {
@@ -26,50 +26,54 @@ class Game extends Component {
 			water: 5,
 			light: 5,
 			shadow: 5,
-			earth: 5
+			earth: 5,
 		},
 		playerHand: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		playerField: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		playerDiscard: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		playerStagedCard: {
 			counter: 0,
-			card: undefined
-		}
+			card: undefined,
+		},
 	}
 	componentDidMount() {
 		//check how to pass info about which room you are in
 		socket.emit( "join" );
-		socket.emit( "initialDraw", this.state.room )
-	}
-	getCount = ( cards ) => {
-		let count = 0
-		for ( let cardType in cards ) {
-			count += cards[ cardType ]
-		}
-		return count
+		socket.on( "roomJoin", room => {
+			console.log( room )
+			this.setState( {
+				room: room
+			}, function () {
+				console.log( "try to initial draw" );
+				socket.emit( "initialDraw" );
+			} )
+		} )
 	};
-	// socket.on( "join", room => {
-	// 	this.setState( ...self.state, { room: room } );
-	// 	console.log( this.state.room )
-	// } )
+	getCount = ( cards ) => {
+		let count = 0;
+		for ( let cardType in cards ) {
+			count += cards[ cardType ];
+		}
+		return count;
+	};
 	flipCard = () => {
 		const {
 			playerHand,
@@ -77,24 +81,24 @@ class Game extends Component {
 			playerField,
 			opponentsField,
 			opponentsDiscard,
-			opponentStagedCard,
+			opponentStagedCard
 		} = {
 			...this.state
-		}
-		playerStagedCard.counter = 0
-		playerField[ playerStagedCard.card ]++
+		};
+		playerStagedCard.counter = 0;
+		playerField[ playerStagedCard.card ]++;
 		switch ( playerStagedCard.card ) {
 			case "earth":
-				this.drawCard( 1 )
+				this.drawCard( 1 );
 				break;
 			case "fire":
-				afterFlip = "fireAction"
+				afterFlip = "fireAction";
 				break;
 			case "shadow":
-				afterFlip = "shadowAction"
+				afterFlip = "shadowAction";
 				break;
 			case "light":
-				afterFlip = "lightAction"
+				afterFlip = "lightAction";
 				break;
 		}
 		this.setState( {
@@ -103,7 +107,7 @@ class Game extends Component {
 			playerField,
 			opponentsField,
 			opponentsDiscard,
-			opponentStagedCard,
+			opponentStagedCard
 		} )
 	}
 
@@ -115,14 +119,14 @@ class Game extends Component {
 			opponentsField,
 			opponentsDiscard,
 			opponentStagedCard,
-			playerDiscard,
+			playerDiscard
 		} = {
 			...this.state
 		}
 		const cardType = e
 			.currentTarget
 			.className
-			.split( " " )[ 2 ]
+			.split( " " )[ 2 ];
 		let pick;
 		switch ( afterFlip ) {
 			case "fireAction":
@@ -135,13 +139,13 @@ class Game extends Component {
 				afterFlip = "";
 				break;
 			case "counterAction":
-				playerHand[ cardType ]--
-				playerHand.water--
-				playerDiscard[ cardType ]++
-				playerDiscard.water++
+				playerHand[ cardType ]--;
+				playerHand.water--;
+				playerDiscard[ cardType ]++;
+				playerDiscard.water++;
 				opponentStagedCard--;
 				opponentsDiscard++;
-				afterFlip = ""
+				afterFlip = "";
 				break;
 			case "lightAction":
 				// call for  discard pile component
@@ -151,30 +155,37 @@ class Game extends Component {
 				afterFlip = "";
 				break;
 			case "shadowAction":
-				pass turn to opponnent playerHand[ pick ]--playerDiscard[ pick ]++afterFlip = "" break;
+				// pass turn to opponnent
+				playerHand[ pick ]--;
+				playerDiscard[ pick ]++;
+				afterFlip = "";
+				break;
 			default:
 				if ( playerHand[ cardType ] === 0 || this.state.playerStagedCard.counter === 1 ) 
 					return
 				else {
-					playerHand[ cardType ]--
-					playerStagedCard.counter++
-					playerStagedCard.card = cardType
+					playerHand[ cardType ]--;
+					playerStagedCard.counter++;
+					playerStagedCard.card = cardType;
 					if ( window.confirm( "Would you like to counter?" ) ) {
-						check for  water card and additional card in playerhand afterFlip = "counterAction" window.alert( "Pick a second card to discard in addition to your water" ) } else {
-						this.flipCard()
+						// check for  water card and additional card in playerhand
+						afterFlip = "counterAction";
+						window.alert( "Pick a second card to discard in addition to your water" );
+					} else {
+						this.flipCard();
 					}
 				}
 				break;
-			}
-			this.setState( {
-				playerHand,
-				playerStagedCard,
-				playerField,
-				opponentsField,
-				opponentsDiscard,
-				opponentStagedCard,
-				playerDiscard,
-			} )
+		}
+		this.setState( {
+			playerHand,
+			playerStagedCard,
+			playerField,
+			opponentsField,
+			opponentsDiscard,
+			opponentStagedCard,
+			playerDiscard
+		} )
 	}
 	render() {
 		const { classes } = this.props;

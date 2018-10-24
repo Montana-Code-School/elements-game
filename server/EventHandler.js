@@ -20,7 +20,6 @@ module.exports = function ( client, ClientManager, rooms ) {
 		console.log( "all rooms", rooms )
 	}
 	drawCard = ( n = 1, game ) => {
-		console.log( "drawCard is working!" )
 		const playerDeck = game.player1.deck
 		const playerHand = game.player1.hand
 		const keys = Object.keys( playerDeck )
@@ -50,5 +49,5 @@ module.exports = function ( client, ClientManager, rooms ) {
 		else 
 			return null
 	}
-	return { handleJoin, getVictory, drawCard, }
+	return { handleJoin, getVictory, drawCard }
 }
