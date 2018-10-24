@@ -19,36 +19,35 @@ module.exports = function ( client, ClientManager, rooms ) {
 		}
 		console.log( "all rooms", rooms )
 	}
-	// function drawCard( n = 1 ) {
-	// 	console.log( n )
-	// 	let random;
-	// 	for ( let i = 0; i < n; i++ ) {
-	// 		random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
-	// 		Object
-	// 			.keys( this.state.playerDeck )
-	// 			.forEach( ( key, index ) => {
-	// 				if ( index === random ) {
-	// 					if ( this.state.playerDeck[ key ] === 0 ) {
-	// 						this.draw_card();
-	// 					} else {
-	// 						this.setState( {
-	// 							[ `playerDeck['${ key }']` ]: this
-	// 								.state
-	// 								.playerDeck[ key ]--,
-	// 							[ `playerDeck['${ key }']` ]: this
-	// 								.state
-	// 								.playerHand[ key ]++,
-	// 						} );
-	// 					}
-	// 				}
-	// 			} )
-	// 	}
-	// }
+	drawCard = ( n = 1, game ) => {
+		console.log( "drawCard is working!" )
+		const playerDeck = game.player1.deck
+		const playerHand = game.player1.hand
+		const keys = Object.keys( playerDeck )
+
+		for ( let i = 0; i < n; i++ ) {
+			drawSingleCard()
+		}
+		function drawSingleCard() {
+			if ( keys.length === 0 )
+				return
+			const randomIndex = Math.floor( Math.random() * keys.length )
+			const randomKey = keys[ randomIndex ]
+			if ( !playerDeck[ randomKey ] ) {
+				keys.splice( randomIndex, 1 )
+				drawSingleCard()
+				return
+			}
+			playerDeck[ randomKey ]--
+			playerHand[ randomKey ]++
+		}
+		console.log( game )
+	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) )
 			return "victory"
 		else
 			return null
 	}
-	return { handleJoin, getVictory }
+	return { handleJoin, getVictory, drawCard }
 }

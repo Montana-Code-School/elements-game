@@ -11,65 +11,80 @@ const ClientManager = require( './ClientManager' );
 const makeHandlers = require( './EventHandler' )
 const clientManager = ClientManager();
 
-let afterFlip = "";
-let player1Field = {
-	fire: 0,
-	water: 0,
-	light: 0,
-	shadow: 0,
-	earth: 0,
+const game = {
+	room: null,
+	'player1': {
+		clientInfo: null,
+		field: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
+		},
+		hand: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
+		},
+		deck: {
+			fire: 5,
+			water: 5,
+			light: 5,
+			shadow: 5,
+			earth: 5
+		},
+		discard: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
+		},
+		stagedCard: {
+			count: 0,
+			cardName: ""
+		},
+	},
+	'player2': {
+		clientInfo: null,
+		field: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
+		},
+		hand: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
+		},
+		deck: {
+			fire: 5,
+			water: 5,
+			light: 5,
+			shadow: 5,
+			earth: 5
+		},
+		discard: {
+			fire: 0,
+			water: 0,
+			light: 0,
+			shadow: 0,
+			earth: 0
+		},
+		stagedCard: {
+			count: 0,
+			cardName: ""
+		},
+	},
 };
-let player2Field = {
-	fire: 0,
-	water: 0,
-	light: 0,
-	shadow: 0,
-	earth: 0,
-};
-let player1Deck = {
-	fire: 5,
-	water: 5,
-	light: 5,
-	shadow: 5,
-	earth: 5,
-};
-let player2Deck = {
-	fire: 5,
-	water: 5,
-	light: 5,
-	shadow: 5,
-	earth: 5,
-};
-let player1Hand = {
-	fire: 0,
-	water: 0,
-	light: 0,
-	shadow: 0,
-	earth: 0,
-};
-let player2Hand = {
-	fire: 0,
-	water: 0,
-	light: 0,
-	shadow: 0,
-	earth: 0,
-};
-let player1Discard = {
-	fire: 0,
-	water: 0,
-	light: 0,
-	shadow: 0,
-	earth: 0,
-};
-let player2Discard = {
-	fire: 0,
-	water: 0,
-	light: 0,
-	shadow: 0,
-	earth: 0,
-}
-let player1StagedCard = "";
-let player2StagedCard = "";
+let turn = 'player1';
 io.on( 'connection', function ( client ) {
 
 	const { rooms } = io.sockets.adapter;
@@ -80,8 +95,9 @@ io.on( 'connection', function ( client ) {
 	const drawCard1 = () => drawCard( 4 )
 	client.on( 'join', handleJoin )
 	client.on( 'initialDraw', function () {
-		console.log( "drawCard" );
-	} )
+		console.log( 'room' );
+		// drawCard( 4, game );
+	} );
 	client.on( 'disconnect', function () {
 		console.log( 'client disconnect...', client.id );
 		// remove user
