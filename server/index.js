@@ -8,6 +8,7 @@ const io = require( 'socket.io' )( server );
 const ClientManager = require( './ClientManager' );
 const makeHandlers = require( './EventHandler' )
 const clientManager = ClientManager();
+
 const game = {
 	room: null,
 	'player1': {
@@ -17,33 +18,33 @@ const game = {
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		hand: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		deck: {
 			fire: 5,
 			water: 5,
 			light: 5,
 			shadow: 5,
-			earth: 5
+			earth: 5,
 		},
 		discard: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		stagedCard: {
 			count: 0,
-			cardName: ""
-		},
+			cardName: "",
+		}
 	},
 	'player2': {
 		clientInfo: null,
@@ -52,34 +53,34 @@ const game = {
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		hand: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		deck: {
 			fire: 5,
 			water: 5,
 			light: 5,
 			shadow: 5,
-			earth: 5
+			earth: 5,
 		},
 		discard: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		stagedCard: {
 			count: 0,
-			cardName: ""
-		},
-	},
+			cardName: "",
+		}
+	}
 };
 // let rooms
 let turn = 'player1';
@@ -87,7 +88,7 @@ let afterFlip = "";
 io.on( 'connection', function ( client ) {
 
 	const { rooms } = io.sockets.adapter;
-	const { handleJoin, drawCard } = makeHandlers( client, clientManager, rooms )
+	const { handleJoin, drawCard, } = makeHandlers( client, clientManager, rooms )
 
 	if ( game.player1.clientInfo == null ) {
 		game.player1.clientInfo = client;

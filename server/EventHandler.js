@@ -42,12 +42,11 @@ module.exports = function ( client, ClientManager, rooms ) {
 		}
 		console.log( game )
 	}
-
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) ) 
 			return "victory"
 		else 
 			return null
 	}
-	return { handleJoin, getVictory, drawCard }
+	return { handleJoin, getVictory, drawCard, }
 }
