@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import CardDisplay from "../CardDisplay/CardDisplay"
-import GameCard from "../GameCard/GameCard"
+import CardDisplay from "../CardDisplay/CardDisplay";
+import GameCard from "../GameCard/GameCard";
 import { Grid, Card, withStyles, Modal } from "@material-ui/core";
-import { Card as styles } from "./AllStyles"
-import openSocket from 'socket.io-client'
+import { Card as styles } from "./AllStyles";
+import openSocket from 'socket.io-client';
+import DiscardPile from '../DiscardPile/DiscardPile';
 const socket = openSocket( 'http://localhost:5000' )
 function getCount( cards ) {
 	let count = 0
@@ -174,10 +175,13 @@ flipCard = () => {
 	}
 	render() {
 		const { classes } = this.props;
-		return ( <Card className={classes.page}>
+		return (
+			 <Card className={classes.page}>
 			<Grid container={true} direction="column" justify="space-evenly" alignItems="center">
 				<Grid container={true} direction="row" justify="space-around" alignItems="center">
-					<p>{
+					<p>
+						<Modal  />
+						{
 							this.state.opponentsStagedCard === 0
 								? "0"
 								: "1"
@@ -272,7 +276,7 @@ flipCard = () => {
 					<p>{getCount( this.state.playerDeck )}</p>
 					<GameCard className="player_deck"/>
 					<p>{getCount( this.state.playerDiscard )}</p>
-					<GameCard className="player_discard" onClick={this.clickHandler}/>
+					<GameCard className="player_discard" />
 					<Card className={classes.multicard_display}>
 						<CardDisplay className="player_hand" onClick={this.clickHandler}/>
 						<Grid container={true} direction="row" justify="space-around" alignItems="center">
