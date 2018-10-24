@@ -3,7 +3,7 @@ module.exports = function ( { name, image, } ) {
 	let chatHistory = []
 
 	function broadcastMessage( message ) {
-		members.forEach( m => m.emit( 'message', message ) )
+		members.forEach( m => m.emit( "message", message ) )
 	}
 
 	// function addEntry(entry) {

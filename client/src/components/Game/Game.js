@@ -3,8 +3,8 @@ import CardDisplay from "../CardDisplay/CardDisplay";
 import GameCard from "../GameCard/GameCard";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
-import openSocket from 'socket.io-client';
-const socket = openSocket( 'http://localhost:5000' )
+import openSocket from "socket.io-client";
+const socket = openSocket( "http://localhost:5000" )
 function getCount( cards ) {
 	let count = 0
 	for ( let cardType in cards ) {
@@ -64,30 +64,6 @@ class Game extends Component {
 		socket.emit( "join" );
 		socket.emit("initialDraw")
 	}
-	// onFlip = ( e ) => {
-	// 	this.setState( {
-	// 		'playerStack': null,
-	// 		[ `playerField['${ e.currentTarget.alt }']` ]: this
-	// 			.state
-	// 			.playerField[`'${ e.currentTarget.alt }'`],
-	// 	} )
-	// 	switch ( e.currentTarget.alt ) {
-	// 		case "fire":
-	// 			this.state.afterFlip = "destroy opponent's card"
-	// 			break;
-	// 		case "earth":
-	// 			this.draw_card()
-	// 			break;
-	// 		case "light":
-	// 			this.state.afterFlip = "select card from discard"
-	// 			//open discard pile
-	// 			break;
-	// 		case "shadow":
-	// 			this.state.afterFlip = "opponent discards card"
-	// 			//propmpt opponent to click the card to discard
-	// 			break;
-	// 	}
-	// }
 	playCard = (e) => {
 	const cardType = e.currentTarget.className.split(" ")[2]
 	const currentState = this.state
@@ -100,7 +76,7 @@ class Game extends Component {
 	currentState.playerStagedCard.card = cardType
 	this.setState(currentState)
 	// this.setState({
-	// 	[`playerHand['${cardType}']`]: this.state.playerHand[cardType]--
+	// 	[`playerHand["${cardType}"]`]: this.state.playerHand[cardType]--
 	// })
 	if (window.confirm("Would you like to counter?")) {
     window.alert("This doesn't work yet, fuck off!")
@@ -124,19 +100,19 @@ flipCard = () => {
 			break;
 		case "fire":
 			const destroyString = `Available cards - Water: ${opponentsField.water}, Earth: ${opponentsField.earth}, Light ${opponentsField.light}, Shadow: ${opponentsField.shadow}, Fire: ${opponentsField.fire}`;
-			pick = prompt(`Please type the name of the card you'd like to destroy. ${destroyString.toLowerCase()}`)
+			pick = prompt(`Please type the name of the card you"d like to destroy. ${destroyString.toLowerCase()}`)
 			opponentsField[pick]--
 			playerDiscard[pick]++
 		break;
 		case "shadow":
 			const handString = `Available cards - Water: ${playerHand.water}, Earth: ${playerHand.earth}, Light ${playerHand.light}, Shadow: ${playerHand.shadow}, Fire: ${playerHand.fire}`;
-			pick = prompt(`Please type the name of the card you'd like to discard from your hand. ${handString.toLowerCase()}`)
+			pick = prompt(`Please type the name of the card you"d like to discard from your hand. ${handString.toLowerCase()}`)
 			playerHand[pick]--
 			playerDiscard[pick]++
 		break;
 		case "light":
 			const discardString = `Available cards - Water: ${playerDiscard.water}, Earth: ${playerDiscard.earth}, Light ${playerDiscard.light}, Shadow: ${playerDiscard.shadow}, Fire: ${playerDiscard.fire}`;
-			pick = prompt(`Please type the name of the card you'd like to return to your hand. ${discardString.toLowerCase()}`)
+			pick = prompt(`Please type the name of the card you"d like to return to your hand. ${discardString.toLowerCase()}`)
 			playerDiscard[pick]--
 			playerHand[pick]++
 		break;
@@ -177,35 +153,35 @@ flipCard = () => {
 						{
 							this
 								.state
-								.opponentsField[ 'water' ]
+								.opponentsField[ "water" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.opponentsField[ 'earth' ]
+								.opponentsField[ "earth" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.opponentsField[ 'light' ]
+								.opponentsField[ "light" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.opponentsField[ 'shadow' ]
+								.opponentsField[ "shadow" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.opponentsField[ 'fire' ]
+								.opponentsField[ "fire" ]
 						}
 					</p>
 				</Grid>
@@ -216,35 +192,35 @@ flipCard = () => {
 						{
 							this
 								.state
-								.playerField[ 'water' ]
+								.playerField[ "water" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.playerField[ 'earth' ]
+								.playerField[ "earth" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.playerField[ 'light' ]
+								.playerField[ "light" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.playerField[ 'shadow' ]
+								.playerField[ "shadow" ]
 						}
 					</p>
 					<p>
 						{
 							this
 								.state
-								.playerField[ 'fire' ]
+								.playerField[ "fire" ]
 						}
 					</p>
 				</Grid>
@@ -260,35 +236,35 @@ flipCard = () => {
 								{
 									this
 										.state
-										.playerHand[ 'water' ]
+										.playerHand[ "water" ]
 								}
 							</p>
 							<p>
 								{
 									this
 										.state
-										.playerHand[ 'earth' ]
+										.playerHand[ "earth" ]
 								}
 							</p>
 							<p>
 								{
 									this
 										.state
-										.playerHand[ 'light' ]
+										.playerHand[ "light" ]
 								}
 							</p>
 							<p>
 								{
 									this
 										.state
-										.playerHand[ 'shadow' ]
+										.playerHand[ "shadow" ]
 								}
 							</p>
 							<p>
 								{
 									this
 										.state
-										.playerHand[ 'fire' ]
+										.playerHand[ "fire" ]
 								}
 							</p>
 						</Grid>
