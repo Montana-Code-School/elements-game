@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import CardDisplay from "../CardDisplay/CardDisplay"
 import GameCard from "../GameCard/GameCard"
-import { Grid, Card, withStyles } from "@material-ui/core";
+import { Grid, Card, withStyles, Modal } from "@material-ui/core";
 import { Card as styles } from "./AllStyles"
 import openSocket from 'socket.io-client'
 const socket = openSocket( 'http://localhost:5000' )
