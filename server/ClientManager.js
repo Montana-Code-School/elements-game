@@ -21,5 +21,5 @@ module.exports = function () {
 		return ( clients.get( clientId ) || {} ).user
 	}
 
-	return { addClient, removeClient, getAvailableUsers, getUserByClientId }
+	return { addClient, removeClient, getUserByClientId }
 }

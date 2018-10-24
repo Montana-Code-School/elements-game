@@ -1,4 +1,4 @@
-module.exports = function ( { name, image, } ) {
+module.exports = function ( { name, image } ) {
 	const players = new Map();
 	let chatHistory = []
 
@@ -6,13 +6,13 @@ module.exports = function ( { name, image, } ) {
 		members.forEach( m => m.emit( 'message', message ) )
 	}
 
-	// function addEntry(entry) {
-	//   chatHistory = chatHistory.concat(entry)
-	// }
-	//
-	// function getChatHistory() {
-	//   return chatHistory.slice()
-	// }
+	function addEntry( entry ) {
+		chatHistory = chatHistory.concat( entry )
+	}
+
+	function getChatHistory() {
+		return chatHistory.slice()
+	}
 
 	function addUser( client ) {
 		players.set( client.id, client )
@@ -23,7 +23,7 @@ module.exports = function ( { name, image, } ) {
 	}
 
 	function serialize() {
-		return { name, image, numMembers: members.size, }
+		return { name, image, numMembers: members.size }
 	}
 
 	return {
@@ -32,6 +32,6 @@ module.exports = function ( { name, image, } ) {
 		getChatHistory,
 		addUser,
 		removeUser,
-		serialize,
+		serialize
 	}
 }
