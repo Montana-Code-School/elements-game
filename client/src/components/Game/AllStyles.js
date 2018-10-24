@@ -25,7 +25,6 @@ const Card = theme => ( {
 			paddingLeft: "14%",
 			paddingRight: "10%",
 			paddingTop: "1%",
-			paddingTop: "1%",
 			backgroundColor: "blue",
 		},
 		[ theme
@@ -35,7 +34,6 @@ const Card = theme => ( {
 			maxHeight: "800px",
 			paddingLeft: "14%",
 			paddingRight: "10%",
-			paddingTop: "1%",
 			paddingTop: "1%",
 			backgroundColor: "green",
 		},
@@ -48,7 +46,6 @@ const Card = theme => ( {
 			maxHeight: "750px",
 			paddingLeft: "14%",
 			paddingRight: "10%",
-			paddingTop: "1%",
 			paddingTop: "1%",
 			backgroundColor: "red",
 		},

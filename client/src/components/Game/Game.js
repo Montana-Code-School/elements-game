@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import CardDisplay from "../CardDisplay/CardDisplay";
 import GameCard from "../GameCard/GameCard";
-import { Grid, Card, withStyles, Modal } from "@material-ui/core";
+import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import openSocket from 'socket.io-client';
-import DiscardPile from '../DiscardPile/DiscardPile';
 const socket = openSocket( 'http://localhost:5000' )
 function getCount( cards ) {
 	let count = 0
@@ -60,34 +59,10 @@ class Game extends Component {
 			card: undefined
 		}
 	}
-	drawCard = ( n = 1 ) => {
-		let random;
-		for ( let i = 0; i < n; i++ ) {
-			random = Math.floor( Math.random() * Object.keys( this.state.playerDeck ).length );
-			Object
-				.keys( this.state.playerDeck )
-				.forEach( ( key, index ) => {
-					if ( index === random ) {
-						if ( this.state.playerDeck[ key ] === 0 ) {
-							this.draw_card();
-						} else {
-							let playerDeck = this.state.playerDeck
-							let playerHand = this.state.playerHand
-							this.setState({
-								[ `playerDeck['${ key }']` ]: playerDeck[key]--,
-								[ `playerHand['${ key }']` ]: playerHand[key]++,
-							});
-
-						}
-					}
-				} )
-		}
-
-	}
 
 	componentDidMount() {
 		socket.emit( "join" );
-		this.drawCard(4)
+		socket.emit("initialDraw")
 	}
 	// onFlip = ( e ) => {
 	// 	this.setState( {
@@ -165,6 +140,8 @@ flipCard = () => {
 			playerDiscard[pick]--
 			playerHand[pick]++
 		break;
+		default :
+		break;
 	}
 	this.setState({playerHand, playerField, playerDiscard, opponentsField, playerStagedCard
 	})
@@ -180,7 +157,6 @@ flipCard = () => {
 			<Grid container={true} direction="column" justify="space-evenly" alignItems="center">
 				<Grid container={true} direction="row" justify="space-around" alignItems="center">
 					<p>
-						<Modal  />
 						{
 							this.state.opponentsStagedCard === 0
 								? "0"

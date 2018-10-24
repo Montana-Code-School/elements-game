@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Modal, Button, CardMedia, withStyles } from "@material-ui/core"
+import { Modal, CardMedia, withStyles } from "@material-ui/core"
 import { Card as styles } from "../Game/AllStyles";
 
 let rand = ()=> (Math.floor(Math.random() * 20) - 10);
@@ -39,12 +38,10 @@ class DiscardPile extends Component {
     showModal: false
   }
     close = () => {
-      console.log("clo")
       this.setState({ showModal: false });
     }
 
     open = () => {
-      console.log(this.state)
      this.setState({ showModal: true })
     }
     render() {
@@ -53,14 +50,12 @@ class DiscardPile extends Component {
         <div className={classes.card}>
          <CardMedia onClick={this.open} component="img" alt={this.props.className} className={this.props.className} image={require( `../../images/discard.png` )}/>
           <Modal
-            aria-labelledby='modal-label'
             style={modalStyle}
             backdropstyle={backdropStyle}
             open={this.state.showModal}
             onClose={this.close}
           >
             <div style={dialogStyle()}>
-              <h4 id='modal-label'>Text in a modal</h4>
               <p>Select a card from your discard pile.</p>
             </div>
           </Modal>
