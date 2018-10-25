@@ -1,12 +1,12 @@
-.Landing_container {
-  background: url('../../images/MTG_board.jpg') no-repeat;
+.landingContainer {
+  background: url("../../images/MTGBoard.jpg") no-repeat;
   background-size: cover;
   height: 100%;
   width: 100%;
   position: relative;
 }
 
-.Landing_button {
+.landingButton {
   position: absolute;
   left: 40.1%;
   top: 45%;
@@ -18,7 +18,7 @@
   border-radius: 10%;
 }
 
-.Landing_header {
+.landingHeader {
   position: absolute;
   left: 32%;
   top: 15%;

@@ -17,36 +17,37 @@ module.exports = function ( client, rooms ) {
 				return `room${ i }`;
 			}
 		}
-		console.log( "all rooms", rooms )
+		console.log( "all rooms", rooms );
 	}
 	drawCard = ( n = 1, game ) => {
-		const playerDeck = game.player1.deck
-		const playerHand = game.player1.hand
-		const keys = Object.keys( playerDeck )
+		console.log( "drawCard is working!" );
+		const playerDeck = game.player1.deck;
+		const playerHand = game.player1.hand;
+		const keys = Object.keys( playerDeck );
 
 		for ( let i = 0; i < n; i++ ) {
-			drawSingleCard()
+			drawSingleCard();
 		}
 		function drawSingleCard() {
 			if ( keys.length === 0 ) 
-				return
-			const randomIndex = Math.floor( Math.random() * keys.length )
-			const randomKey = keys[ randomIndex ]
+				return;
+			const randomIndex = Math.floor( Math.random() * keys.length );
+			const randomKey = keys[ randomIndex ];
 			if ( !playerDeck[ randomKey ] ) {
-				keys.splice( randomIndex, 1 )
-				drawSingleCard()
-				return
+				keys.splice( randomIndex, 1 );
+				drawSingleCard();
+				return;
 			}
-			playerDeck[ randomKey ]--
-			playerHand[ randomKey ]++
+			playerDeck[ randomKey ]--;
+			playerHand[ randomKey ]++;
 		}
-		console.log( game )
+		console.log( game );
 	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) ) 
-			return "victory"
+			return "victory";
 		else 
-			return null
-	}
-	return { handleJoin, getVictory, drawCard, }
+			return null;
+		}
+	return { handleJoin, getVictory, drawCard, };
 }
