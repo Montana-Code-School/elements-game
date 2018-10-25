@@ -10,6 +10,8 @@ const makeHandlers = require( "./eventHandler" );
 
 const game = {
 	room: null,
+	afterFlip: "",
+	turn: "",
 	"player1": {
 		clientInfo: null,
 		clientId: null,
@@ -83,23 +85,23 @@ const game = {
 		},
 	},
 };
-let turn = "player1";
+
 io.on( "connection", function ( client ) {
 
 	const { rooms } = io.sockets.adapter;
-	const { handleJoin, drawCard } = makeHandlers( client, rooms, game );
+	const { handleJoin, getVictory, drawCard,flipCard, onClick } = makeHandlers( client, rooms, game );
 
-	// clientManager.addClient( client )
 	client.on( "join", function (){
 		game.room = handleJoin();
 		if (game.player1.clientInfo === null) {
 			game.player1.clientInfo = client;
 			game.player1.clientId = client.id;
-			client.emit("roomJoin", {"roomName": game.room, "playerName": "player1"});
+			game.turn = client.id
+			client.emit("roomJoin", {"roomName": game.room, "playerName": client.id, "turn": game.turn});
 		} else if (game.player2.clientInfo === null){
 			game.player2.clientInfo = client;
 			game.player2.clientId = client.id;
-		 	client.emit("roomJoin", {"roomName": game.room, "playerName": "player2"});
+		 	client.emit("roomJoin", {"roomName": game.room, "playerName": client.id});
 		}
 		} );
 	client.on( "initialDraw", function (roomName) {
@@ -119,6 +121,10 @@ io.on( "connection", function ( client ) {
 			 });
 		}
 	} );
+	client.on("click",cardType=>{
+		// if (game.turn === "player1" && )
+		onClick(cardType);
+	})
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );
 		// remove user client.removeClient( client );

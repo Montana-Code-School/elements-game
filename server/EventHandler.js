@@ -1,7 +1,7 @@
-module.exports = function ( client, rooms ) {
+module.exports = function ( client, rooms, game ) {
 	let counter = 0;
 
-	function handleJoin() {
+	handleJoin=()=> {
 		for ( let i = 0; i <= counter; i++ ) {
 			if ( !!rooms[ `room${ i }` ] ) {
 				if ( rooms[ `room${ i }` ].length === 1 ) {
@@ -43,16 +43,6 @@ module.exports = function ( client, rooms ) {
 		return {deck,hand};
 	}
 	flipCard = () => {
-		let {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentsStagedCard
-		} = {
-			...this.state
-		};
 		playerStagedCard.counter = 0;
 		playerField[ playerStagedCard.card ]++;
 		switch ( playerStagedCard.card ) {
@@ -60,33 +50,83 @@ module.exports = function ( client, rooms ) {
 				drawCard( 1 );
 				break;
 			case "fire":
-				afterFlip = "fireAction";
+				game.afterFlip = "fireAction";
 				break;
 			case "shadow":
-				afterFlip = "shadowAction";
+				game.afterFlip = "shadowAction";
 				break;
 			case "light":
-				afterFlip = "lightAction";
+				game.afterFlip = "lightAction";
 				break;
 			default:
 				break;
 		}
-		this.setState( {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentsStagedCard
-		} )
 	}
 
-
+	onClick = (cardType) => {
+		if (game.player1.clientInfo === null || game.player2.clientInfo === null){
+			console.log("Player Disconnected")
+			return
+		}
+ 		if (game.afterFlip === "" && game.turn === game.player1.clientId){
+} 
+		//
+		// let pick;
+		// switch ( game.afterFlip ) {
+		// 	case "fireAction":
+		// 		opponentsField[ cardType ]--;
+		// 		playerDiscard[ cardType ]++;
+		// 		game.afterFlip = "";
+		// 		break;
+		// 	case "earthAction":
+		// 		this.drawCard( 1 );
+		// 		game.afterFlip = "";
+		// 		break;
+		// 	case "counterAction":
+		// 		playerHand[ cardType ]--;
+		// 		playerHand.water--;
+		// 		playerDiscard[ cardType ]++;
+		// 		playerDiscard.water++;
+		// 		opponentsStagedCard--;
+		// 		opponentsDiscard++;
+		// 		game.afterFlip = "";
+		// 		break;
+		// 	case "lightAction":
+		// 		// call for  discard pile component
+		// 		pick = prompt( `Available cards - Earth: ${ playerDiscard.earth}, Fire: ${ playerDiscard.fire}, Water: ${ playerDiscard.water}, Shadow: ${ playerDiscard.shadow}, Light: ${ playerDiscard.light }` );
+		// 		playerDiscard[ pick ]--;
+		// 		playerHand[ pick ]++;
+		// 		game.afterFlip = "";
+		// 		break;
+		// 	case "shadowAction":
+		// 		// pass turn to opponnent
+		// 		playerHand[ pick ]--;
+		// 		playerDiscard[ pick ]++;
+		// 		game.afterFlip = "";
+		// 		break;
+		// 	default:
+		// 		if ( playerHand[ cardType ] === 0 || this.state.playerStagedCard.counter === 1 )
+		// 			return
+		// 		else {
+		// 			playerHand[ cardType ]--;
+		// 			playerStagedCard.counter++;
+		// 			playerStagedCard.card = cardType;
+		// 			if ( window.confirm( "Would you like to counter?" ) ) {
+		// 				// check for  water card and additional card in playerhand
+		// 				game.afterFlip = "counterAction";
+		// 				window.alert( "Pick a second card to discard in addition to your water" );
+		// 			} else {
+		// 				this.flipCard();
+		// 			}
+		// 		}
+		// 		break;
+		// }
+	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) )
 			return "victory";
 		else
 			return null;
 		}
-	return { handleJoin, getVictory, drawCard };
+	return { handleJoin, getVictory, drawCard,flipCard,onClick };
 }
