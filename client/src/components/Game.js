@@ -4,7 +4,7 @@ import GameCard from "./GameCard";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import openSocket from "socket.io-client";
-const socket = openSocket( "http://localhost:5000" );
+const socket = openSocket( "http://localhost:5001" );
 let afterFlip = "";
 function getCount( cards ) {
 	let count = 0;
@@ -100,6 +100,17 @@ class Game extends Component {
 			socket.emit("click",e.currentTarget.className.split(" ")[2]);
 		}
 	}
+
+	resolveSocketCall = () => {
+		socket.on("counterOffer", function(){
+			if (window.alert("Would you like to counter?")) {
+				console.log("player countered!")
+			} else {
+				socket.emit("flipCard")
+			}
+		})
+	}
+
 	render() {
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
