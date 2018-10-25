@@ -12,6 +12,7 @@ const game = {
 	room: null,
 	"player1": {
 		clientInfo: null,
+		clientId: null,
 		field: {
 			fire: 0,
 			water: 0,
@@ -47,6 +48,7 @@ const game = {
 	},
 	"player2": {
 		clientInfo: null,
+		clientId: null,
 		field: {
 			fire: 0,
 			water: 0,
@@ -85,15 +87,37 @@ let turn = "player1";
 io.on( "connection", function ( client ) {
 
 	const { rooms } = io.sockets.adapter;
-	const { handleJoin, drawCard } = makeHandlers( client, rooms );
+	const { handleJoin, drawCard } = makeHandlers( client, rooms, game );
 
-	console.log( "client connected...", client.id );
 	// clientManager.addClient( client )
-	const drawCard1 = () => drawCard( 4 );
-	client.on( "join", handleJoin );
-	client.on( "initialDraw", function () {
-		console.log( "room" );
-		// drawCard( 4, game );
+	client.on( "join", function (){
+		game.room = handleJoin();
+		if (game.player1.clientInfo === null) {
+			game.player1.clientInfo = client;
+			game.player1.clientId = client.id;
+			client.emit("roomJoin", {"roomName": game.room, "playerName": "player1"});
+		} else if (game.player2.clientInfo === null){
+			game.player2.clientInfo = client;
+			game.player2.clientId = client.id;
+		 	client.emit("roomJoin", {"roomName": game.room, "playerName": "player2"});
+		}
+		} );
+	client.on( "initialDraw", function (roomName) {
+		// Find specific room for initialDraw
+		if(game.player1.clientInfo && game.player2.clientInfo){
+		 	 drawCard( 4, game.player1 );
+			 drawCard(4,game.player2);
+			 io.sockets.in(roomName).emit("initialDrawRes", {
+				 "player1": {
+					 "deck": game.player1.deck,
+					 "hand": game.player1.hand,
+				 },
+				 "player2": {
+					 "deck": game.player2.deck,
+					 "hand": game.player2.hand,
+				 }
+			 });
+		}
 	} );
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );
@@ -114,7 +138,7 @@ if ( process.env.NODE_ENV === "production" ) {
 
 }
 server.listen( port, function ( err ) {
-	if ( err ) 
+	if ( err )
 		throw err
 	console.log( "listening on port" + port );
 } )
