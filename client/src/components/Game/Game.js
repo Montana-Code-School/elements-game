@@ -138,15 +138,15 @@ flipCard = () => {
 								? "0"
 								: "1"
 						}</p>
-					<GameCard className="opponents_stack"/>
-					<Card className={classes.multicard_display}>
-						<CardDisplay className="opponents_hand"/>
+					<GameCard className="opponentsStack"/>
+					<Card className={classes.multicardDisplay}>
+						<CardDisplay className="opponentsHand"/>
 						<p>{getCount( this.state.opponentsHand )}</p>
 					</Card>
 					<p>{this.state.opponentsDiscard}</p>
-					<GameCard className="opponents_discard"/>
+					<GameCard className="opponentsDiscard"/>
 					<p>{this.state.opponentsDeck}</p>
-					<GameCard className="opponents_deck"/>
+					<GameCard className="opponentsDeck"/>
 				</Grid>
 				<Grid container={true} direction="row" justify="space-around" alignItems="center">
 					<p>
@@ -185,8 +185,8 @@ flipCard = () => {
 						}
 					</p>
 				</Grid>
-				<CardDisplay className="opponents_field" onClick={this.clickHandler}/>
-				<CardDisplay className="player_field" onClick={this.clickHandler}/>
+				<CardDisplay className="opponentsField" onClick={this.clickHandler}/>
+				<CardDisplay className="playerField" onClick={this.clickHandler}/>
 				<Grid container={true} direction="row" justify="space-around" alignItems="center">
 					<p>
 						{
@@ -226,11 +226,11 @@ flipCard = () => {
 				</Grid>
 				<Grid container={true} direction="row" justify="space-around" alignItems="center">
 					<p>{getCount( this.state.playerDeck )}</p>
-					<GameCard className="player_deck"/>
+					<GameCard className="playerDeck"/>
 					<p>{getCount( this.state.playerDiscard )}</p>
-					<GameCard className="player_discard" />
-					<Card className={classes.multicard_display}>
-						<CardDisplay className="player_hand" onClick={this.clickHandler}/>
+					<GameCard className="playerDiscard" />
+					<Card className={classes.multicardDisplay}>
+						<CardDisplay className="playerHand" onClick={this.clickHandler}/>
 						<Grid container={true} direction="row" justify="space-around" alignItems="center">
 							<p>
 								{
@@ -274,7 +274,7 @@ flipCard = () => {
 								? "0"
 								: "1"
 						}</p>
-					<GameCard className="player_stack"/>
+					<GameCard className="playerStack"/>
 
 				</Grid>
 			</Grid>

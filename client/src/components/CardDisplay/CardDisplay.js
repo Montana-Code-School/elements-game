@@ -4,14 +4,14 @@ import Grid from "@material-ui/core/Grid"
 
 export default class CardDisplay extends Component {
 	render() {
-		if ( this.props.className === "opponents_hand" ) {
+		if ( this.props.className === "opponentsHand" ) {
 			return ( <Grid container={true} direction="row" justify="space-around" alignItems="center">
-				
-				<GameCard className="card_back"/>
-				<GameCard className="card_back"/>
-				<GameCard className="card_back"/>
-				<GameCard className="card_back"/>
-				<GameCard className="card_back"/>
+
+				<GameCard className="cardBack"/>
+				<GameCard className="cardBack"/>
+				<GameCard className="cardBack"/>
+				<GameCard className="cardBack"/>
+				<GameCard className="cardBack"/>
 			</Grid> )
 		} else {
 			return ( <Grid container={true} direction="row" justify="space-around" alignItems="center">
