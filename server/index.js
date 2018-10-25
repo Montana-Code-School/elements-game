@@ -3,7 +3,7 @@ const serveStatic = require( "serve-static" );
 const express = require( "express" );
 const app = express();
 const path = require( "path" );
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const server = require( "http" ).createServer( app );
 const io = require( "socket.io" )( server );
 const makeHandlers = require( "./eventHandler" );
@@ -122,9 +122,9 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on("click",cardType=>{
-		// if (game.turn === "player1" && )
 		onClick(cardType);
 	})
+	client.on("flipCard", flipCard);
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );
 		// remove user client.removeClient( client );
