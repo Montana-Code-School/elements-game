@@ -62,7 +62,6 @@ class Game extends Component {
 			this.setState( {
 				room: room
 			}, function () {
-				console.log( "try to initial draw" );
 				socket.emit( "initialDraw" );
 			} )
 		} )
@@ -74,119 +73,6 @@ class Game extends Component {
 		}
 		return count;
 	};
-	flipCard = () => {
-		const {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentStagedCard,
-		} = {
-			...this.state
-		};
-		playerStagedCard.counter = 0;
-		playerField[ playerStagedCard.card ]++;
-		switch ( playerStagedCard.card ) {
-			case "earth":
-				this.drawCard( 1 );
-				break;
-			case "fire":
-				afterFlip = "fireAction";
-				break;
-			case "shadow":
-				afterFlip = "shadowAction";
-				break;
-			case "light":
-				afterFlip = "lightAction";
-				break;
-		}
-		this.setState( {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentStagedCard,
-		} )
-	}
-
-	clickHandler = ( e ) => {
-		const {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentStagedCard,
-			playerDiscard,
-		} = {
-			...this.state
-		}
-		const cardType = e
-			.currentTarget
-			.className
-			.split( " " )[ 2 ];
-		let pick;
-		switch ( afterFlip ) {
-			case "fireAction":
-				opponentsField[ cardType ]--;
-				playerDiscard[ cardType ]++;
-				afterFlip = "";
-				break;
-			case "earthAction":
-				this.drawCard( 1 );
-				afterFlip = "";
-				break;
-			case "counterAction":
-				playerHand[ cardType ]--;
-				playerHand.water--;
-				playerDiscard[ cardType ]++;
-				playerDiscard.water++;
-				opponentStagedCard--;
-				opponentsDiscard++;
-				afterFlip = "";
-				break;
-			case "lightAction":
-				// call for  discard pile component
-				pick = prompt( `Available cards - Earth: ${ playerDiscard.earth}, Fire: ${ playerDiscard.fire}, Water: ${ playerDiscard.water}, Shadow: ${ playerDiscard.shadow}, Light: ${ playerDiscard.light }` );
-				playerDiscard[ pick ]--;
-				playerHand[ pick ]++;
-				afterFlip = "";
-				break;
-			case "shadowAction":
-				// pass turn to opponnent
-				playerHand[ pick ]--;
-				playerDiscard[ pick ]++;
-				afterFlip = "";
-				break;
-			default:
-				if ( playerHand[ cardType ] === 0 || this.state.playerStagedCard.counter === 1 ) 
-					return
-				else {
-					playerHand[ cardType ]--;
-					playerStagedCard.counter++;
-					playerStagedCard.card = cardType;
-					if ( window.confirm( "Would you like to counter?" ) ) {
-						// check for  water card and additional card in playerhand
-						afterFlip = "counterAction";
-						window.alert( "Pick a second card to discard in addition to your water" );
-					} else {
-						this.flipCard();
-					}
-				}
-				break;
-		}
-		this.setState( {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentStagedCard,
-			playerDiscard,
-		} )
-	}
 	render() {
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>

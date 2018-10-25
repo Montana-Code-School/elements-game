@@ -1,6 +1,6 @@
-module.exports = function ( client, ClientManager, rooms ) {
+module.exports = function ( client, rooms ) {
 	let counter = 0;
-
+	console.log( "data", DataStore )
 	function handleJoin() {
 		for ( let i = 0; i <= counter; i++ ) {
 			if ( !!rooms[ `room${ i }` ] ) {
