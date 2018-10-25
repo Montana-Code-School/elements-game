@@ -7,7 +7,7 @@ const Card = theme => ( {
 		marginBottom: "1%",
 		margin: ".1%",
 	},
-	multicard_display: {
+	multicardDisplay: {
 		marginTop: "1%",
 		marginBottom: "1%",
 		width: "50%",
