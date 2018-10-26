@@ -1,6 +1,5 @@
 module.exports = function ( client, rooms ) {
 	let counter = 0;
-	console.log( "data", DataStore )
 	function handleJoin() {
 		for ( let i = 0; i <= counter; i++ ) {
 			if ( !!rooms[ `room${ i }` ] ) {
@@ -49,5 +48,5 @@ module.exports = function ( client, rooms ) {
 		else 
 			return null;
 		}
-	return { handleJoin, getVictory, drawCard, };
+	return { handleJoin, getVictory, drawCard };
 }

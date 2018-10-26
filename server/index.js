@@ -6,35 +6,46 @@ const port = process.env.PORT || 5000;
 const server = require( "http" ).createServer();
 const io = require( "socket.io" )( server );
 
+const classes = require( "./roomAndPlayerClasses" )
 const ClientManager = require( "./clientManager" );
-const PlayingRoomManager = require( "./PlayingRoomManager" )
+const RoomHandler = require( "./PlayingRoomManager" )
 const makeHandlers = require( "./eventHandler" );
 
 const clientManager = ClientManager();
-const playingRoomManager = PlayingRoomManager();
+const playingRoomManager = RoomHandler();
 
 let afterFlip = "";
 io.on( "connection", function ( client ) {
 
 	const { rooms } = io.sockets.adapter;
-	const { handleJoin, drawCard, } = makeHandlers( client, rooms )
-
-	// if ( game.player1.clientInfo == null ) { 	game.player1.clientInfo = client; }
-	// else if ( game.player2.clientInfo == null ) { 	game.player2.clientInfo =
-	// client; } else { 	client.disconnect(); }
+	const { handleJoin, drawCard } = makeHandlers( client, rooms )
+	const { Room, Player, } = classes;
+	room = new Room();
+	if ( game.player1.clientInfo == null ) {
+		game.player1.clientInfo = client;
+	} else if ( game.player2.clientInfo == null ) {
+		game.player2.clientInfo = client;
+	} else {
+		client.disconnect();
+	}
 	clientManager.addClient( client );
 	console.log( "client connected...", client.id );
 	client.on( "join", function () {
-		// let room = handleJoin();  game.room = room; client.emit( "roomJoin", room );
+		room.name = handleJoin();
+		playingRoomManager.addRoom( room );
+		client.emit( "roomJoin", room.name );
 	} );
 
 	client.on( "initialDraw", function () {
-		// if ( ( game.player1.clientInfo === null ) || ( game.player2.clientInfo ===
-		// null ) ) { 	console.log( "waiting for opponent" ); 	return; } else if ( (
-		// game.player1.clientInfo !== null ) && ( game.player2.clientInfo !== null ) )
-		// { 	console.log( game ) console.log( "two players in the room", game.room );
-	} )
-	// console.log( game.room ); drawCard( 4, game );, });
+		if ( ( game.player1.clientInfo === null ) || ( game.player2.clientInfo === null ) ) {
+			console.log( "waiting for opponent" );
+			return;
+		} else if ( ( game.player1.clientInfo !== null ) && ( game.player2.clientInfo !== null ) ) {
+			console.log( game );
+			console.log( "two players in the room", game.room );
+		}
+		// console.log( game.room ); drawCard( 4, game );,
+	} );
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );
 		//remove user

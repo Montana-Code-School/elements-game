@@ -60,7 +60,13 @@ class Game extends Component {
 	};
 	componentDidMount() {
 		socket.emit( "join" );
-		socket.emit( "initialDraw" );
+		socket.on( "roomJoin", room => {
+			this.setState( {
+				room: room
+			}, function () {
+				socket.emit( "initialDraw" );
+			} )
+		} )
 	}
 	playCard = ( e ) => {
 		const cardType = e.currentTarget.className.split( " " )[ 2 ];
