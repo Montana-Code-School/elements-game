@@ -53,7 +53,6 @@ class DiscardPile extends Component {
 	};
 	render() {
 		const { classes, cards } = this.props;
-		console.log(cards)
 		return ( <div className={classes.card}>
 			<CardMedia
 				onClick={this.open}
