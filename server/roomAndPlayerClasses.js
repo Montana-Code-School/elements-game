@@ -8,8 +8,9 @@ class Pile {
 	}
 }
 class Player {
-	constructor() {
-		this.id = "";
+	constructor( clientInfo, clientId ) {
+		this.clientInfo = clientInfo
+		this.clientId = clientId;
 		this.deck = new Pile( 5, 5, 5, 5, 5 );
 		this.field = new Pile( 0, 0, 0, 0, 0 );
 		this.hand = new Pile( 0, 0, 0, 0, 0 );
@@ -18,8 +19,10 @@ class Player {
 	}
 }
 class Room {
-	constructor( name ) {
-		this.name = name;
+	constructor( roomName, turn, afterFlip ) {
+		this.room = roomName;
+		this.turn = turn;
+		this.afterFlip = afterFlip;
 		this.player1 = new Player;
 		this.player2 = new Player;
 		this.turn = "player1";
@@ -27,5 +30,5 @@ class Room {
 }
 module.exports = {
 	Room,
-	Player,
+	Player
 }

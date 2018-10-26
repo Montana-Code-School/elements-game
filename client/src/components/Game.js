@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
-import { Grid, Card, withStyles } from "@material-ui/core";
+import { Grid, Card, withStyles, } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import openSocket from "socket.io-client";
 const socket = openSocket( "http://localhost:5000" );
@@ -15,187 +15,108 @@ function getCount( cards ) {
 }
 class Game extends Component {
 	state = {
+		turn: "",
+		room: null,
+		afterFlip: "",
+		playerName: null,
 		opponentsDeck: 25,
 		opponentsDiscard: 0,
 		opponentsStagedCard: 0,
+		opponentsHand: 0,
 		opponentsField: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		playerDeck: {
 			fire: 5,
 			water: 5,
 			light: 5,
 			shadow: 5,
-			earth: 5
+			earth: 5,
 		},
 		playerHand: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		playerField: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		playerDiscard: {
 			fire: 0,
 			water: 0,
 			light: 0,
 			shadow: 0,
-			earth: 0
+			earth: 0,
 		},
 		playerStagedCard: {
 			counter: 0,
-			card: undefined
-		}
+			card: undefined,
+		},
 	};
 	componentDidMount() {
 		socket.emit( "join" );
-		socket.on( "roomJoin", room => {
+		socket.on( "roomJoin", data => {
 			this.setState( {
-				room: room
+				room: data.roomName,
+				playerName: data.playerName,
+				turn: data.turn,
 			}, function () {
-				socket.emit( "initialDraw" );
+				if ( this.state.playerName !== this.state.turn ) {
+					socket.emit( "initialDraw", this.state.room )
+				};
+				socket.on( "initialDrawRes", data => {
+					if ( this.state.playerName === this.state.turn ) {
+						this.setState( {
+							playerDeck: data.player1.deck,
+							playerHand: data.player1.hand,
+							opponentsDeck: getCount( data.player2.deck ),
+							opponentsHand: getCount( data.player2.hand )
+						} )
+					} else {
+						this.setState( {
+							playerDeck: data.player2.deck,
+							playerHand: data.player2.hand,
+							opponentsDeck: getCount( data.player1.deck ),
+							opponentsHand: getCount( data.player1.hand )
+						} )
+					}
+				} )
 			} )
 		} )
 	}
-	playCard = ( e ) => {
-		const cardType = e.currentTarget.className.split( " " )[ 2 ];
-		const currentState = this.state;
-		if ( currentState.playerHand[ cardType ] === 0 ) 
-			return;
-		currentState.playerHand[ cardType ]--;
-		if ( this.state.playerStagedCard.counter === 1 ) 
-			return;
-		currentState.playerStagedCard.counter++;
-		currentState.playerStagedCard.card = cardType;
-		this.setState( currentState );
-		if ( window.confirm( "Would you like to counter?" ) ) {
-			window.alert( "This doesn't work yet, fuck off!" );
-		} else {
-			this.flipCard();
-		}
-	}
 	flipCard = () => {
-		let {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentsStagedCard
-		} = {
-			...this.state
-		};
-		playerStagedCard.counter = 0;
-		playerField[ playerStagedCard.card ]++;
-		switch ( playerStagedCard.card ) {
-			case "earth":
-				this.drawCard( 1 );
-				break;
-			case "fire":
-				afterFlip = "fireAction";
-				break;
-			case "shadow":
-				afterFlip = "shadowAction";
-				break;
-			case "light":
-				afterFlip = "lightAction";
-				break;
-			default:
-				break;
-		}
-		this.setState( {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentsStagedCard
-		} )
+		socket.emit( "flipCard" );
 	}
 	clickHandler = ( e ) => {
-		let {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentsStagedCard,
-			playerDiscard
-		} = {
-			...this.state
-		};
-		const cardType = e.currentTarget.className.split( " " )[ 2 ];
-		let pick;
-		switch ( afterFlip ) {
-			case "fireAction":
-				opponentsField[ cardType ]--;
-				playerDiscard[ cardType ]++;
-				afterFlip = "";
-				break;
-			case "earthAction":
-				this.drawCard( 1 );
-				afterFlip = "";
-				break;
-			case "counterAction":
-				playerHand[ cardType ]--;
-				playerHand.water--;
-				playerDiscard[ cardType ]++;
-				playerDiscard.water++;
-				opponentsStagedCard--;
-				opponentsDiscard++;
-				afterFlip = "";
-				break;
-			case "lightAction":
-				// call for  discard pile component
-				pick = prompt( `Available cards - Earth: ${ playerDiscard.earth}, Fire: ${ playerDiscard.fire}, Water: ${ playerDiscard.water}, Shadow: ${ playerDiscard.shadow}, Light: ${ playerDiscard.light }` );
-				playerDiscard[ pick ]--;
-				playerHand[ pick ]++;
-				afterFlip = "";
-				break;
-			case "shadowAction":
-				// pass turn to opponnent
-				playerHand[ pick ]--;
-				playerDiscard[ pick ]++;
-				afterFlip = "";
-				break;
-			default:
-				if ( playerHand[ cardType ] === 0 || this.state.playerStagedCard.counter === 1 ) 
-					return
-				else {
-					playerHand[ cardType ]--;
-					playerStagedCard.counter++;
-					playerStagedCard.card = cardType;
-					if ( window.confirm( "Would you like to counter?" ) ) {
-						// check for  water card and additional card in playerhand
-						afterFlip = "counterAction";
-						window.alert( "Pick a second card to discard in addition to your water" );
-					} else {
-						this.flipCard();
-					}
-				}
-				break;
+		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
+			window.alert( "hey its not your turn" )
+		} else if ( this.state.turn !== this.state.playerName && this.state.afterFlip !== "" ) {
+			socket.emit( "click", e.currentTarget.className.split( " " )[ 2 ] );
+		} else {
+			socket.emit( "click", e.currentTarget.className.split( " " )[ 2 ] );
 		}
-		this.setState( {
-			playerHand,
-			playerStagedCard,
-			playerField,
-			opponentsField,
-			opponentsDiscard,
-			opponentsStagedCard,
-			playerDiscard
+	}
+
+	resolveSocketCall = () => {
+		socket.on( "counterOffer", function () {
+			if ( window.alert( "Would you like to counter?" ) ) {
+				console.log( "player countered!" )
+			} else {
+				socket.emit( "flipCard" )
+			}
 		} )
 	}
+
 	render() {
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
@@ -217,7 +138,7 @@ class Game extends Component {
 					<GameCard className="opponentsStack"/>
 					<Card className={classes.multicardDisplay}>
 						<CardDisplay className="opponentsHand"/>
-						<p>{getCount( this.state.opponentsHand )}</p>
+						<p>{this.state.opponentsHand}</p>
 					</Card>
 					<p>{this.state.opponentsDiscard}</p>
 					<GameCard className="opponentsDiscard"/>
@@ -256,7 +177,7 @@ class Game extends Component {
 					<p>{getCount( this.state.playerDeck )}</p>
 					<GameCard className="playerDeck"/>
 					<p>{getCount( this.state.playerDiscard )}</p>
-					<GameCard className="playerDiscard"/>
+					<GameCard className="playerDiscard" cards={this.state.playerDiscard}/>
 					<Card className={classes.multicardDisplay}>
 						<CardDisplay className="playerHand" onClick={this.clickHandler}/>
 						<Grid

@@ -13,5 +13,5 @@ module.exports = function () {
 		rooms.delete( room.name );
 	}
 	// }
-	return { getRoomById, addRoom, deleteRoom, }
+	return { getRoomById, addRoom, deleteRoom }
 }
