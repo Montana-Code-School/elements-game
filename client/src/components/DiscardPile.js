@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { Modal, CardMedia, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
+import CardDisplay from "./CardDisplay";
+import { Grid } from "@material-ui/core";
+
 
 let rand = () => ( Math.floor( Math.random() * 20 ) - 10 );
 const modalStyle = {
@@ -49,7 +52,8 @@ class DiscardPile extends Component {
 		this.setState( { showModal: true } )
 	};
 	render() {
-		const { classes } = this.props;
+		const { classes, cards } = this.props;
+		console.log(cards)
 		return ( <div className={classes.card}>
 			<CardMedia
 				onClick={this.open}
@@ -63,7 +67,18 @@ class DiscardPile extends Component {
 				open={this.state.showModal}
 				onClose={this.close}>
 				<div style={dialogStyle()}>
-					<p>Select a card from your discard pile.</p>
+					<CardDisplay/>
+					<Grid
+						container={true}
+						direction="row"
+						justify="space-around"
+						alignItems="center">
+						<p>{cards[ "water" ]}</p>
+						<p>{cards[ "earth" ]}</p>
+						<p>{cards[ "light" ]}</p>
+						<p>{cards[ "shadow" ]}</p>
+						<p>{cards[ "fire" ]}</p>
+					</Grid>
 				</div>
 			</Modal>
 		</div> );

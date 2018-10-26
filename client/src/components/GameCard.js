@@ -19,7 +19,7 @@ class GameCard extends Component {
 				className={`${ this.props.className} ${ classes.card }`}
 				image={require( `../images/discard.png` )}/>
 		} else if ( this.props.className === "playerDiscard" ) {
-			return <DiscardPile className={this.props.className}/>
+			return <DiscardPile className={this.props.className} cards={this.props.cards}/>
 		} else {
 			return <CardMedia
 				component="img"

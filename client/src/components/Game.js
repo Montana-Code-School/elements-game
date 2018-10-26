@@ -171,7 +171,7 @@ class Game extends Component {
 					<p>{getCount( this.state.playerDeck )}</p>
 					<GameCard className="playerDeck"/>
 					<p>{getCount( this.state.playerDiscard )}</p>
-					<GameCard className="playerDiscard"/>
+					<GameCard className="playerDiscard" cards={this.state.playerDiscard}/>
 					<Card className={classes.multicardDisplay}>
 						<CardDisplay className="playerHand" onClick={this.clickHandler}/>
 						<Grid
