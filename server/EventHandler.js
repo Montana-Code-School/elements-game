@@ -78,7 +78,7 @@ module.exports = function ( client, rooms, game ) {
 			opponent = "player1";
 		}
 			let pick;
-			console.log("this is opponent!!!!!!!!", game[currentPlayer].field);
+			// console.log("this is opponent!!!!!!!!", game[currentPlayer].field);
 			// switch ( game.afterFlip ) {
 			// 	case "fireAction":
 			// 		game[opponent]field[ cardType ]--;
