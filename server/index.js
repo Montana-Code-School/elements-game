@@ -4,7 +4,7 @@ const express = require( "express" );
 const app = express();
 const path = require( "path" );
 const port = process.env.PORT || 5000;
-const server = require( "http" ).createServer();
+const server = require( 'http' ).createServer( app );
 const io = require( "socket.io" )( server );
 
 const classes = require( "./roomAndPlayerClasses" )
@@ -19,7 +19,13 @@ io.on( "connection", function ( client ) {
 	let game = null;
 	const { rooms } = io.sockets.adapter;
 	const { Player } = classes;
-	const { handleJoin, getVictory, drawCard, flipCard, onClick } = makeHandlers( client, rooms );
+	const {
+		handleJoin,
+		getVictory,
+		drawCard,
+		flipCard,
+		onClick,
+	} = makeHandlers( client, rooms );
 	clientManager.addClient( client );
 	client.on( "join", function () {
 		//generate room name that client needs to join
@@ -34,7 +40,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": game.name,
 				"playerName": client.id,
-				"turn": game.turn
+				"turn": game.turn,
 			} );
 			//if room exist,but there is only one player
 		} else if ( game.player2 === null ) {
@@ -45,7 +51,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": game.name,
 				"playerName": client.id,
-				"turn": game.turn
+				"turn": game.turn,
 			} );
 		}
 	} );
@@ -59,12 +65,12 @@ io.on( "connection", function ( client ) {
 			io.sockets. in ( roomName ).emit( "initialDrawRes", {
 				"player1": {
 					"deck": game.player1.deck,
-					"hand": game.player1.hand
+					"hand": game.player1.hand,
 				},
 				"player2": {
 					"deck": game.player2.deck,
-					"hand": game.player2.hand
-				},
+					"hand": game.player2.hand,
+				}
 			} );
 		}
 	} );
@@ -89,7 +95,7 @@ io.on( "connection", function ( client ) {
 				io.sockets. in ( roomName ).emit( "cardPlayed", {
 					"hand": game[ currentPlayer ].hand,
 					"stagedCard": game[ currentPlayer ].stagedCard,
-					"currentPlayer": client.id
+					"currentPlayer": client.id,
 				} );
 				if ( game.afterFlip === "counterAction" ) {
 					client.broadcast.to( game.room ).emit( "counterOffer" );
@@ -111,13 +117,13 @@ io.on( "connection", function ( client ) {
 		console.log( err );
 	} )
 } );
-if ( process.env.NODE_ENV === "production" ) {
-	console.log( "Im here" );
-	app.use( express.static( path.join( __dirname, "../client/build" ) ) );
-	app.get( "/", function ( req, res ) {
-		res.sendFile( path.join( __dirname, "../client/build", "index.html" ) );
-	} );
-}
+// if ( process.env.NODE_ENV === "production" ) {
+console.log( "Im here" );
+app.use( express.static( path.join( __dirname, "../client/build" ) ) );
+app.get( "/", function ( req, res ) {
+	res.sendFile( path.join( __dirname, "../client/build", "index.html" ) );
+} );
+
 server.listen( port, function ( err ) {
 	if ( err ) {
 		console.log( "error", err )
