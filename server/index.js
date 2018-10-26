@@ -8,8 +8,8 @@ const io = require( "socket.io" )( server );
 
 const classes = require( "./roomAndPlayerClasses" )
 const ClientManager = require( "./clientManager" );
-const RoomHandler = require( "./PlayingRoomManager" )
-const makeHandlers = require( "./eventHandler" );
+const RoomHandler = require( "./playingRoomManager" )
+const makeHandlers = require( "./EventHandler" );
 const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
