@@ -4,7 +4,7 @@ import GameCard from "./GameCard";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import openSocket from "socket.io-client";
-const socket = openSocket( "http://localhost:5001" );
+const socket = openSocket( "http://localhost:5000" );
 let afterFlip = "";
 function getCount( cards ) {
 	let count = 0;
