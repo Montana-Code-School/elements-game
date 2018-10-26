@@ -115,6 +115,12 @@ class Game extends Component {
 				socket.emit( "flipCard" )
 			}
 		} )
+		socket.on( "fireActionRes", data => {
+			this.setState( { "opponentsField": data.opponentsField, "opponentsDiscard": data.opponentsDiscard, "afterFlip": data.afterFlip } )
+		} )
+		socket.on( "cardPlayed", data => {
+			this.setState( {} )
+		} )
 	}
 
 	render() {

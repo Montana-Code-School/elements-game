@@ -1,6 +1,5 @@
-module.exports = function ( client, rooms, game ) {
+module.exports = function ( client, rooms ) {
 	let counter = 0;
-
 	handleJoin = () => {
 		for ( let i = 0; i <= counter; i++ ) {
 			if ( !!rooms[ `room${ i }` ] ) {
@@ -42,7 +41,7 @@ module.exports = function ( client, rooms, game ) {
 		}
 		return { deck, hand };
 	}
-	flipCard = () => {
+	flipCard = ( game ) => {
 		playerStagedCard.counter = 0;
 		playerField[ playerStagedCard.card ]++;
 		switch ( playerStagedCard.card ) {
@@ -63,9 +62,9 @@ module.exports = function ( client, rooms, game ) {
 		}
 	}
 
-	onClick = ( cardType ) => {
+	onClick = ( cardType, game ) => {
 		if ( game.player1.clientInfo === null || game.player2.clientInfo === null ) {
-			console.log( "Player Disconnected" )
+			console.log( "Player Disconnected" );
 			return
 		}
 		let currentPlayer = "player1";
@@ -78,32 +77,57 @@ module.exports = function ( client, rooms, game ) {
 			opponent = "player1";
 		}
 		let pick;
-		// console.log("this is opponent!!!!!!!!", game[currentPlayer].field); switch (
-		// game.afterFlip ) { 	case "fireAction": 		game[opponent]field[ cardType ]--;
-		// game[opponent]discard[ cardType ]++; 		game.afterFlip = ""; 		break; 	case
-		// "earthAction": 		drawCard( 1, currentPlayer ); 		game.afterFlip = ""; break;
-		// case "counterAction": 		game[currentPlayer]hand[ cardType ]--;
-		// game[currentPlayer]hand.water--; 		game[currentPlayer]discard[ cardType ]++;
-		// game[currentPlayer]discard.water++; 		game[opponent]stagedCard = {"count": 0,
-		// "cardName": ""}; 		game[opponent]discard++; 		game.afterFlip = ""; 		break;
-		// case "lightAction": 	  call for  discard pile component 		pick = prompt(
-		// `Available cards - Earth: ${ game[currentPlayer]discard.earth}, Fire: ${
-		// game[currentPlayer]discard.fire}, Water: ${
-		// game[currentPlayer]discard.water}, Shadow: ${
-		// game[currentPlayer]discard.shadow}, Light: ${
-		// game[currentPlayer]discard.light }` ); 		game[currentPlayer]discard[ pick
-		// ]--; 		game[currentPlayer]hand[ pick ]++; 		game.afterFlip = ""; 		break;
-		// case "shadowAction": 	  pass turn to opponnent 		game[opponent]hand[ pick
-		// ]--; 		game[opponent]discard[ pick ]++; 		game.afterFlip = ""; 		break;
-		// default: 		if ( game[currentPlayer]hand[ cardType ] === 0 ||
-		// game[currentPlayer]stagedCard.count === 1 ) 			return 		else {
-		// game[currentPlayer]hand[ cardType ]--; 			game[currentPlayer]stagedCard =
-		// {"count": 1, "cardName": cardType};
-		// socket.broadcast.to(game.room).emit("counterOffer"); 		  { 		    check for
-		// water card and additional card in currentPlayerhand 		  	game.afterFlip =
-		// "counterAction"; 		  	window.alert( "Pick a second card to discard in
-		// addition to your water" ); 		  } else { 		  	this.flipCard(); 		  } 		}
-		// break; }
+		switch ( game.afterFlip ) {
+			case "fireAction":
+				game[ opponent ].field[ cardType ]--;
+				game[ opponent ].discard[ cardType ]++;
+				game.afterFlip = "";
+				break;
+				// I don't think we need this case because it doesn't have effect on click case
+				// "earthAction": 	let result = drawCard( 1, currentPlayer ); 	game.afterFlip =
+				// ""; 	break;
+			case "counterAction":
+				game[ currentPlayer ].hand[ cardType ]--;
+				game[ currentPlayer ].hand.water--;
+				game[ currentPlayer ].discard[ cardType ]++;
+				game[ currentPlayer ].discard.water++;
+				game[ opponent ].stagedCard = {
+					"count": 0,
+					"cardName": "",
+				};
+				game[ opponent ].discard++;
+				game.afterFlip = "";
+				break;
+			case "lightAction":
+				// call for discard pile component
+				pick = prompt( `Available cards - Earth: ${ game[ currentPlayer ].discard.earth}, Fire: ${ game[ currentPlayer ].discard.fire}, Water: ${ game[ currentPlayer ].discard.water}, Shadow: ${ game[ currentPlayer ].discard.shadow}, Light: ${ game[ currentPlayer ].discard.light }` );
+				game[ currentPlayer ].discard[ pick ]--;
+				game[ currentPlayer ].hand[ pick ]++;
+				game.afterFlip = "";
+				break;
+			case "shadowAction":
+				// pass turn to opponnent
+				game[ opponent ].hand[ pick ]--;
+				game[ opponent ].discard[ pick ]++;
+				game.afterFlip = "";
+				break;
+			default:
+				if ( game[ currentPlayer ].hand[ cardType ] === 0 || game[ currentPlayer ].stagedCard.count === 1 ) {
+					return;
+				} else {
+					console.log( "clicked" );
+					game[ currentPlayer ].hand[ cardType ]--;
+					game[ currentPlayer ].stagedCard = {
+						"count": 1,
+						"cardName": cardType,
+					};
+					return "counter";
+					// {  check for  water card and additional card in currentPlayerhand
+					// game.afterFlip = "counterAction"; 	window.alert( "Pick a second card to
+					// discard in addition to your water " ); } else { 	this.flipCard(); }
+				}
+				break;
+		}
 	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) ) 
