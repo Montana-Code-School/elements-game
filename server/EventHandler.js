@@ -42,9 +42,9 @@ module.exports = function ( client, rooms ) {
 		return { deck, hand };
 	}
 	flipCard = ( game ) => {
-		playerStagedCard.counter = 0;
-		playerField[ playerStagedCard.card ]++;
-		switch ( playerStagedCard.card ) {
+		playerStagedCard = "";
+		playerField[ playerStagedCard ]++;
+		switch ( playerStagedCard ) {
 			case "earth":
 				drawCard( 1 );
 				break;
@@ -63,12 +63,14 @@ module.exports = function ( client, rooms ) {
 	}
 
 	onClick = ( cardType, game ) => {
+		let gameUpdate = {};
+		let emitAction = "";
+		let currentPlayer = "player1";
+		let opponent = "player1";
 		if ( game.player1.clientInfo === null || game.player2.clientInfo === null ) {
 			console.log( "Player Disconnected" );
 			return
 		}
-		let currentPlayer = "player1";
-		let opponent = "player2";
 		if ( game.turn === game.player1.clientId ) {
 			currentplayer = "player1";
 			opponent = "player2";
@@ -76,27 +78,22 @@ module.exports = function ( client, rooms ) {
 			currentplayer = "player2";
 			opponent = "player1";
 		}
-		let pick;
 		switch ( game.afterFlip ) {
 			case "fireAction":
 				game[ opponent ].field[ cardType ]--;
 				game[ opponent ].discard[ cardType ]++;
 				game.afterFlip = "";
+				emitAction = "fireActionEmit";
 				break;
-				// I don't think we need this case because it doesn't have effect on click case
-				// "earthAction": 	let result = drawCard( 1, currentPlayer ); 	game.afterFlip =
-				// ""; 	break;
 			case "counterAction":
 				game[ currentPlayer ].hand[ cardType ]--;
 				game[ currentPlayer ].hand.water--;
 				game[ currentPlayer ].discard[ cardType ]++;
 				game[ currentPlayer ].discard.water++;
-				game[ opponent ].stagedCard = {
-					"count": 0,
-					"cardName": "",
-				};
+				game[ opponent ].stagedCard = "";
 				game[ opponent ].discard++;
 				game.afterFlip = "";
+				emitAction = "counterActionEmit";
 				break;
 			case "lightAction":
 				// call for discard pile component
@@ -104,30 +101,27 @@ module.exports = function ( client, rooms ) {
 				game[ currentPlayer ].discard[ pick ]--;
 				game[ currentPlayer ].hand[ pick ]++;
 				game.afterFlip = "";
+				emitAction = "lightActionEmit";
 				break;
 			case "shadowAction":
 				// pass turn to opponnent
 				game[ opponent ].hand[ pick ]--;
 				game[ opponent ].discard[ pick ]++;
 				game.afterFlip = "";
+				emitAction = "shadowActionEmit";
 				break;
 			default:
-				if ( game[ currentPlayer ].hand[ cardType ] === 0 || game[ currentPlayer ].stagedCard.count === 1 ) {
+				if ( game[ currentPlayer ].hand[ cardType ] === 0 || game[ currentPlayer ].stagedCard !== "empty" ) {
 					return;
 				} else {
-					console.log( "clicked" );
 					game[ currentPlayer ].hand[ cardType ]--;
-					game[ currentPlayer ].stagedCard = {
-						"count": 1,
-						"cardName": cardType,
-					};
-					return "counter";
-					// {  check for  water card and additional card in currentPlayerhand
-					// game.afterFlip = "counterAction"; 	window.alert( "Pick a second card to
-					// discard in addition to your water " ); } else { 	this.flipCard(); }
+					game[ currentPlayer ].stagedCard = cardType;
+					game.afterFlip = "counterAction";
+					emitAction = "cardPlayed";
 				}
 				break;
 		}
+		return { "game": game, "emitAction": emitAction };
 	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) ) 

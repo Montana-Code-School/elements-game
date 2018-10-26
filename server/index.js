@@ -54,6 +54,7 @@ io.on( "connection", function ( client ) {
 		if ( game.player1.clientInfo && game.player2.clientInfo ) {
 			drawCard( 4, game.player1 );
 			drawCard( 4, game.player2 );
+			game = playingRoomManager.updateRoom( game );
 			io.sockets. in ( roomName ).emit( "initialDrawRes", {
 				"player1": {
 					"deck": game.player1.deck,
@@ -66,12 +67,34 @@ io.on( "connection", function ( client ) {
 			} );
 		}
 	} );
-	client.on( "click", cardType => {
-		let result = onClick( cardType, game );
-		if ( result === "counter" ) {
-			client.broadcast.to( game.room ).emit( "counterOffer" );
+	client.on( "click", ( cardType, roomName ) => {
+		let emitAction = "";
+		game = playingRoomManager.getRoomById( roomName );
+		game = onClick( cardType, game );
+		// console.log( "back from onclick", game.emitAction )
+		emitAction = game.emitAction;
+		game = playingRoomManager.updateRoom( game.game );
+		// console.log( "this is after update: ", game )
+		let currentPlayer = "";
+		client.id === game.player1.clientId
+			? currentPlayer = "player1"
+			: currentPlayer = "player2";
+		switch ( emitAction ) {
+				// case "fireActionEmit": 	io.sockets. in ( roomName ).emit( emitAction, {
+				// "field":,"discard": } ); 	break; case "shadowActionEmit": 	io.sockets. in (
+				// roomName ).emit( emitAction, { "blabla" } ); 	break; case "lightActionEmit":
+				// io.sockets. in ( roomName ).emit( emitAction, { "blabla" } ); 	break;
+			default:
+				io.sockets. in ( roomName ).emit( "cardPlayed", {
+					"hand": game[ currentPlayer ].hand,
+					"stagedCard": game[ currentPlayer ].stagedCard,
+					"currentPlayer": client.id
+				} );
+				if ( game.afterFlip === "counterAction" ) {
+					client.broadcast.to( game.room ).emit( "counterOffer" );
+				}
+				break;
 		}
-
 	} );
 	client.on( "flipCard", flipCard );
 	client.on( "disconnect", function () {
