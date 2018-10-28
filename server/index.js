@@ -10,7 +10,7 @@ const io = require( "socket.io" )( server );
 const classes = require( "./roomAndPlayerClasses" )
 const ClientManager = require( "./clientManager" );
 const RoomHandler = require( "./playingRoomManager" )
-const makeHandlers = require( "./EventHandler" );
+const makeHandlers = require( "./eventHandler" );
 const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
@@ -19,7 +19,13 @@ io.on( "connection", function ( client ) {
 	let game = null;
 	const { rooms } = io.sockets.adapter;
 	const { Player } = classes;
-	const { handleJoin, getVictory, drawCard, flipCard, onClick } = makeHandlers( client, rooms );
+	const {
+		handleJoin,
+		getVictory,
+		drawCard,
+		flipCard,
+		onClick,
+	} = makeHandlers( client, rooms );
 	clientManager.addClient( client );
 	client.on( "join", function () {
 		//generate room name that client needs to join
@@ -34,7 +40,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": game.name,
 				"playerName": client.id,
-				"turn": game.turn
+				"turn": game.turn,
 			} );
 			//if room exist,but there is only one player
 		} else if ( game.player2 === null ) {
@@ -45,7 +51,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": game.name,
 				"playerName": client.id,
-				"turn": game.turn
+				"turn": game.turn,
 			} );
 		}
 	} );
@@ -59,12 +65,12 @@ io.on( "connection", function ( client ) {
 			io.sockets. in ( roomName ).emit( "initialDrawRes", {
 				"player1": {
 					"deck": game.player1.deck,
-					"hand": game.player1.hand
+					"hand": game.player1.hand,
 				},
 				"player2": {
 					"deck": game.player2.deck,
-					"hand": game.player2.hand
-				},
+					"hand": game.player2.hand,
+				}
 			} );
 		}
 	} );
@@ -91,13 +97,16 @@ io.on( "connection", function ( client ) {
 					"stagedCard": game[ currentPlayer ].stagedCard,
 					"currentPlayer": client.id
 				} );
-				if ( game.afterFlip === "counterAction" ) {
-					client.broadcast.to( game.room ).emit( "counterOffer" );
-				}
 				break;
 		}
 	} );
-	client.on( "flipCard", flipCard );
+	client.on( "counterOffer", function () {
+		client.broadcast.to( roomName ).emit( "counterOffer" );
+	} )
+	client.on( "flipCard", function () {
+		console.log( "server" );
+		flipCard( game )
+	} );
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );
 		//remove user
@@ -112,7 +121,6 @@ io.on( "connection", function ( client ) {
 	} )
 } );
 if ( process.env.NODE_ENV === "production" ) {
-	console.log( "Im here" );
 	app.use( express.static( path.join( __dirname, "../client/build" ) ) );
 	app.get( "/", function ( req, res ) {
 		res.sendFile( path.join( __dirname, "../client/build", "index.html" ) );

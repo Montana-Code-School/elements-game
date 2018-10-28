@@ -39,9 +39,10 @@ module.exports = function ( client, rooms ) {
 			deck[ randomKey ]--;
 			hand[ randomKey ]++;
 		}
-		return { deck, hand };
+		return { deck, hand, };
 	}
 	flipCard = ( game ) => {
+		console.log( "flipping card" )
 		playerStagedCard = "";
 		playerField[ playerStagedCard ]++;
 		switch ( playerStagedCard ) {
@@ -121,7 +122,7 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		return { "game": game, "emitAction": emitAction };
+		return { "game": game, "emitAction": emitAction, };
 	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) ) 
@@ -129,5 +130,11 @@ module.exports = function ( client, rooms ) {
 		else 
 			return null;
 		}
-	return { handleJoin, getVictory, drawCard, flipCard, onClick };
+	return {
+		handleJoin,
+		getVictory,
+		drawCard,
+		flipCard,
+		onClick,
+	};
 }

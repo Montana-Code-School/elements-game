@@ -3,8 +3,7 @@ import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
-import openSocket from "socket.io-client";
-const socket = openSocket( "http://localhost:5000" );
+import socket from './socket';
 let afterFlip = "";
 function getCount( cards ) {
 	let count = 0;
@@ -15,6 +14,8 @@ function getCount( cards ) {
 }
 class Game extends Component {
 	state = {
+		client: socket(),
+		message: "Waiting for opponent",
 		turn: "",
 		room: null,
 		afterFlip: "",
@@ -61,75 +62,77 @@ class Game extends Component {
 		playerStagedCard: ""
 	};
 	componentDidMount() {
-		socket.emit( "join" );
-		socket.on( "roomJoin", data => {
-			this.setState( {
-				room: data.roomName,
-				playerName: data.playerName,
-				turn: data.turn
-			}, function () {
-				if ( this.state.playerName !== this.state.turn ) {
-					socket.emit( "initialDraw", this.state.room )
-				};
-				socket.on( "initialDrawRes", data => {
-					if ( this.state.playerName === this.state.turn ) {
-						this.setState( {
-							playerDeck: data.player1.deck,
-							playerHand: data.player1.hand,
-							opponentsDeck: getCount( data.player2.deck ),
-							opponentsHand: getCount( data.player2.hand ),
-						} )
-					} else {
-						this.setState( {
-							playerDeck: data.player2.deck,
-							playerHand: data.player2.hand,
-							opponentsDeck: getCount( data.player1.deck ),
-							opponentsHand: getCount( data.player1.hand ),
-						} )
-					}
-				} )
-			} )
-		} )
-		this.resolveSocketCall();
+		this.join();
+		this.state.client.getRoomJoin( this.onRoomJoin );
+		this.state.client.getInitialDrawRes( this.onInitialDrawRes )
 	}
-	flipCard = () => {
-		socket.emit( "flipCard" );
+	onRoomJoin = ( data ) => {
+		this.setState( {
+			room: data.roomName,
+			playerName: data.playerName,
+			turn: data.turn,
+		}, function () {
+			if ( this.state.playerName !== this.state.turn ) {
+				this.state.client.initialDraw( this.state.room );
+			}
+		} );
+	}
+	join = () => {
+		this.state.client.join();
+	}
+	onInitialDrawRes = ( data ) => {
+		if ( this.state.playerName === this.state.turn ) {
+			this.setState( {
+				playerDeck: data.player1.deck,
+				playerHand: data.player1.hand,
+				opponentsDeck: getCount( data.player2.deck ),
+				opponentsHand: getCount( data.player2.hand )
+			} )
+		} else {
+			this.setState( {
+				playerDeck: data.player2.deck,
+				playerHand: data.player2.hand,
+				opponentsDeck: getCount( data.player1.deck ),
+				opponentsHand: getCount( data.player1.hand )
+			} )
+		}
 	}
 	clickHandler = ( e ) => {
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
 			window.alert( "hey its not your turn" )
-		} else if ( this.state.turn !== this.state.playerName && this.state.afterFlip !== "" ) {
-			socket.emit( "click", e.currentTarget.className.split( " " )[2], this.state.room );
 		} else {
-			socket.emit( "click", e.currentTarget.className.split( " " )[2], this.state.room );
+			this.state.client.playCard( e.currentTarget.className.split( " " )[2], this.state.room );
+		}
+		this.state.client.getPlayedCard( this.onPlayedCard );
+	}
+	onPlayedCard = ( data ) => {
+		if ( data.currentPlayer === this.state.playerName ) {
+			this.setState( {
+				"playerHand": data.hand,
+				"playerStagedCard": data.stagedCard,
+			}, function () {
+				this.state.client.counterOffer( this.state.room );
+			} );
+		} else {
+			this.setState( {
+				"opponentsHand": getCount( data.hand ),
+				"opponentsStagedCard": data.stagedCard,
+			}, function () {
+				this.state.client.getCounterOffer( this.onCounterOffer );
+			} )
 		}
 	}
-
-	resolveSocketCall = () => {
-		socket.on( "counterOffer", function () {
-			this.setState( { "flipCard": "counterAction" } )
+	onCounterOffer = () => {
+		this.setState( {
+			"flipCard": "counterAction"
+		}, function () {
 			if ( window.alert( "Would you like to counter?" ) ) {
-				console.log( "player countered!" )
+				console.log( "player countered !" );
 			} else {
-				socket.emit( "flipCard" )
+				// this.state.client.flipCard( this.state.room );
 			}
-		} )
-		socket.on( "fireActionRes", data => {
-			this.setState( { "opponentsField": data.opponentsField, "opponentsDiscard": data.opponentsDiscard, "afterFlip": data.afterFlip, } )
-		} )
-		socket.on( "cardPlayed", data => {
-			console.log( "this is some data:  ", data )
-			if ( data.currentPlayer === this.state.playerName ) {
-				this.setState( { "playerHand": data.hand, "playerStagedCard": data.stagedCard } )
-			} else {
-				this.setState( {
-					"opponentsHand": getCount( data.hand ),
-					"opponentsStagedCard": data.stagedCard
-				} )
-			}
-		} )
+		} );
 	}
-
 	render() {
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
@@ -149,39 +152,55 @@ class Game extends Component {
 								: "1"
 						}</p>
 					<GameCard className="opponentsStack"/>
+					<p>{this.state.opponentsHand}</p>
 					<Card className={classes.multicardDisplay}>
 						<CardDisplay className="opponentsHand"/>
-						<p>{this.state.opponentsHand}</p>
 					</Card>
 					<p>{this.state.opponentsDiscard}</p>
 					<GameCard className="opponentsDiscard"/>
 					<p>{this.state.opponentsDeck}</p>
 					<GameCard className="opponentsDeck"/>
 				</Grid>
+
 				<Grid
 					container={true}
 					direction="row"
 					justify="space-around"
 					alignItems="center">
-					<p>{this.state.opponentsField[ "water" ]}</p>
-					<p>{this.state.opponentsField[ "earth" ]}</p>
-					<p>{this.state.opponentsField[ "light" ]}</p>
-					<p>{this.state.opponentsField[ "shadow" ]}</p>
-					<p>{this.state.opponentsField[ "fire" ]}</p>
+					{/* <Card className={classes.chat}>
+						<p>njkbkjbjkb</p>
+						</Card> */
+					}
+
+					<Card className={classes.field}>
+						<Grid
+							container={true}
+							direction="row"
+							justify="space-around"
+							alignItems="center">
+							<p>{this.state.opponentsField[ "water" ]}</p>
+							<p>{this.state.opponentsField[ "earth" ]}</p>
+							<p>{this.state.opponentsField[ "light" ]}</p>
+							<p>{this.state.opponentsField[ "shadow" ]}</p>
+							<p>{this.state.opponentsField[ "fire" ]}</p>
+						</Grid>
+						<CardDisplay className="opponentsField" onClick={this.clickHandler}/>
+						<p>{this.state.message}</p>
+						<CardDisplay className="playerField" onClick={this.clickHandler}/>
+						<Grid
+							container={true}
+							direction="row"
+							justify="space-around"
+							alignItems="center">
+							<p>{this.state.playerField[ "water" ]}</p>
+							<p>{this.state.playerField[ "earth" ]}</p>
+							<p>{this.state.playerField[ "light" ]}</p>
+							<p>{this.state.playerField[ "shadow" ]}</p>
+							<p>{this.state.playerField[ "fire" ]}</p>
+						</Grid>
+					</Card>
 				</Grid>
-				<CardDisplay className="opponentsField" onClick={this.clickHandler}/>
-				<CardDisplay className="playerField" onClick={this.clickHandler}/>
-				<Grid
-					container={true}
-					direction="row"
-					justify="space-around"
-					alignItems="center">
-					<p>{this.state.playerField[ "water" ]}</p>
-					<p>{this.state.playerField[ "earth" ]}</p>
-					<p>{this.state.playerField[ "light" ]}</p>
-					<p>{this.state.playerField[ "shadow" ]}</p>
-					<p>{this.state.playerField[ "fire" ]}</p>
-				</Grid>
+
 				<Grid
 					container={true}
 					direction="row"
