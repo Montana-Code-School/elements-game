@@ -139,7 +139,7 @@ class Game extends Component {
 		if (data.currentPlayer === this.state.playerName) {
 			this.setState({
 				"message": data.message
-			}, 	this.state.client.getFlippedCardRes(this.onFlippedCardRes ))
+			}, 	this.state.client.getCounterOfferRes(this.onCounterOfferRes))
 		} else {
 		console.log("receiving counteroffer")
 		if ( this.state.playerHand.water >= 1 && ( this.state.playerHand.earth >= 1 || this.state.playerHand.shadow >= 1 || this.state.playerHand.light >= 1 || this.state.playerHand.fire >= 1 ) ) {
@@ -152,16 +152,22 @@ class Game extends Component {
 			window.alert( "Unfortunately you are not able to counter" )
 			this.state.client.flipCard( this.state.room )
 		}
-		this.state.client.getFlippedCardRes( this.onFlippedCardRes );}
+		this.state.client.sendCounterOfferRes(this.state.room)
+		this.state.client.getCounterOfferRes(this.onCounterOfferRes)
+		}
+	}
+	onCounterOfferRes = () => {
+		console.log("this is counterofferres flipping the card")
+		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 	}
 	onFlippedCardRes = ( data ) => {
+		console.log("this is the flipped card to state")
 		if ( this.state.playerName === data.playerName ) {
 			// console.log( "setting opponentsField", data.field )
 			this.setState( { "opponentsField": data.field, "opponentsStagedCard": data.stagedCard, } );
 		} else {
 			// console.log( "setting opponentsField1", data.field )
 			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, } );
-
 		}
 	}
 	render() {

@@ -109,16 +109,19 @@ io.on( "connection", function ( client ) {
 		console.log("broadcasting counter offer")
 		io.sockets.in( roomName ).emit( "getCounterOffer", {"message": "Waiting for opponent...", "currentPlayer": client.id } );
 	} );
+	client.on("sendCounterOfferRes", function(roomName) {
+		io.sockets.in(roomName).emit("getCounterOfferRes")
+	})
 	client.on( "flipCard", function ( roomName ) {
 		game = playingRoomManager.getRoomById( roomName );
-		// console.log( game )
 		let opponent = "";
 		client.id === game.player1.clientId
 			? opponent = "player2"
 			: opponent = "player1";
 		game = flipCard( game, opponent );
 		game = playingRoomManager.updateRoom( game );
-		io.sockets. in ( roomName ).emit( "getFlippedCardRes", {
+		console.log("flipping card",roomName)
+		io.sockets.in(roomName).emit( "getFlippedCardRes", {
 			"stagedCard": game[ opponent ].stagedCard,
 			"field": game[ opponent ].field,
 			"playerName": client.id

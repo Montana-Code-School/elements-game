@@ -28,14 +28,21 @@ export default function () {
 	function getCounterOffer( onCounterOffer ) {
 		socket.on( "getCounterOffer", onCounterOffer );
 	}
-
+	function sendCounterOfferRes(roomName) {
+		socket.emit("sendCounterOfferRes", roomName)
+	}
+	function getCounterOfferRes(onCounterOfferRes) {
+		socket.on("getCounterOfferRes", onCounterOfferRes)
+	}
 	function flipCard( roomName ) {
 		socket.emit( "flipCard", roomName );
 	}
 	function getFlippedCardRes( onFlippedCardRes ) {
 		console.log( "get flipped card result" )
-
-		socket.on( "getFlippedCardRes", onFlippedCardRes );
+		// onFlippedCardRes
+		socket.on( "getFlippedCardRes",function(data){
+			console.log("flipp result",data);
+		} );
 	}
 	function disconnect() {
 		socket.disconnect();
@@ -64,6 +71,8 @@ export default function () {
 		flipCard,
 		getFlippedCardRes,
 		disconnect,
-		getDisconnect
+		getDisconnect,
+		sendCounterOfferRes,
+		getCounterOfferRes
 	}
 }
