@@ -127,8 +127,11 @@ io.on( "connection", function ( client ) {
 
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );
+		const roomName = playingRoomManager.findRoomByClient(client.id);
+		client.broadcast.to(roomName).emit("getDisconnect", "Your opponent left the game. You will now be redirected to the Home Page.")
 		//remove user
 		clientManager.deleteClient( client );
+		playingRoomManager.deleteRoom(roomName);
 		// send message to the client about opponent disconnecting
 		// after that send emit to server to join again
 		console.log( "all rooms", io.sockets.adapter.rooms );

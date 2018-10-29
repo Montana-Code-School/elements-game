@@ -18,9 +18,11 @@ export default function () {
 		socket.emit( "click", card, roomName, afterFlip );
 	}
 	function getClickedCard( onClickedCard ) {
+		console.log("getClickedCard")
 		socket.on( "cardClicked", onClickedCard );
 	}
 	function counterOffer( roomName ) {
+		console.log("sending counter offer")
 		socket.emit( "counterOffer", roomName );
 	}
 	function getCounterOffer( onCounterOffer ) {
@@ -31,7 +33,13 @@ export default function () {
 		socket.emit( "flipCard", roomName );
 	}
 	function getFlippedCardRes( onFlippedCardRes ) {
+		console.log("get flipped card result")
+
 		socket.on( "getFlippedCardRes", onFlippedCardRes );
+	}
+	function getDisconnect(onDisconnect){
+		console.log("onDisconnect happened")
+		socket.on("getDisconnect", onDisconnect)
 	}
 	socket.on( 'error', function ( err ) {
 		console.log( 'received socket error:' )
@@ -47,6 +55,7 @@ export default function () {
 		counterOffer,
 		getCounterOffer,
 		flipCard,
-		getFlippedCardRes
+		getFlippedCardRes,
+		getDisconnect
 	}
 }
