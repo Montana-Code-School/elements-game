@@ -4,6 +4,8 @@ import GameCard from "./GameCard";
 import { Grid, Card, withStyles, } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
+// import { Link } from "react-router-dom";
+
 function getCount( cards ) {
 	let count = 0;
 	for ( let cardType in cards ) {
@@ -64,6 +66,11 @@ class Game extends Component {
 		this.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
 		this.state.client.getInitialDrawRes( this.onInitialDrawRes )
+		this.state.client.getDisconnect(this.onDisconnect);
+	}
+	onDisconnect = (data) => {
+		console.log("here we are in onDisconnect")
+		window.alert(data)
 	}
 	onRoomJoin = ( data ) => {
 		this.setState( {
@@ -110,14 +117,16 @@ class Game extends Component {
 				"playerHand": data.hand,
 				"playerStagedCard": data.stagedCard
 			}, function () {
+				console.log("player Clicked Card")
 				this.state.client.counterOffer( this.state.room );
-				this.state.client.getFlippedCardRes( this.onFlippedCardRes );
+				// this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 			} );
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsStagedCard": data.stagedCard
 			}, function () {
+				console.log("Opponent Clicked Card")
 				this.state.client.getCounterOffer( this.onCounterOffer );
 			} )
 		}
@@ -129,7 +138,7 @@ class Game extends Component {
 			} else {
 				this.state.client.flipCard( this.state.room );
 			}
-		} else {
+		} else if (this.state.playerHand.water === 0){
 			window.alert( "Unfortunately you are not able to counter" )
 			this.state.client.flipCard( this.state.room )
 		}
