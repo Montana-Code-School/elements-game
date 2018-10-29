@@ -48,6 +48,10 @@ export default function () {
 		console.log( 'received socket error:' )
 		console.log( err )
 	} );
+	// socket.setTimeout(function () {
+  //    console.log('2 seconds passed, closing the socket');
+  //    socket.close();
+  //  }, 5000);
 	return {
 		join,
 		getRoomJoin,

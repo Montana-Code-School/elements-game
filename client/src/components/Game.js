@@ -115,7 +115,7 @@ class Game extends Component {
 			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 		}
 	}
-	onClickedCard = ( data ) => {
+	 onClickedCard = ( data ) => {
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
 				"playerHand": data.hand,
@@ -123,21 +123,26 @@ class Game extends Component {
 			}, function () {
 				console.log( "player Clicked Card" )
 				this.state.client.counterOffer( this.state.room );
-				// this.state.client.getFlippedCardRes(
-				// this.onFlippedCardRes );
+				this.state.client.getCounterOffer( this.onCounterOffer );
 			} );
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsStagedCard": data.stagedCard,
 			}, function () {
-				console.log( "Opponent Clicked Card" )
+				console.log( "listening for counter offer" )
 				this.state.client.getCounterOffer( this.onCounterOffer );
 			} )
 		}
 	}
-	onCounterOffer = () => {
-		if ( this.state.playerHand.water > 1 && ( this.state.playerHand.earth > 1 || this.state.playerHand.shadow > 1 || this.state.playerHand.light > 1 || this.state.playerHand.fire > 1 ) ) {
+	onCounterOffer = (data) => {
+		if (data.currentPlayer === this.state.playerName) {
+			this.setState({
+				"message": data.message
+			}, 	this.state.client.getFlippedCardRes(this.onFlippedCardRes ))
+		} else {
+		console.log("receiving counteroffer")
+		if ( this.state.playerHand.water >= 1 && ( this.state.playerHand.earth >= 1 || this.state.playerHand.shadow >= 1 || this.state.playerHand.light >= 1 || this.state.playerHand.fire >= 1 ) ) {
 			if ( window.confirm( "Would you like to counter?" ) ) {
 				window.alert( "pick card besides water to discard" )
 			} else {
@@ -147,14 +152,14 @@ class Game extends Component {
 			window.alert( "Unfortunately you are not able to counter" )
 			this.state.client.flipCard( this.state.room )
 		}
-		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
+		this.state.client.getFlippedCardRes( this.onFlippedCardRes );}
 	}
 	onFlippedCardRes = ( data ) => {
 		if ( this.state.playerName === data.playerName ) {
-			console.log( "setting opponentsField", data.field )
+			// console.log( "setting opponentsField", data.field )
 			this.setState( { "opponentsField": data.field, "opponentsStagedCard": data.stagedCard, } );
 		} else {
-			console.log( "setting opponentsField1", data.field )
+			// console.log( "setting opponentsField1", data.field )
 			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, } );
 
 		}
