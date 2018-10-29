@@ -100,15 +100,14 @@ io.on( "connection", function ( client ) {
 				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": game[ currentPlayer ].hand,
 					"stagedCard": game[ currentPlayer ].stagedCard,
-					"playerName": client.id
+					"playerName": client.id,
 				} );
 				break;
 		}
 	} );
-
 	client.on( "counterOffer", function ( roomName ) {
 		client.broadcast.to( roomName ).emit( "getCounterOffer" );
-	} )
+	} );
 	client.on( "flipCard", function ( roomName ) {
 		game = playingRoomManager.getRoomById( roomName );
 		console.log( game )
@@ -121,18 +120,18 @@ io.on( "connection", function ( client ) {
 		io.sockets. in ( roomName ).emit( "getFlippedCardRes", {
 			"stagedCard": game[ opponent ].stagedCard,
 			"field": game[ opponent ].field,
-			"playerName": client.id,
+			"playerName": client.id
 		} )
-	} )
-
+	} );
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );
-		const roomName = playingRoomManager.findRoomByClient(client.id);
-		client.broadcast.to(roomName).emit("getDisconnect", "Your opponent left the game. You will now be redirected to the Home Page.")
+		const roomName = playingRoomManager.findRoomByClient( client.id );
+		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
+					" the Home Page." )
 		//remove user
 		clientManager.deleteClient( client );
-		playingRoomManager.deleteRoom(roomName);
-		console.log("this is Map rooms", playingRoomManager.getAllRooms());
+		playingRoomManager.deleteRoom( roomName );
+		console.log( "this is Map rooms", playingRoomManager.getAllRooms() );
 		// send message to the client about opponent disconnecting
 		// after that send emit to server to join again
 		console.log( "all rooms", io.sockets.adapter.rooms );
