@@ -70,7 +70,8 @@ class Game extends Component {
 	}
 	onDisconnect = (data) => {
 		console.log("here we are in onDisconnect")
-		window.alert(data)
+		window.alert(data);
+		// <Link to="/" replace />
 	}
 	onRoomJoin = ( data ) => {
 		this.setState( {
