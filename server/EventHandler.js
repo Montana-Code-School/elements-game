@@ -39,19 +39,25 @@ module.exports = function ( client, rooms ) {
 			deck[ randomKey ]--;
 			hand[ randomKey ]++;
 		}
-		return { deck, hand };
+		return { deck, hand, };
 	}
-	flipCard = ( game ) => {
-		playerStagedCard = "";
-		playerField[ playerStagedCard ]++;
-		switch ( playerStagedCard ) {
+	flipCard = ( game, opponent ) => {
+		console.log( "opponent, game", opponent, "game", game )
+		let card = game[ opponent ].stagedCard;
+		game[ opponent ].stagedCard = "";
+		game[ opponent ].field[ card ]++;
+		switch ( game[ opponent ].stagedCard ) {
 			case "earth":
-				drawCard( 1 );
+				let deckAndHand = drawCard( 1, game[ opponent ] );
+				game[ opponent ].deck = deckAndHand.deck;
+				game[ opponent ].hand = deckAndHand.hand;
 				break;
-			case "fire":
+			case
+				"fire":
 				game.afterFlip = "fireAction";
 				break;
-			case "shadow":
+			case
+				"shadow":
 				game.afterFlip = "shadowAction";
 				break;
 			case "light":
@@ -60,13 +66,14 @@ module.exports = function ( client, rooms ) {
 			default:
 				break;
 		}
+		return game;
 	}
 
 	onClick = ( cardType, game ) => {
 		let gameUpdate = {};
 		let emitAction = "";
 		let currentPlayer = "player1";
-		let opponent = "player1";
+		let opponent = "player2";
 		if ( game.player1.clientInfo === null || game.player2.clientInfo === null ) {
 			console.log( "Player Disconnected" );
 			return
@@ -117,11 +124,11 @@ module.exports = function ( client, rooms ) {
 					game[ currentPlayer ].hand[ cardType ]--;
 					game[ currentPlayer ].stagedCard = cardType;
 					game.afterFlip = "counterAction";
-					emitAction = "cardPlayed";
+					emitAction = "cardClicked";
 				}
 				break;
 		}
-		return { "game": game, "emitAction": emitAction };
+		return { "game": game, "emitAction": emitAction, };
 	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) ) 
@@ -129,5 +136,11 @@ module.exports = function ( client, rooms ) {
 		else 
 			return null;
 		}
-	return { handleJoin, getVictory, drawCard, flipCard, onClick };
+	return {
+		handleJoin,
+		getVictory,
+		drawCard,
+		flipCard,
+		onClick,
+	};
 }

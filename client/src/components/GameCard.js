@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { CardMedia, withStyles, } from "@material-ui/core";
+import { CardMedia, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import DiscardPile from "./DiscardPile";
 class GameCard extends Component {
@@ -24,7 +24,7 @@ class GameCard extends Component {
 			return <CardMedia
 				component="img"
 				alt={this.props.className}
-				className={`${ this.props.className} ${ classes.card }`}
+				className={`${ this.props.className} ${ classes.multicardDisplayCard }`}
 				image={require( `../images/${ this.props.className }.png` )}
 				onClick={this.props.onClick}/>
 		}
