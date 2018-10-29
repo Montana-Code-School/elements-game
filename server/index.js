@@ -15,11 +15,17 @@ const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
 // room = new Room();
-io.on("connection", function ( client ) {
+io.on( "connection", function ( client ) {
 	let game = null;
 	const { rooms } = io.sockets.adapter;
 	const { Player } = classes;
-	const { handleJoin, getVictory, drawCard, flipCard, onClick } = makeHandlers( client, rooms );
+	const {
+		handleJoin,
+		getVictory,
+		drawCard,
+		flipCard,
+		onClick,
+	} = makeHandlers( client, rooms );
 	clientManager.addClient( client );
 	client.on( "join", function () {
 		//generate room name that client needs to join
@@ -35,7 +41,7 @@ io.on("connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": game.name,
 				"playerName": client.id,
-				"turn": game.turn
+				"turn": game.turn,
 			} );
 			//if room exist,but there is only one player
 		} else if ( game.player2 === null ) {
@@ -47,7 +53,7 @@ io.on("connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": game.name,
 				"playerName": client.id,
-				"turn": game.turn
+				"turn": game.turn,
 			} );
 		}
 	} );
@@ -61,16 +67,16 @@ io.on("connection", function ( client ) {
 			io.sockets. in ( roomName ).emit( "initialDrawRes", {
 				"player1": {
 					"deck": game.player1.deck,
-					"hand": game.player1.hand
+					"hand": game.player1.hand,
 				},
 				"player2": {
 					"deck": game.player2.deck,
-					"hand": game.player2.hand
-				},
+					"hand": game.player2.hand,
+				}
 			} );
 		}
 	} );
-	client.on("click", ( cardType, roomName, afterFlip ) => {
+	client.on( "click", ( cardType, roomName, afterFlip ) => {
 		let emitAction = "";
 		game = playingRoomManager.getRoomById( roomName );
 		game.afterFlip = afterFlip;
@@ -91,57 +97,59 @@ io.on("connection", function ( client ) {
 				// "lightActionEmit": io.sockets. in ( roomName ).emit(
 				// emitAction, { "blabla" } ); 	break;
 			default:
-				io.sockets. in ( roomName ).emit("cardClicked", {
+				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": game[ currentPlayer ].hand,
 					"stagedCard": game[ currentPlayer ].stagedCard,
-					<<<<<<< HEAD "currentPlayer": client.id, =======
-					"playerName": client.id >>>>>>>
-						8c7c92b8ea0e41de51ac496f0314ab5b911c79c8 } ); break; } } );
-						client.on( "counterOffer", function ( roomName ) {
-						client.broadcast.to( roomName ).emit( "getCounterOffer" );
-					}
-					) client.on( "flipCard", function ( roomName ) {
-						game = playingRoomManager.getRoomById( roomName );
-						console.log( game )
-						let opponent = "";
-						client.id === game.player1.clientId
-							? opponent = "player2"
-							: opponent = "player1";
-						game = flipCard( game, opponent );
-						game = playingRoomManager.updateRoom( game );
-						io.sockets. in ( roomName ).emit( "getFlippedCardRes", {
-							"stagedCard": game[ opponent ].stagedCard,
-							"field": game[ opponent ].field,
-							"playerName": client.id,
-						} )
-					}
-					) client.on( "disconnect", function () {
-						console.log( "client disconnect...", client.id );
-						const roomName = playingRoomManager.findRoomByClient( client.id );
-						client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
-									" the Home Page." )
-						//remove user
-						clientManager.deleteClient( client );
-						playingRoomManager.deleteRoom( roomName );
-						console.log( "this is Map rooms", playingRoomManager.getAllRooms() );
-						// send message to the client about opponent disconnecting
-						// after that send emit to server to join again
-						console.log( "all rooms", io.sockets.adapter.rooms );
-					}
-					); client.on( "error", function ( err ) {
-						console.log( "received error from client:", client.id );
-						console.log( err );
-					}
-					) } ); if ( process.env.NODE_ENV === "production" ) {
-						app.use( express.static( path.join( __dirname, "../client/build" ) ) );
-						app.get( "/", function ( req, res ) {
-							res.sendFile( path.join( __dirname, "../client/build", "index.html" ) );
-						} );
-					}
-					server.listen( port, function ( err ) {
-						if ( err ) {
-							console.log( "error", err )
-						}
-						console.log( "listening on port" + port );
-					}
-					)
+					"playerName": client.id,
+				} );
+				break;
+		}
+	} );
+	client.on( "counterOffer", function ( roomName ) {
+		client.broadcast.to( roomName ).emit( "getCounterOffer" );
+	} );
+	client.on( "flipCard", function ( roomName ) {
+		game = playingRoomManager.getRoomById( roomName );
+		console.log( game )
+		let opponent = "";
+		client.id === game.player1.clientId
+			? opponent = "player2"
+			: opponent = "player1";
+		game = flipCard( game, opponent );
+		game = playingRoomManager.updateRoom( game );
+		io.sockets. in ( roomName ).emit( "getFlippedCardRes", {
+			"stagedCard": game[ opponent ].stagedCard,
+			"field": game[ opponent ].field,
+			"playerName": client.id
+		} )
+	} );
+	client.on( "disconnect", function () {
+		console.log( "client disconnect...", client.id );
+		const roomName = playingRoomManager.findRoomByClient( client.id );
+		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
+					" the Home Page." )
+		//remove user
+		clientManager.deleteClient( client );
+		playingRoomManager.deleteRoom( roomName );
+		console.log( "this is Map rooms", playingRoomManager.getAllRooms() );
+		// send message to the client about opponent disconnecting
+		// after that send emit to server to join again
+		console.log( "all rooms", io.sockets.adapter.rooms );
+	} );
+	client.on( "error", function ( err ) {
+		console.log( "received error from client:", client.id );
+		console.log( err );
+	} )
+} );
+if ( process.env.NODE_ENV === "production" ) {
+	app.use( express.static( path.join( __dirname, "../client/build" ) ) );
+	app.get( "/", function ( req, res ) {
+		res.sendFile( path.join( __dirname, "../client/build", "index.html" ) );
+	} );
+}
+server.listen( port, function ( err ) {
+	if ( err ) {
+		console.log( "error", err )
+	}
+	console.log( "listening on port" + port );
+} )
