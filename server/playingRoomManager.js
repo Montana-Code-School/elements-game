@@ -14,9 +14,25 @@ module.exports = function () {
 		rooms.set( room.name, room );
 		return getRoomById( room.name );
 	}
-
-	function deleteRoom( room ) {
-		rooms.delete( room.name );
+	function getAllRooms(){
+		return rooms.values()
 	}
-	return { getRoomById, addRoom, deleteRoom, updateRoom }
+function findRoomByClient(id) {
+	const roomsArr = Array.from(rooms)
+	const roomRes = roomsArr.filter(roomArr => {
+		if (roomArr[1].player1 !== undefined && roomArr[1].player2 !== undefined) {
+			return roomArr[1].player1.clientId === id || roomArr[1].player2.clientId === id}
+		else if (roomArr[1].player2 === undefined){
+			return roomArr[1].player1.clientId === id
+		}} )
+
+	if (roomRes[0] !== undefined)
+		return roomRes[0][0];
+	else
+		return {}
+}
+	function deleteRoom( roomName ) {
+		rooms.delete( roomName );
+	}
+	return { getRoomById, addRoom, deleteRoom, updateRoom, findRoomByClient, getAllRooms}
 }

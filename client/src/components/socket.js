@@ -14,21 +14,32 @@ export default function () {
 	function getInitialDrawRes( onInitialDrawRes ) {
 		socket.on( "initialDrawRes", onInitialDrawRes );
 	};
-	function playCard( card, roomName ) {
-		socket.emit( "click", card, roomName );
+	function clickCard( card, roomName, afterFlip ) {
+		socket.emit( "click", card, roomName, afterFlip );
 	}
-	function getPlayedCard( onPlayedCard ) {
-		socket.on( "cardPlayed", onPlayedCard );
+	function getClickedCard( onClickedCard ) {
+		console.log("getClickedCard")
+		socket.on( "cardClicked", onClickedCard );
 	}
 	function counterOffer( roomName ) {
+		console.log("sending counter offer")
 		socket.emit( "counterOffer", roomName );
 	}
 	function getCounterOffer( onCounterOffer ) {
-		console.log( 'getting offer' );
-		socket.on( "counterOffer", onCounterOffer );
+		socket.on( "getCounterOffer", onCounterOffer );
 	}
+
 	function flipCard( roomName ) {
 		socket.emit( "flipCard", roomName );
+	}
+	function getFlippedCardRes( onFlippedCardRes ) {
+		console.log("get flipped card result")
+
+		socket.on( "getFlippedCardRes", onFlippedCardRes );
+	}
+	function getDisconnect(onDisconnect){
+		console.log("onDisconnect happened")
+		socket.on("getDisconnect", onDisconnect)
 	}
 	socket.on( 'error', function ( err ) {
 		console.log( 'received socket error:' )
@@ -39,9 +50,12 @@ export default function () {
 		getRoomJoin,
 		initialDraw,
 		getInitialDrawRes,
-		playCard,
-		getPlayedCard,
+		clickCard,
+		getClickedCard,
 		counterOffer,
 		getCounterOffer,
+		flipCard,
+		getFlippedCardRes,
+		getDisconnect
 	}
 }
