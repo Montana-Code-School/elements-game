@@ -106,11 +106,12 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on( "counterOffer", function ( roomName ) {
-		client.broadcast.to( roomName ).emit( "getCounterOffer" );
+		console.log("broadcasting counter offer")
+		io.sockets.in( roomName ).emit( "getCounterOffer", {"message": "Waiting for opponent...", "currentPlayer": client.id } );
 	} );
 	client.on( "flipCard", function ( roomName ) {
 		game = playingRoomManager.getRoomById( roomName );
-		console.log( game )
+		// console.log( game )
 		let opponent = "";
 		client.id === game.player1.clientId
 			? opponent = "player2"

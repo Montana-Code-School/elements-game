@@ -27,7 +27,7 @@ module.exports = function ( client, rooms ) {
 			drawSingleCard();
 		}
 		function drawSingleCard() {
-			if ( keys.length === 0 ) 
+			if ( keys.length === 0 )
 				return;
 			const randomIndex = Math.floor( Math.random() * keys.length );
 			const randomKey = keys[ randomIndex ];
@@ -42,7 +42,7 @@ module.exports = function ( client, rooms ) {
 		return { deck, hand, };
 	}
 	flipCard = ( game, opponent ) => {
-		console.log( "opponent, game", opponent, "game", game )
+		// console.log( "opponent, game", opponent, "game", game )
 		let card = game[ opponent ].stagedCard;
 		game[ opponent ].stagedCard = "";
 		game[ opponent ].field[ card ]++;
@@ -131,9 +131,9 @@ module.exports = function ( client, rooms ) {
 		return { "game": game, "emitAction": emitAction, };
 	}
 	getVictory = ( field ) => {
-		if ( !Object.values( field ).includes( 0 ) ) 
+		if ( !Object.values( field ).includes( 0 ) )
 			return "victory";
-		else 
+		else
 			return null;
 		}
 	return {
