@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
+import CustomModal from "./Modal";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
@@ -19,6 +20,7 @@ class Game extends Component {
 			client: socket(),
 			message: "Waiting for opponent",
 			turn: "",
+			alert: false,
 			room: null,
 			afterFlip: "",
 			playerName: null,
@@ -103,7 +105,7 @@ class Game extends Component {
 	}
 	clickHandler = ( e ) => {
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
-			window.alert( "hey its not your turn" )
+			this.setState({"alert": true})
 		} else {
 			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 		}
@@ -170,9 +172,19 @@ class Game extends Component {
 		}
 		console.log( "after update", this.state )
 	}
+	closeModal = () => {
+		this.setState({"alert": false})
+	}
+	getModalContent(){
+		return <p>This function will return modal content based on conditionals!</p>
+	}
 	render() {
 		const { classes } = this.props;
-		return ( <Card className={classes.page}>
+		return (
+			<Card className={classes.page}>
+				<CustomModal isOpen={this.state.alert} closeModal={this.closeModal}>
+					{this.getModalContent()}
+				</CustomModal>
 			<Grid
 				container={true}
 				direction="column"
