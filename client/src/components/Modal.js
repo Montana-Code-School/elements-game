@@ -40,6 +40,15 @@ const dialogStyle = function () {
 
 class CustomModal extends Component {
 
+  getButtonOptions(){
+    let buttonOptions = <button onClick={this.props.closeModal}>Close</button>
+    if (this.props.hasChoice){
+      buttonOptions = [<button onClick={this.props.accept}>Yes</button>,
+                       <button onClick={this.props.decline}>No</button>]
+    }
+    return buttonOptions;
+  }
+
 	render() {
 		return (
       <div>
@@ -50,7 +59,7 @@ class CustomModal extends Component {
   				onClose={this.props.closeModal}>
   				<div style={dialogStyle()}>
             {this.props.children}
-            <button onClick={this.props.closeModal}>Close</button>
+            {this.getButtonOptions()}
   				</div>
   			</Modal>
   		</div> );
