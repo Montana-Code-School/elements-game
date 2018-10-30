@@ -20,7 +20,11 @@ class Game extends Component {
 			client: socket(),
 			message: "Waiting for opponent",
 			turn: "",
-			alert: false,
+			modal: {
+				open: false,
+				message: "",
+				hasChoice: false
+			},
 			room: null,
 			afterFlip: "",
 			playerName: null,
@@ -71,7 +75,7 @@ class Game extends Component {
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
-		window.alert( data );
+		this.setState({"modal": {"open": true, "message": data}});
 		this.state.client.disconnect();
 	}
 	onRoomJoin = ( data ) => {
@@ -105,7 +109,7 @@ class Game extends Component {
 	}
 	clickHandler = ( e ) => {
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
-			this.setState({"alert": true})
+			this.setState({"modal": {"open": true, "message": "It is not your turn."}})
 		} else {
 			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 		}
@@ -126,33 +130,44 @@ class Game extends Component {
 		}
 		this.state.client.getCounterOffer( this.onCounterOffer );
 	}
-
+	refuseCounter = () => {
+		const result = "noCounter";
+		this.state.client.sendCounterOfferRes( this.state.room, result );
+		this.setListenerOnCounter(result)
+		this.closeModal()
+	}
+	acceptCounter = () => {
+		const result = "blabla"
+		this.state.client.sendCounterOfferRes( this.state.room, result );
+		this.setListenerOnCounter(result)
+		this.closeModal()
+	}
 	onCounterOffer = ( data ) => {
 		let result = "noCounter";
 		if ( data.currentPlayer === this.state.playerName ) {
 			this.setState( { "message": data.message } )
 		} else {
 			if ( this.state.playerHand.water >= 1 && ( this.state.playerHand.earth >= 1 || this.state.playerHand.shadow >= 1 || this.state.playerHand.light >= 1 || this.state.playerHand.fire >= 1 ) ) {
-				if ( window.confirm( "Would you like to counter?" ) ) {
-					result = "blabla"
-					this.state.client.sendCounterOfferRes( this.state.room, result );
-				} else {
-					console.log( "no counter" )
-					result = "noCounter";
-					this.state.client.sendCounterOfferRes( this.state.room, result );
-				}
+				this.setState({
+					"modal": {
+						"open": true,
+						"message": "Would you like to counter?",
+						"hasChoice": true,
+					}})
 			} else if ( this.state.playerHand.water === 0 ) {
-				window.alert( "Unfortunately you are not able to counter" );
+				this.setState({"modal": {"open": true, "message": "You are unable to counter at this time."}})
 				result = "noCounter";
 				this.state.client.sendCounterOfferRes( this.state.room, result );
 			}
 		}
-		console.log( "onCounterOffer", result );
+	}
+	setListenerOnCounter (result) {
 		if ( result === "noCounter" ) {
 			this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 		} else {
 			this.state.client.getCounterOfferRes( this.onCounterOfferRes );
 		}
+
 	}
 	listenerOff( emit ) {
 		this.state.client.listenerOff( emit );
@@ -173,16 +188,21 @@ class Game extends Component {
 		console.log( "after update", this.state )
 	}
 	closeModal = () => {
-		this.setState({"alert": false})
+		this.setState({"modal": {"open": false, "hasChoice": false}})
 	}
 	getModalContent(){
-		return <p>This function will return modal content based on conditionals!</p>
+		return <p>{this.state.modal.message}</p>
 	}
 	render() {
 		const { classes } = this.props;
 		return (
 			<Card className={classes.page}>
-				<CustomModal isOpen={this.state.alert} closeModal={this.closeModal}>
+				<CustomModal
+					hasChoice={this.state.modal.hasChoice}
+					decline={this.refuseCounter}
+					accept={this.acceptCounter}
+					isOpen={this.state.modal.open}
+					closeModal={this.closeModal}>
 					{this.getModalContent()}
 				</CustomModal>
 			<Grid
