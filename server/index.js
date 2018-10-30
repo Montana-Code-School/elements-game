@@ -106,7 +106,6 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on( "counterOffer", function ( roomName ) {
-		console.log("broadcasting counter offer")
 		io.sockets.in( roomName ).emit( "getCounterOffer", {"message": "Waiting for opponent...", "currentPlayer": client.id } );
 	} );
 	client.on( "flipCard", function ( roomName ) {
@@ -132,7 +131,6 @@ io.on( "connection", function ( client ) {
 		//remove user
 		clientManager.deleteClient( client );
 		playingRoomManager.deleteRoom( roomName );
-		console.log( "this is Map rooms", playingRoomManager.getAllRooms() );
 		// send message to the client about opponent disconnecting
 		// after that send emit to server to join again
 		console.log( "all rooms", io.sockets.adapter.rooms );

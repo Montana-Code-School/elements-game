@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
+import CustomModal from "./Modal";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
@@ -19,6 +20,7 @@ class Game extends Component {
 	state = {
 		client: socket(),
 		message: "Waiting for opponent",
+		alert: false,
 		turn: "",
 		room: null,
 		afterFlip: "",
@@ -71,7 +73,6 @@ class Game extends Component {
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
-		console.log( "here we are in onDisconnect" )
 		window.alert( data );
 		this.state.client.disconnect();
 		// <Link to="/" replace />
@@ -110,7 +111,7 @@ class Game extends Component {
 	}
 	clickHandler = ( e ) => {
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
-			window.alert( "hey its not your turn" )
+			this.setState({"alert": true})
 		} else {
 			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 		}
@@ -121,7 +122,6 @@ class Game extends Component {
 				"playerHand": data.hand,
 				"playerStagedCard": data.stagedCard,
 			}, function () {
-				console.log( "player Clicked Card" )
 				this.state.client.counterOffer( this.state.room );
 				this.state.client.getCounterOffer( this.onCounterOffer );
 			} );
@@ -130,7 +130,6 @@ class Game extends Component {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsStagedCard": data.stagedCard,
 			}, function () {
-				console.log( "listening for counter offer" )
 				this.state.client.getCounterOffer( this.onCounterOffer );
 			} )
 		}
@@ -141,8 +140,7 @@ class Game extends Component {
 				"message": data.message
 			}, 	this.state.client.getFlippedCardRes(this.onFlippedCardRes ))
 		} else {
-		console.log("receiving counteroffer")
-		if ( this.state.playerHand.water >= 1 && ( this.state.playerHand.earth >= 1 || this.state.playerHand.shadow >= 1 || this.state.playerHand.light >= 1 || this.state.playerHand.fire >= 1 ) ) {
+		if ( this.state.playerHand.water >= 1 && (this.state.playerHand.earth >= 1 || this.state.playerHand.shadow >= 1 || this.state.playerHand.light >= 1 || this.state.playerHand.fire >= 1 )) {
 			if ( window.confirm( "Would you like to counter?" ) ) {
 				window.alert( "pick card besides water to discard" )
 			} else {
@@ -152,7 +150,8 @@ class Game extends Component {
 			window.alert( "Unfortunately you are not able to counter" )
 			this.state.client.flipCard( this.state.room )
 		}
-		this.state.client.getFlippedCardRes( this.onFlippedCardRes );}
+		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
+		}
 	}
 	onFlippedCardRes = ( data ) => {
 		if ( this.state.playerName === data.playerName ) {
@@ -164,9 +163,19 @@ class Game extends Component {
 
 		}
 	}
+	closeModal = () => {
+		this.setState({"alert": false})
+	}
+	getModalContent(){
+		return <p>This function will return modal content based on conditionals!</p>
+	}
 	render() {
 		const { classes } = this.props;
-		return ( <Card className={classes.page}>
+		return (
+			<Card className={classes.page}>
+				<CustomModal isOpen={this.state.alert} closeModal={this.closeModal}>
+					{this.getModalContent()}
+				</CustomModal>
 			<Grid
 				container={true}
 				direction="column"
