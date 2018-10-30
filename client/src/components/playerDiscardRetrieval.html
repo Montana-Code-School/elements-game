@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+      <meta charset="utf-8">
+    <title>Discard PopUp Box</title>
+<style>
+    body {
+        backgroung-color: lightblue;
+    }
+    #myBtn {
+        font-size: 160%;
+        background-color: blue;
+        color: gold;
+        width: 30%;
+        height: 11%;
+        margin: 15px;
+    }
+
+    div.gallery {
+        margin: 5px;
+        border: 3px solid blue;
+        float: left;
+        width: 200px;
+    }
+
+    div.gallery:hover {
+        border:
+        15px solid blue;
+    }
+
+    div.gallery img {
+        width: 100%;
+        height: auto;
+    }
+
+    div.desc {
+        padding: 15px;
+    }
+
+    .modal {
+        backgroung-color: black;
+        display:  image;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: wrap;
+    }
+
+<!-- Modal Content/Box -->
+    .flex-container {
+        display: flex;
+        height: 200%;
+        justify-content: space-around;
+        justify-content: space-between;
+        flex-flow: row wrap;
+        background-color: blue;
+    }
+
+    p {
+        font-size: 200%;
+        color: black;
+        margin: 50px;
+        padding: 20px;
+    }
+
+<!-- The Close Button -->
+    .close {
+        color: red;
+        float: center;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: red;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+  </head>
+<body>
+
+<!-- Trigger/Open The Modal -->
+    <button id="myBtn">
+        <div>YourTurn</div>
+        <div>Click Me!</div>
+    </button>
+
+<!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <br></br>
+            <br></br>
+<!-- Modal content -->
+        <!-- <span class="close">&times;</span> -->
+        <span class="close">&times;</span>
+            <p align="center">
+                Please select the card that you would like to return to your hand.
+            </p>
+        </div>
+        <div class="gallery">
+            <img src="../images/earth4.png" alt="earth card" width="300" height="200">
+        </div>
+
+        <div class="gallery">
+            <img src="../images/fire4.png" alt="fire card" width="300" height="200">
+        </div>
+
+        <div class="gallery">
+            <img src="../images/light5.png" alt="light card" width="300" height="200">
+        </div>
+
+        <div class="gallery">
+            <img src="../images/shadow2.png" alt="shadow card" width="300" height="200">
+        </div>
+
+        <div class="gallery">
+            <img src="../images/water5.png" alt="water card" width="300" height="200">
+        </div>
+    </div>
+    <script>
+    // Get the modal
+        var modal = document.getElementById('myModal');
+
+    // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal
+        btn.onclick = function() {
+        modal.style.display = "block";
+        }
+
+    // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+        modal.style.display = "none";
+        }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+    </body>
+</html>
