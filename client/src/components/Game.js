@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
-import { Grid, Card, withStyles, } from "@material-ui/core";
+import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
 
@@ -31,37 +31,37 @@ class Game extends Component {
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
 			playerDeck: {
 				fire: 5,
 				water: 5,
 				light: 5,
 				shadow: 5,
-				earth: 5,
+				earth: 5
 			},
 			playerHand: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
 			playerField: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
 			playerDiscard: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
-			playerStagedCard: "",
+			playerStagedCard: ""
 		};
 		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
@@ -76,7 +76,7 @@ class Game extends Component {
 		this.setState( {
 			room: data.roomName,
 			playerName: data.playerName,
-			turn: data.turn
+			turn: data.turn,
 		}, function () {
 			if ( this.state.playerName !== this.state.turn ) {
 				this.state.client.initialDraw( this.state.room );
@@ -89,14 +89,14 @@ class Game extends Component {
 				playerDeck: data.player1.deck,
 				playerHand: data.player1.hand,
 				opponentsDeck: getCount( data.player2.deck ),
-				opponentsHand: getCount( data.player2.hand ),
+				opponentsHand: getCount( data.player2.hand )
 			} )
 		} else {
 			this.setState( {
 				playerDeck: data.player2.deck,
 				playerHand: data.player2.hand,
 				opponentsDeck: getCount( data.player1.deck ),
-				opponentsHand: getCount( data.player1.hand ),
+				opponentsHand: getCount( data.player1.hand )
 			} )
 		}
 		this.state.client.getClickedCard( this.onClickedCard );
@@ -112,14 +112,14 @@ class Game extends Component {
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
 				"playerHand": data.hand,
-				"playerStagedCard": data.stagedCard
+				"playerStagedCard": data.stagedCard,
 			}, function () {
 				this.state.client.counterOffer( this.state.room, this.onCounterOffer );
 			} );
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
-				"opponentsStagedCard": data.stagedCard
+				"opponentsStagedCard": data.stagedCard,
 			} )
 		}
 		this.state.client.getCounterOffer( this.onCounterOffer );
@@ -165,10 +165,16 @@ class Game extends Component {
 			this.setState( {
 				"opponentsField": data.field,
 				"opponentsStagedCard": data.stagedCard,
-				"turn": data.turn
+				"turn": data.turn,
 			}, function () {} );
 		} else {
-			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, "turn": data.turn } );
+			this.setState( {
+				"playerField": data.field,
+				"playerStagedCard": data.stagedCard,
+				"turn": data.turn,
+			}, function () {
+				this.state.client.drawCard( this.room, )
+			} );
 		}
 		this.state.client.getClickedCard( this.onClickedCard );
 	}

@@ -73,6 +73,6 @@ export default function () {
 		getDisconnect,
 		sendCounterOfferRes,
 		getCounterOfferRes,
-		drawCard,
+		drawCard
 	}
 }
