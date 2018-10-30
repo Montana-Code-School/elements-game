@@ -59,7 +59,7 @@ class DiscardPile extends Component {
 				component="img"
 				alt={this.props.className}
 				className={this.props.className}
-				image={require( `../images/discard.png` )}/>
+				image={require( `../images/discard_back.png` )}/>
 			<Modal
 				style={modalStyle}
 				backdropstyle={backdropStyle}
