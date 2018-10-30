@@ -4,9 +4,6 @@ import GameCard from "./GameCard";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
-import { Redirect } from "react-router-dom";
-
-// import { Link } from "react-router-dom";
 
 function getCount( cards ) {
 	let count = 0;
@@ -16,65 +13,64 @@ function getCount( cards ) {
 	return count;
 }
 class Game extends Component {
-	state = {
-		client: socket(),
-		message: "Waiting for opponent",
-		turn: "",
-		room: null,
-		afterFlip: "",
-		playerName: null,
-		opponentsDeck: 25,
-		opponentsDiscard: 0,
-		opponentsStagedCard: "",
-		opponentsHand: 0,
-		opponentsField: {
-			fire: 0,
-			water: 0,
-			light: 0,
-			shadow: 0,
-			earth: 0
-		},
-		playerDeck: {
-			fire: 5,
-			water: 5,
-			light: 5,
-			shadow: 5,
-			earth: 5
-		},
-		playerHand: {
-			fire: 0,
-			water: 0,
-			light: 0,
-			shadow: 0,
-			earth: 0
-		},
-		playerField: {
-			fire: 0,
-			water: 0,
-			light: 0,
-			shadow: 0,
-			earth: 0
-		},
-		playerDiscard: {
-			fire: 0,
-			water: 0,
-			light: 0,
-			shadow: 0,
-			earth: 0
-		},
-		playerStagedCard: ""
-	};
-	componentDidMount() {
-		this.join();
+	constructor() {
+		super();
+		this.state = {
+			client: socket(),
+			message: "Waiting for opponent",
+			turn: "",
+			room: null,
+			afterFlip: "",
+			playerName: null,
+			opponentsDeck: 25,
+			opponentsDiscard: 0,
+			opponentsStagedCard: "",
+			opponentsHand: 0,
+			opponentsField: {
+				fire: 0,
+				water: 0,
+				light: 0,
+				shadow: 0,
+				earth: 0
+			},
+			playerDeck: {
+				fire: 5,
+				water: 5,
+				light: 5,
+				shadow: 5,
+				earth: 5
+			},
+			playerHand: {
+				fire: 0,
+				water: 0,
+				light: 0,
+				shadow: 0,
+				earth: 0
+			},
+			playerField: {
+				fire: 0,
+				water: 0,
+				light: 0,
+				shadow: 0,
+				earth: 0
+			},
+			playerDiscard: {
+				fire: 0,
+				water: 0,
+				light: 0,
+				shadow: 0,
+				earth: 0
+			},
+			playerStagedCard: ""
+		};
+		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
-		this.state.client.getInitialDrawRes( this.onInitialDrawRes )
+		this.state.client.getInitialDrawRes( this.onInitialDrawRes );
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
-		console.log( "here we are in onDisconnect" )
 		window.alert( data );
 		this.state.client.disconnect();
-		// <Link to="/" replace />
 	}
 	onRoomJoin = ( data ) => {
 		this.setState( {
@@ -86,9 +82,6 @@ class Game extends Component {
 				this.state.client.initialDraw( this.state.room );
 			}
 		} );
-	}
-	join = () => {
-		this.state.client.join();
 	}
 	onInitialDrawRes = ( data ) => {
 		if ( this.state.playerName === this.state.turn ) {
@@ -115,54 +108,67 @@ class Game extends Component {
 			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 		}
 	}
-	 onClickedCard = ( data ) => {
+	onClickedCard = ( data ) => {
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
 				"playerHand": data.hand,
 				"playerStagedCard": data.stagedCard,
 			}, function () {
-				console.log( "player Clicked Card" )
-				this.state.client.counterOffer( this.state.room );
-				this.state.client.getCounterOffer( this.onCounterOffer );
+				this.state.client.counterOffer( this.state.room, this.onCounterOffer );
 			} );
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsStagedCard": data.stagedCard,
-			}, function () {
-				console.log( "listening for counter offer" )
-				this.state.client.getCounterOffer( this.onCounterOffer );
 			} )
 		}
+		this.state.client.getCounterOffer( this.onCounterOffer );
 	}
-	onCounterOffer = (data) => {
-		if (data.currentPlayer === this.state.playerName) {
-			this.setState({
-				"message": data.message
-			}, 	this.state.client.getFlippedCardRes(this.onFlippedCardRes ))
+
+	onCounterOffer = ( data ) => {
+		let result = "noCounter";
+		if ( data.currentPlayer === this.state.playerName ) {
+			this.setState( { "message": data.message } )
 		} else {
-		console.log("receiving counteroffer")
-		if ( this.state.playerHand.water >= 1 && ( this.state.playerHand.earth >= 1 || this.state.playerHand.shadow >= 1 || this.state.playerHand.light >= 1 || this.state.playerHand.fire >= 1 ) ) {
-			if ( window.confirm( "Would you like to counter?" ) ) {
-				window.alert( "pick card besides water to discard" )
-			} else {
-				this.state.client.flipCard( this.state.room );
+			if ( this.state.playerHand.water >= 1 && ( this.state.playerHand.earth >= 1 || this.state.playerHand.shadow >= 1 || this.state.playerHand.light >= 1 || this.state.playerHand.fire >= 1 ) ) {
+				if ( window.confirm( "Would you like to counter?" ) ) {
+					result = "blabla"
+					this.state.client.sendCounterOfferRes( this.state.room, result );
+				} else {
+					console.log( "no counter" )
+					result = "noCounter";
+					this.state.client.sendCounterOfferRes( this.state.room, result );
+				}
+			} else if ( this.state.playerHand.water === 0 ) {
+				window.alert( "Unfortunately you are not able to counter" );
+				result = "noCounter";
+				this.state.client.sendCounterOfferRes( this.state.room, result );
 			}
-		} else if ( this.state.playerHand.water === 0 ) {
-			window.alert( "Unfortunately you are not able to counter" )
-			this.state.client.flipCard( this.state.room )
 		}
-		this.state.client.getFlippedCardRes( this.onFlippedCardRes );}
+		console.log( "onCounterOffer", result );
+		if ( result === "noCounter" ) {
+			this.state.client.getFlippedCardRes( this.onFlippedCardRes );
+		} else {
+			this.state.client.getCounterOfferRes( this.onCounterOfferRes );
+		}
+	}
+	listenerOff( emit ) {
+		this.state.client.listenerOff( emit );
+	}
+	onCounterOfferRes = () => {
+		console.log( "onCounterOfferRes" );
+		// this.state.client.getFlippedCardRes(
+		// this.onFlippedCardRes );
 	}
 	onFlippedCardRes = ( data ) => {
+		console.log( "before update", this.state );
 		if ( this.state.playerName === data.playerName ) {
-			// console.log( "setting opponentsField", data.field )
-			this.setState( { "opponentsField": data.field, "opponentsStagedCard": data.stagedCard, } );
+			this.setState( { "opponentsField": data.field, "opponentsStagedCard": data.stagedCard, "turn": data.turn, } );
 		} else {
-			// console.log( "setting opponentsField1", data.field )
-			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, } );
-
+			console.log( "setting information about player" );
+			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, "turn": data.turn, } );
 		}
+		console.log( "after update", this.state )
 	}
 	render() {
 		const { classes } = this.props;

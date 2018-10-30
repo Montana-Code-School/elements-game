@@ -25,6 +25,7 @@ io.on( "connection", function ( client ) {
 		drawCard,
 		flipCard,
 		onClick,
+		onSwitchTurn
 	} = makeHandlers( client, rooms );
 	clientManager.addClient( client );
 	client.on( "join", function () {
@@ -106,23 +107,30 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on( "counterOffer", function ( roomName ) {
-		console.log("broadcasting counter offer")
-		io.sockets.in( roomName ).emit( "getCounterOffer", {"message": "Waiting for opponent...", "currentPlayer": client.id } );
+		io.sockets. in ( roomName ).emit( "getCounterOffer", {
+			"message": "Waiting for opponent...",
+			"currentPlayer": client.id
+		} );
 	} );
+	client.on( "sendCounterOfferRes", function ( roomName ) {
+		console.log( "server recieved counter Offer result" )
+		io.sockets. in ( roomName ).emit( "getCounterOfferRes" )
+	} )
 	client.on( "flipCard", function ( roomName ) {
 		game = playingRoomManager.getRoomById( roomName );
-		// console.log( game )
 		let opponent = "";
 		client.id === game.player1.clientId
 			? opponent = "player2"
 			: opponent = "player1";
 		game = flipCard( game, opponent );
+		game = onSwitchTurn( game );
 		game = playingRoomManager.updateRoom( game );
-		io.sockets. in ( roomName ).emit( "getFlippedCardRes", {
+		game = io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
 			"stagedCard": game[ opponent ].stagedCard,
 			"field": game[ opponent ].field,
-			"playerName": client.id
-		} )
+			"playerName": client.id,
+			"turn": game.turn,
+		} );
 	} );
 	client.on( "disconnect", function () {
 		console.log( "client disconnect...", client.id );

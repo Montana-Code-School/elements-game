@@ -27,7 +27,7 @@ module.exports = function ( client, rooms ) {
 			drawSingleCard();
 		}
 		function drawSingleCard() {
-			if ( keys.length === 0 )
+			if ( keys.length === 0 ) 
 				return;
 			const randomIndex = Math.floor( Math.random() * keys.length );
 			const randomKey = keys[ randomIndex ];
@@ -39,10 +39,9 @@ module.exports = function ( client, rooms ) {
 			deck[ randomKey ]--;
 			hand[ randomKey ]++;
 		}
-		return { deck, hand, };
+		return { deck, hand };
 	}
 	flipCard = ( game, opponent ) => {
-		// console.log( "opponent, game", opponent, "game", game )
 		let card = game[ opponent ].stagedCard;
 		game[ opponent ].stagedCard = "";
 		game[ opponent ].field[ card ]++;
@@ -128,12 +127,18 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		return { "game": game, "emitAction": emitAction, };
+		return { "game": game, "emitAction": emitAction };
+	}
+	onSwitchTurn = ( game ) => {
+		game.turn === game.player1.clientId
+			? game.turn = game.player2.clientId
+			: game.turn = game.player1.clientId;
+		return game;
 	}
 	getVictory = ( field ) => {
-		if ( !Object.values( field ).includes( 0 ) )
+		if ( !Object.values( field ).includes( 0 ) ) 
 			return "victory";
-		else
+		else 
 			return null;
 		}
 	return {
@@ -142,5 +147,6 @@ module.exports = function ( client, rooms ) {
 		drawCard,
 		flipCard,
 		onClick,
+		onSwitchTurn
 	};
 }
