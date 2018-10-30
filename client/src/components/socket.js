@@ -39,6 +39,9 @@ export default function () {
 	function getFlippedCardRes( onFlippedCardRes ) {
 		socket.on( "onFlippedCardRes", onFlippedCardRes );
 	}
+	function drawCard( roomName, currentPlayer ) {
+		socket.emit( "drawCard", roomName, currentPlayer );
+	}
 	function disconnect() {
 		socket.disconnect();
 	}
@@ -70,5 +73,6 @@ export default function () {
 		getDisconnect,
 		sendCounterOfferRes,
 		getCounterOfferRes,
+		drawCard,
 	}
 }
