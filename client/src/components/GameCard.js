@@ -11,13 +11,13 @@ class GameCard extends Component {
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
-				image={require( `../images/cardBack.png` )}/>
+				image={require( `../images/cardBackx.png` )}/>
 		} else if ( this.props.className === "opponentsDiscard" ) {
 			return <CardMedia
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
-				image={require( `../images/discard.png` )}/>
+				image={require( `../images/discard_back.png` )}/>
 		} else if ( this.props.className === "playerDiscard" ) {
 			return <DiscardPile className={this.props.className} cards={this.props.cards}/>
 		} else {
@@ -25,7 +25,7 @@ class GameCard extends Component {
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.multicardDisplayCard }`}
-				image={require( `../images/${ this.props.className }.png` )}
+				image={require( `../images/${ this.props.className }x.png` )}
 				onClick={this.props.onClick}/>
 		}
 	}
