@@ -18,16 +18,12 @@ module.exports = function ( client, rooms ) {
 		}
 		console.log( "all rooms", rooms );
 	}
-	drawCard = ( n = 1, player ) => {
+	drawCard = ( n, player ) => {
 		const deck = player.deck;
 		const hand = player.hand;
 		const keys = Object.keys( deck );
-
-		for ( let i = 0; i < n; i++ ) {
-			drawSingleCard();
-		}
 		function drawSingleCard() {
-			if ( keys.length === 0 )
+			if ( keys.length === 0 ) 
 				return;
 			const randomIndex = Math.floor( Math.random() * keys.length );
 			const randomKey = keys[ randomIndex ];
@@ -39,7 +35,10 @@ module.exports = function ( client, rooms ) {
 			deck[ randomKey ]--;
 			hand[ randomKey ]++;
 		}
-		return { deck, hand, };
+		for ( let i = 0; i < n; i++ ) {
+			drawSingleCard();
+		}
+		return { deck, hand };
 	}
 	flipCard = ( gameOnCardFlip, opponent ) => {
 		let card = gameOnCardFlip[ opponent ].stagedCard;
@@ -71,14 +70,15 @@ module.exports = function ( client, rooms ) {
 	onClick = ( cardType, gameOnClick, emitAction ) => {
 		let currentPlayer = "player1";
 		let opponent = "player2";
-		// if ( gameOnClick.player1.clientInfo === null ||
-		// gameOnClick.player2.clientInfo === null ) { 	console.log(
-		// "Player Disconnected" ); 	return }
+		if ( gameOnClick.player1.clientInfo === null || gameOnClick.player2.clientInfo === null ) {
+			console.log( "Player Disconnected" );
+			return
+		}
 		if ( gameOnClick.turn === gameOnClick.player1.clientId ) {
-			currentplayer = "player1";
+			currentPlayer = "player1";
 			opponent = "player2";
 		} else {
-			currentplayer = "player2";
+			currentPlayer = "player2";
 			opponent = "player1";
 		}
 		switch ( gameOnClick.afterFlip ) {
@@ -124,8 +124,7 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		console.log( "return result before return", gameOnClick, "\nemitAction", emitAction )
-		return { gameOnClick, emitAction };
+		return { gameOnClick, emitAction, };
 	}
 	onSwitchTurn = ( gameOnSwitchTurn ) => {
 		gameOnSwitchTurn.turn === gameOnSwitchTurn.player1.clientId
@@ -134,9 +133,9 @@ module.exports = function ( client, rooms ) {
 		return gameOnSwitchTurn;
 	}
 	getVictory = ( field ) => {
-		if ( !Object.values( field ).includes( 0 ) )
+		if ( !Object.values( field ).includes( 0 ) ) 
 			return "victory";
-		else
+		else 
 			return null;
 		}
 	return {
@@ -145,6 +144,6 @@ module.exports = function ( client, rooms ) {
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn,
+		onSwitchTurn
 	};
 }

@@ -69,6 +69,10 @@ class Game extends Component {
 		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
 		this.state.client.getInitialDrawRes( this.onInitialDrawRes );
+		this.state.client.getClickedCard( this.onClickedCard );
+		this.state.client.getCounterOffer( this.onCounterOffer );
+		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
+		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
@@ -111,7 +115,6 @@ class Game extends Component {
 				message: data.player2.message
 			} )
 		}
-		this.state.client.getClickedCard( this.onClickedCard );
 	}
 	clickHandler = ( e ) => {
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
@@ -131,7 +134,7 @@ class Game extends Component {
 				"playerHand": data.hand,
 				"playerStagedCard": data.stagedCard,
 			}, function () {
-				this.state.client.counterOffer( this.state.room, this.onCounterOffer );
+				this.state.client.counterOffer( this.state.room );
 			} );
 		} else {
 			this.setState( {
@@ -139,7 +142,6 @@ class Game extends Component {
 				"opponentsStagedCard": data.stagedCard,
 			} )
 		}
-		this.state.client.getCounterOffer( this.onCounterOffer );
 	}
 	onCounterOffer = ( data ) => {
 		if ( data.currentPlayer === this.state.playerName ) {
@@ -149,7 +151,7 @@ class Game extends Component {
 				this.setState( {
 					"modal": {
 						"open": true,
-						"message": "Would you like to counter?",
+						"message": "Would you like to counter? ",
 						"hasChoice": true
 					}
 				} )
@@ -158,12 +160,11 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You are unable to counter at this time.",
-						"hasNoWater": true
+						"hasNoWater": true,
 					}
-				})
+				} )
 			}
 		}
-		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
 	}
 	closeModal = () => {
 		this.setState( {
@@ -184,11 +185,13 @@ class Game extends Component {
 		} )
 	}
 	refuseCounter = () => {
-		this.setState({"modal": {
-										"hasNoWater": false}
-									}, function() {
-										this.closeOfferModal( "noCounter" );
-									})
+		this.setState( {
+			"modal": {
+				"hasNoWater": false
+			}
+		}, function () {
+			this.closeOfferModal( "noCounter" );
+		} )
 	}
 	acceptCounter = () => {
 		this.closeOfferModal( "blabla" );
@@ -198,33 +201,20 @@ class Game extends Component {
 			if ( result.player === this.state.playerName ) {
 				this.state.client.flipCard( this.state.room );
 			}
-			this.state.client.getFlippedCardRes( this.onFlippedCardRes );
-		} else {
-			this.state.client.getCounterActionRes( this.onActionOfferRes );
-		}
+		} else {}
 	}
-	// listenerOff( emit ) { 	this.state.client.listenerOff(
-	// emit ); } onCounterActionRes = () => { 	console.log(
-	// "onCounterOfferRes" );
-	// this.state.client.getFlippedCardRes(
-	// this.onFlippedCardRes ); }
 	onFlippedCardRes = ( data ) => {
 		if ( this.state.playerName === data.playerName ) {
 			this.setState( {
 				"opponentsField": data.field,
 				"opponentsStagedCard": data.stagedCard,
 				"turn": data.turn,
-				"afterFlip": data.afterFlip
+				"afterFlip": ""
 			}, function () {
 				this.state.client.drawCard( this.state.room, this.state.playerName )
 			} );
 		} else {
-			this.setState( {
-				"playerField": data.field,
-				"playerStagedCard": data.stagedCard,
-				"turn": data.turn,
-			 	"afterFlip": data.afterFlip
-			} );
+			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, "turn": data.turn, "afterFlip": "" } );
 		}
 		this.state.client.drawCardRes( this.onDrawCardRes );
 	}
@@ -233,17 +223,17 @@ class Game extends Component {
 			this.setState( {
 				"playerHand": data.hand,
 				"playerDeck": getCount( data.deck ),
-				"message": data.playerMessage
+				"message": data.playerMessage,
 			} )
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsDeck": getCount( data.deck ),
-				"message": data.opponentsMessage
+				"message": data.opponentsMessage,
 			} )
 		}
 	}
-	getModalContent() {
+	getModalContent = () => {
 		return <p>{this.state.modal.message}</p>
 	}
 	render() {
