@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Modal } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 let rand = () => ( Math.floor( Math.random() * 20 ) - 10 );
 const modalStyle = {
@@ -46,6 +47,12 @@ class CustomModal extends Component {
 				<button onClick={this.props.accept}>Yes</button>,
 				<button onClick={this.props.decline}>No</button>,
 			]
+		} else if (this.props.hasExit) {
+			buttonOptions = <Link to="/">
+				<button>Ok</button>
+			</Link>
+		} else if (this.props.hasNoWater) {
+			buttonOptions = <button onClick={this.props.decline}>Ok</button>
 		}
 		return buttonOptions;
 	}

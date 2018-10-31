@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
 import CustomModal from "./Modal";
+import ChatBox from "./ChatBox"
 import { Grid, Card, withStyles, } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
@@ -23,7 +24,9 @@ class Game extends Component {
 			modal: {
 				open: false,
 				message: "",
-				hasChoice: false
+				hasChoice: false,
+				hasExit: false,
+				hasNoWater: false
 			},
 			room: null,
 			afterFlip: "",
@@ -73,6 +76,7 @@ class Game extends Component {
 			"modal": {
 				"open": true,
 				"message": data,
+				"hasExit": true
 			}
 		}, function () {
 			this.state.client.disconnect();
@@ -154,10 +158,9 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You are unable to counter at this time.",
+						"hasNoWater": true
 					}
-				}, function () {
-					this.state.client.sendCounterOfferRes( this.state.room, "noCounter" );
-				} )
+				})
 			}
 		}
 		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
@@ -181,7 +184,11 @@ class Game extends Component {
 		} )
 	}
 	refuseCounter = () => {
-		this.closeOfferModal( "noCounter" );
+		this.setState({"modal": {
+										"hasNoWater": false}
+									}, function() {
+										this.closeOfferModal( "noCounter" );
+									})
 	}
 	acceptCounter = () => {
 		this.closeOfferModal( "blabla" );
@@ -248,6 +255,8 @@ class Game extends Component {
 				decline={this.refuseCounter}
 				accept={this.acceptCounter}
 				isOpen={this.state.modal.open}
+				hasExit={this.state.modal.hasExit}
+				hasNoWater={this.state.modal.hasNoWater}
 				closeModal={this.closeModal}>
 				{this.getModalContent()}
 			</CustomModal>
@@ -286,7 +295,7 @@ class Game extends Component {
 						<p>njkbkjbjkb</p>
 						</Card> */
 					}
-
+					<ChatBox/>
 					<Card className={classes.field}>
 						<Grid
 							container={true}
