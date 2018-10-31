@@ -38,7 +38,7 @@ module.exports = function ( client, rooms ) {
 		for ( let i = 0; i < n; i++ ) {
 			drawSingleCard();
 		}
-		return { deck, hand, };
+		return { deck, hand };
 	}
 	flipCard = ( gameOnCardFlip, opponent ) => {
 		let card = gameOnCardFlip[ opponent ].stagedCard;
@@ -124,8 +124,7 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		console.log( "return result before return", gameOnClick, "\nemitAction", emitAction )
-		return { gameOnClick, emitAction };
+		return { gameOnClick, emitAction, };
 	}
 	onSwitchTurn = ( gameOnSwitchTurn ) => {
 		gameOnSwitchTurn.turn === gameOnSwitchTurn.player1.clientId
@@ -145,6 +144,6 @@ module.exports = function ( client, rooms ) {
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn,
+		onSwitchTurn
 	};
 }

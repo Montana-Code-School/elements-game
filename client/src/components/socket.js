@@ -51,9 +51,9 @@ export default function () {
 		console.log( "onDisconnect happened" )
 		socket.on( "getDisconnect", onDisconnect );
 	}
-	function listenerOff( emit ) {
+	function listenerOff( emit, onDrawCardRes ) {
 		console.log( `turning off listener to ${ emit }` )
-		socket.off( `${ emit }` );
+		socket.off( `${ emit }`, onDrawCardRes );
 	}
 	socket.on( 'error', function ( err ) {
 		console.log( 'received socket error:' )
@@ -79,6 +79,6 @@ export default function () {
 		getCounterOfferRes,
 		drawCard,
 		drawCardRes,
-		listenerOff
+		listenerOff,
 	}
 }

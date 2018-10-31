@@ -126,6 +126,7 @@ class Game extends Component {
 		}
 	}
 	onClickedCard = ( data ) => {
+
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
 				"playerHand": data.hand,
@@ -160,7 +161,7 @@ class Game extends Component {
 						"message": "You are unable to counter at this time.",
 						"hasNoWater": true
 					}
-				})
+				} )
 			}
 		}
 		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
@@ -184,11 +185,13 @@ class Game extends Component {
 		} )
 	}
 	refuseCounter = () => {
-		this.setState({"modal": {
-										"hasNoWater": false}
-									}, function() {
-										this.closeOfferModal( "noCounter" );
-									})
+		this.setState( {
+			"modal": {
+				"hasNoWater": false
+			}
+		}, function () {
+			this.closeOfferModal( "noCounter" );
+		} )
 	}
 	acceptCounter = () => {
 		this.closeOfferModal( "blabla" );
@@ -196,6 +199,7 @@ class Game extends Component {
 	onCounterOfferRes = ( result ) => {
 		if ( result.result === "noCounter" ) {
 			if ( result.player === this.state.playerName ) {
+				console.log( "infinity" )
 				this.state.client.flipCard( this.state.room );
 			}
 			this.state.client.getFlippedCardRes( this.onFlippedCardRes );
@@ -224,8 +228,6 @@ class Game extends Component {
 				"playerHand": data.hand,
 				"playerDeck": getCount( data.deck ),
 				"message": data.playerMessage,
-			}, function () {
-				this.listenerOff( "drawCardRes" )
 			} )
 		} else {
 			this.setState( {
@@ -234,10 +236,8 @@ class Game extends Component {
 				"message": data.opponentsMessage,
 			} )
 		}
+		this.state.client.listenerOff( "drawCardRes", this.onDrawCardRes )
 		this.state.client.getClickedCard( this.onClickedCard );
-	}
-	listenerOff( emit ) {
-		this.state.client.listenerOff( emit );
 	}
 	onCounterActionRes = () => {
 		console.log( "onCounterOfferRes" );
@@ -246,8 +246,10 @@ class Game extends Component {
 	getModalContent() {
 		return <p>{this.state.modal.message}</p>
 	}
+	// localStorage.debug = 'socket.io-client:socket
+	// ,engine.io-client:socket ';
+
 	render() {
-		localStorage.debug = 'socket.io-client:socket ,engine.io-client:socket ';
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
 			<CustomModal
