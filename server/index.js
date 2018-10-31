@@ -79,25 +79,54 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on( "click", ( cardType, roomName, afterFlip ) => {
-		console.log( "card clicked" );
+		console.log( "cardType", cardType, "afterFlip", afterFlip )
 		let emitAction = "";
 		let gameOnClick = playingRoomManager.getRoomById( roomName );
 		gameOnClick.afterFlip = afterFlip;
-		console.log( "before onClick    ", gameOnClick );
-		onClick( cardType, gameOnClick, emitAction );
-		console.log( "after onClick    ", gameOnClick );
+		let res = onClick( cardType, gameOnClick, emitAction );
+		gameOnClick = res.game;
+		emitAction = res.emitAction
+		console.log( "after update", emitAction );
+		gameOnClick.afterFlip = "";
 		gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 		let currentPlayer = "";
-		client.id === gameOnClick.player1.clientId
-			? currentPlayer = "player1"
-			: currentPlayer = "player2";
+		if ( client.id === gameOnClick.player1.clientId ) {
+			currentPlayer = "player1";
+			opponent = "player2";
+		} else {
+			currentPlayer = "player2";
+			opponent = "player1";
+		}
+		console.log( "emitAction", emitAction )
 		switch ( emitAction ) {
-				// case "fireActionEmit": 	io.sockets. in ( roomName ).emit(
-				// emitAction, { 		"field":, 		"discard":, 		"emitAction": }
-				// ); 	break; case 	"shadowActionEmit": 	io.sockets. in (
-				// roomName ).emit( emitAction, { "blabla" } ); 	break; case
-				// "lightActionEmit": 	io.sockets. in ( roomName ).emit(
-				// emitAction, { "blabla" } ); 	break;
+			case "fireActionEmit":
+				io.sockets. in ( roomName ).emit( "cardActionRes", {
+					"field": gameOnClick[ opponent ].field,
+					"discard": gameOnClick[ opponent ].discard,
+					"emitAction": emitAction,
+					"afterFlip": gameOnClick.afterFlip,
+					"currentPlayer": client.id
+				} );
+				break;
+			case "shadowActionEmit":
+				console.log( "shadowActionEmit" );
+				io.sockets. in ( roomName ).emit( "cardActionRes", {
+					"hand": gameOnClick[ currentPlayer ].hand,
+					"discard": gameOnClick[ currentPlayer ].discard,
+					"emitAction": emitAction,
+					"afterFlip": gameOnClick.afterFlip,
+					"currentPlayer": client.id
+				} );
+				break;
+			case "lightActionEmit":
+				io.sockets. in ( roomName ).emit( "cardActionRes", {
+					"hand": gameOnClick[ currentPlayer ].hand,
+					"discard": gameOnClick[ currentPlayer ].discard,
+					"emitAction": emitAction,
+					"afterFlip": gameOnClick.afterFlip,
+					"currentPlayer": client.id,
+				} );
+				break;
 			default:
 				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": gameOnClick[ currentPlayer ].hand,

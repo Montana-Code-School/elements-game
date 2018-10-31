@@ -38,7 +38,7 @@ module.exports = function ( client, rooms ) {
 		for ( let i = 0; i < n; i++ ) {
 			drawSingleCard();
 		}
-		return { deck, hand };
+		return { deck, hand, };
 	}
 	flipCard = ( gameOnCardFlip, opponent ) => {
 		let card = gameOnCardFlip[ opponent ].stagedCard;
@@ -99,17 +99,14 @@ module.exports = function ( client, rooms ) {
 				emitAction = "counterActionEmit";
 				break;
 			case "lightAction":
-				// call for discard pile component
-				pick = prompt( `Available cards - Earth: ${ gameOnClick[ currentPlayer ].discard.earth}, Fire: ${ gameOnClick[ currentPlayer ].discard.fire}, Water: ${ gameOnClick[ currentPlayer ].discard.water}, Shadow: ${ gameOnClick[ currentPlayer ].discard.shadow}, Light: ${ gameOnClick[ currentPlayer ].discard.light }` );
-				gameOnClick[ currentPlayer ].discard[ pick ]--;
-				gameOnClick[ currentPlayer ].hand[ pick ]++;
+				gameOnClick[ currentPlayer ].discard[ cardType ]--;
+				gameOnClick[ currentPlayer ].hand[ cardType ]++;
 				gameOnClick.afterFlip = "";
 				emitAction = "lightActionEmit";
 				break;
 			case "shadowAction":
-				// pass turn to opponnent
-				gameOnClick[ opponent ].hand[ pick ]--;
-				gameOnClick[ opponent ].discard[ pick ]++;
+				gameOnClick[ opponent ].hand[ cardType ]--;
+				gameOnClick[ opponent ].discard[ cardType ]++;
 				gameOnClick.afterFlip = "";
 				emitAction = "shadowActionEmit";
 				break;
@@ -124,7 +121,7 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		return { gameOnClick, emitAction, };
+		return { "game": gameOnClick, "emitAction": emitAction, };
 	}
 	onSwitchTurn = ( gameOnSwitchTurn ) => {
 		gameOnSwitchTurn.turn === gameOnSwitchTurn.player1.clientId
@@ -144,6 +141,6 @@ module.exports = function ( client, rooms ) {
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn
+		onSwitchTurn,
 	};
 }

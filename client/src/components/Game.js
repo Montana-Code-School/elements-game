@@ -75,6 +75,7 @@ class Game extends Component {
 		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 		this.state.client.getDrawCardRes( this.onDrawCardRes );
 		this.state.client.getVictoryCheck( this.onVictoryCheck );
+		this.state.client.getCardActionRes( this.onCardActionRes )
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
@@ -135,6 +136,7 @@ class Game extends Component {
 					}
 				} )
 			} else {
+				console.log( "card clicked", e.currentTarget.className.split( " " )[2], "afterFlip", this.state.afterFlip )
 				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 			}
 		}
@@ -281,6 +283,53 @@ class Game extends Component {
 			//use modal for loooooser data.opponentsMessage
 		}
 	}
+	onCardActionRes = ( data ) => {
+		let player1 = "";
+		let player2 = "";
+		if ( data.currentPlayer === this.state.playerName ) {
+			player1 = "player";
+			player2 = "opponent";
+		} else {
+			console.log( "wrong thingy" )
+			player1 = "opponent";
+			player2 = "player";
+		}
+		switch ( data.emitAction ) {
+			case "fireActionEmit":
+				this.setState( {
+					afterFlip: data.afterFlip,
+					[ `${ player2 }sField` ]: data.field,
+					[ `${ player2 }sDiscard` ]: getCount( data.discard )
+				} )
+				break;
+			case "lightActionEmit":
+				this.setState( {
+					afterFlip: data.afterFlip,
+					[ `${ player1 }Discard` ]: data.discard,
+					[ `${ player1 }Hand` ]: data.hand
+				} )
+				break;
+			default:
+				if ( data.currentPlayer === this.state.playerName ) {
+					console.log( "if" )
+					this.setState( {
+						afterFlip: data.afterFlip,
+						"playerHand": data.hand,
+						"playerDiscard": data.discard
+					}, function () {
+						console.log( this.state )
+					} )
+				} else {
+					console.log( "else" )
+					this.setState( {
+						afterFlip: data.afterFlip,
+						"opponentsHand": getCount( data.hand ),
+						"opponentsDiscard": getCount( data.discard )
+					} )
+				}
+				break;
+		}
+	}
 	getModalContent = () => {
 		return <p>{this.state.modal.message}</p>
 	}
@@ -301,17 +350,17 @@ class Game extends Component {
 				container={true}
 				direction="column"
 				justify="space-evenly"
-				alignItems="center">
+			alignItems="center">
 				<Grid
 					container={true}
 					direction="row"
 					justify="space-around"
-					alignItems="center">
+				alignItems="center">
 					<p>{
 							this.state.opponentsStagedCard === ""
 								? "0"
 								: "1"
-						}</p>
+					}</p>
 					<GameCard className="opponentsStack"/>
 					<p>{this.state.opponentsHand}</p>
 					<Card className={classes.multicardDisplay}>
@@ -327,14 +376,14 @@ class Game extends Component {
 					container={true}
 					direction="row"
 					justify="space-around"
-					alignItems="center">
+				alignItems="center">
 					<ChatBox/>
 					<Card className={classes.field}>
 						<Grid
 							container={true}
 							direction="row"
 							justify="space-around"
-							alignItems="center">
+						alignItems="center">
 							<p>{this.state.opponentsField[ "water" ]}</p>
 							<p>{this.state.opponentsField[ "earth" ]}</p>
 							<p>{this.state.opponentsField[ "light" ]}</p>
@@ -352,7 +401,7 @@ class Game extends Component {
 							container={true}
 							direction="row"
 							justify="space-around"
-							alignItems="center">
+						alignItems="center">
 							<p>{this.state.playerField[ "water" ]}</p>
 							<p>{this.state.playerField[ "earth" ]}</p>
 							<p>{this.state.playerField[ "light" ]}</p>
@@ -366,7 +415,7 @@ class Game extends Component {
 					container={true}
 					direction="row"
 					justify="space-around"
-					alignItems="center">
+				alignItems="center">
 					<p>{this.state.playerDeck}</p>
 					<GameCard className="playerDeck"/>
 					<p>{getCount( this.state.playerDiscard )}</p>
