@@ -213,12 +213,18 @@ class Game extends Component {
 				"opponentsField": data.field,
 				"opponentsStagedCard": data.stagedCard,
 				"turn": data.turn,
+				"afterFlip": data.afterFlip
 			}, function () {
 				console.log( "trigger call to the server" )
 				this.state.client.drawCard( this.state.room, this.state.playerName )
 			} );
 		} else {
-			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, "turn": data.turn, } );
+			this.setState( {
+				"playerField": data.field,
+				"playerStagedCard": data.stagedCard,
+				"turn": data.turn,
+			 	"afterFlip": data.afterFlip
+			} );
 		}
 		this.state.client.drawCardRes( this.onDrawCardRes );
 	}
