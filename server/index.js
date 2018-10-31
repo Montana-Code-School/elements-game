@@ -79,15 +79,14 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on( "click", ( cardType, roomName, afterFlip ) => {
-		console.log( "recieved on click    ", cardType, "roomName   ", roomName, "flip   ", afterFlip )
+		console.log( "card clicked" );
 		let emitAction = "";
 		let gameOnClick = playingRoomManager.getRoomById( roomName );
 		gameOnClick.afterFlip = afterFlip;
-		console.log( "calling onClick", gameOnClick );
+		console.log( "before onClick    ", gameOnClick );
 		onClick( cardType, gameOnClick, emitAction );
-		console.log( "return result", gameOnClick )
+		console.log( "after onClick    ", gameOnClick );
 		gameOnClick = playingRoomManager.updateRoom( gameOnClick );
-		console.log( "this is after update: ", gameOnClick )
 		let currentPlayer = "";
 		client.id === gameOnClick.player1.clientId
 			? currentPlayer = "player1"
@@ -109,6 +108,7 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on( "counterOffer", function ( roomName ) {
+		console.log( "getCounterOffer" )
 		io.sockets. in ( roomName ).emit( "getCounterOffer", {
 			"message": "Waiting for opponent...",
 			"currentPlayer": client.id
@@ -122,6 +122,7 @@ io.on( "connection", function ( client ) {
 		} )
 	} );
 	client.on( "flipCard", function ( roomName ) {
+		console.log( "flipCard" )
 		let gameOnFlipCard = playingRoomManager.getRoomById( roomName );
 		let opponent = "";
 		client.id === gameOnFlipCard.player1.clientId
@@ -139,6 +140,7 @@ io.on( "connection", function ( client ) {
 		} );
 	} );
 	client.on( "drawCard", function ( roomName, currentPlayer ) {
+		console.log( "drawCard " )
 		let player = "player1";
 		let gameOnCardDraw = playingRoomManager.getRoomById( roomName );
 		gameOnCardDraw.player1.clientId === currentPlayer
@@ -146,7 +148,7 @@ io.on( "connection", function ( client ) {
 			: player = "player2";
 		drawCard( 1, gameOnCardDraw[ player ] );
 		gameOnCardDraw = playingRoomManager.updateRoom( gameOnCardDraw );
-		console.log( "sending drawCardRes" )
+
 		io.sockets. in ( roomName ).emit( "drawCardRes", {
 			"deck": gameOnCardDraw[ player ].deck,
 			"hand": gameOnCardDraw[ player ].hand,
