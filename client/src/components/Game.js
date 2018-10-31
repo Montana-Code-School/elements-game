@@ -217,6 +217,7 @@ class Game extends Component {
 		} else {}
 	}
 	onFlippedCardRes = ( data ) => {
+		console.log("this is onFlippedCardRes")
 		if ( this.state.playerName === data.playerName ) {
 			this.setState( {
 				"opponentsField": data.field,
@@ -225,6 +226,13 @@ class Game extends Component {
 				"message": data.message
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
+				if (this.state.afterFlip === "shadowAction") {
+					this.setState({
+						"modal": {
+							"open": true,
+							"message": "this is shadowAction modal."
+						}})
+				}
 				//shadow modal with this players hand for this player
 			} );
 		} else {
@@ -232,8 +240,21 @@ class Game extends Component {
 				"playerField": data.field,
 				"playerStagedCard": data.stagedCard,
 				"afterFlip": data.afterFlip,
-				"message": ""
+				"message": data.message
 			}, function () {
+				if (this.state.afterFlip === "lightAction") {
+					this.setState({
+						"modal": {
+							"open": true,
+							"message": "this is lightAction modal."
+						}})
+				} else if (this.state.afterFlip === "fireAction") {
+					this.setState({
+						"modal": {
+							"open": true,
+							"message": "this is fireAction modal."
+						}})
+				}
 				// fire modal with opponnents field for this player light
 				// modal with discard pile for this player
 			} );
