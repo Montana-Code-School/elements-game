@@ -48,6 +48,9 @@ export default function () {
 	function victoryCheck( roomName ) {
 		socket.emit( "victoryCheck", roomName )
 	}
+	function getVictoryCheck( onVictoryCheck ) {
+		socket.on( "onVictoryCheck", onVictoryCheck );
+	}
 	function disconnect() {
 		socket.disconnect();
 	}
@@ -82,7 +85,8 @@ export default function () {
 		getCounterOfferRes,
 		drawCard,
 		getDrawCardRes,
-		victoryCheck
-		// listenerOff,,,,,,
+		victoryCheck,
+		getVictoryCheck
+		// listenerOff,,,,,,,,
 	}
 }

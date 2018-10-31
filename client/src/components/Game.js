@@ -74,6 +74,7 @@ class Game extends Component {
 		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
 		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 		this.state.client.getDrawCardRes( this.onDrawCardRes );
+		this.state.client.getVictoryCheck( this.onVictoryCheck );
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
@@ -126,7 +127,16 @@ class Game extends Component {
 				}
 			} )
 		} else {
-			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+			if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] === 0 ) {
+				this.setState( {
+					"modal": {
+						"open": true,
+						"message": "You unable to play this card",
+					}
+				} )
+			} else {
+				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+			}
 		}
 	}
 	onClickedCard = ( data ) => {
@@ -244,6 +254,13 @@ class Game extends Component {
 			} )
 		}
 	}
+	onVictoryCheck = ( data ) => {
+		if ( this.state.playerName === data.playerName ) {
+			//use modal for win data.playerMessage
+		} else {
+			//use modal for loooooser data.opponentsMessage
+		}
+	}
 	getModalContent = () => {
 		return <p>{this.state.modal.message}</p>
 	}
@@ -291,10 +308,6 @@ class Game extends Component {
 					direction="row"
 					justify="space-around"
 					alignItems="center">
-					{/* <Card className={classes.chat}>
-						<p>njkbkjbjkb</p>
-						</Card> */
-					}
 					<ChatBox/>
 					<Card className={classes.field}>
 						<Grid
@@ -339,6 +352,7 @@ class Game extends Component {
 					<p>{getCount( this.state.playerDiscard )}</p>
 					<GameCard
 						className="playerDiscard"
+						onClick={this.clickHandler}
 						cards={this.state.playerDiscard}/>
 					<Card className={classes.multicardDisplay}>
 						<CardDisplay

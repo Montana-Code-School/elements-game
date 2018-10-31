@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { CardMedia, withStyles } from "@material-ui/core";
+import { CardMedia, withStyles, } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import DiscardPile from "./DiscardPile";
 class GameCard extends Component {
@@ -19,7 +19,10 @@ class GameCard extends Component {
 				className={`${ this.props.className} ${ classes.card }`}
 				image={require( `../images/discard_back.png` )}/>
 		} else if ( this.props.className === "playerDiscard" ) {
-			return <DiscardPile className={this.props.className} cards={this.props.cards}/>
+			return <DiscardPile
+				className={this.props.className}
+				cards={this.props.cards}
+				onClick={this.props.onClick}/>
 		} else {
 			return <CardMedia
 				component="img"
