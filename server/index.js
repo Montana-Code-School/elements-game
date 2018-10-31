@@ -129,13 +129,13 @@ io.on( "connection", function ( client ) {
 			: opponent = "player1";
 		gameOnFlipCard = flipCard( gameOnFlipCard, opponent );
 		gameOnFlipCard = onSwitchTurn( gameOnFlipCard );
-		gameOnFlipCard.flipCard = "";
 		gameOnFlipCard = playingRoomManager.updateRoom( gameOnFlipCard );
 		io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
 			"stagedCard": gameOnFlipCard[ opponent ].stagedCard,
 			"field": gameOnFlipCard[ opponent ].field,
 			"playerName": client.id,
-			"turn": gameOnFlipCard.turn
+			"turn": gameOnFlipCard.turn,
+			"afterFlip": gameOnFlipCard.afterFlip
 		} );
 	} );
 	client.on( "drawCard", function ( roomName, currentPlayer ) {

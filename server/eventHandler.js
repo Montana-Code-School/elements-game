@@ -27,7 +27,7 @@ module.exports = function ( client, rooms ) {
 			drawSingleCard();
 		}
 		function drawSingleCard() {
-			if ( keys.length === 0 ) 
+			if ( keys.length === 0 )
 				return;
 			const randomIndex = Math.floor( Math.random() * keys.length );
 			const randomKey = keys[ randomIndex ];
@@ -45,7 +45,7 @@ module.exports = function ( client, rooms ) {
 		let card = gameOnCardFlip[ opponent ].stagedCard;
 		gameOnCardFlip[ opponent ].stagedCard = "";
 		gameOnCardFlip[ opponent ].field[ card ]++;
-		switch ( gameOnCardFlip[ opponent ].stagedCard ) {
+		switch ( card ) {
 			case "earth":
 				let deckAndHand = drawCard( 1, gameOnCardFlip[ opponent ] );
 				gameOnCardFlip[ opponent ].deck = deckAndHand.deck;
@@ -114,7 +114,7 @@ module.exports = function ( client, rooms ) {
 				emitAction = "shadowActionEmit";
 				break;
 			default:
-				if ( gameOnClick[ currentPlayer ].hand[ cardType ] === 0 || gameOnClick[ currentPlayer ].stagedCard !== "empty" ) {
+				if ( gameOnClick[ currentPlayer ].hand[ cardType ] === 0 || gameOnClick[ currentPlayer ].stagedCard !== "" ) {
 					return;
 				} else {
 					gameOnClick[ currentPlayer ].hand[ cardType ]--;
@@ -134,9 +134,9 @@ module.exports = function ( client, rooms ) {
 		return gameOnSwitchTurn;
 	}
 	getVictory = ( field ) => {
-		if ( !Object.values( field ).includes( 0 ) ) 
+		if ( !Object.values( field ).includes( 0 ) )
 			return "victory";
-		else 
+		else
 			return null;
 		}
 	return {
