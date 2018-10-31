@@ -6,7 +6,7 @@ export default function () {
 		socket.emit( "join" );
 	};
 	function getRoomJoin( onRoomJoin ) {
-		socket.on( "roomJoin", onRoomJoin )
+		socket.on( "roomJoin", onRoomJoin );
 	}
 	function initialDraw( roomName ) {
 		socket.emit( "initialDraw", roomName );
@@ -24,20 +24,22 @@ export default function () {
 		socket.emit( "counterOffer", roomName );
 	}
 	function getCounterOffer( onCounterOffer ) {
-		console.log( "socket on getcounterOffer" )
 		socket.on( "getCounterOffer", onCounterOffer );
 	}
 	function flipCard( roomName ) {
 		socket.emit( "flipCard", roomName );
 	}
 	function sendCounterOfferRes( roomName, result ) {
-		socket.emit( "sendCounterOfferRes", roomName, result )
+		socket.emit( "sendCounterOfferRes", roomName, result );
 	}
 	function getCounterOfferRes( onCounterOfferRes ) {
 		socket.on( "getCounterOfferRes", onCounterOfferRes );
 	}
 	function getFlippedCardRes( onFlippedCardRes ) {
 		socket.on( "onFlippedCardRes", onFlippedCardRes );
+	}
+	function getCardActionRes( onCardActionRes ) {
+		socket.on( "cardActionRes", onCardActionRes );
 	}
 	function drawCard( roomName, currentPlayer ) {
 		socket.emit( "drawCard", roomName, currentPlayer );
@@ -46,7 +48,7 @@ export default function () {
 		socket.on( "drawCardRes", onDrawCardRes );
 	}
 	function victoryCheck( roomName ) {
-		socket.emit( "victoryCheck", roomName )
+		socket.emit( "victoryCheck", roomName );
 	}
 	function getVictoryCheck( onVictoryCheck ) {
 		socket.on( "onVictoryCheck", onVictoryCheck );
@@ -55,15 +57,11 @@ export default function () {
 		socket.disconnect();
 	}
 	function getDisconnect( onDisconnect ) {
-		console.log( "onDisconnect happened" )
 		socket.on( "getDisconnect", onDisconnect );
 	}
-	// function listenerOff( emit, onDrawCardRes ) {
-	// console.log( `turning off listener to ${ emit }` )
-	// socket.off( `${ emit }`, onDrawCardRes ); }
 	socket.on( 'error', function ( err ) {
-		console.log( 'received socket error:' )
-		console.log( err )
+		console.log( 'received socket error:' );
+		console.log( err );
 	} );
 	// socket.setTimeout(function () {    console.log('2 seconds
 	// passed, closing the socket');    socket.close();  },
@@ -86,7 +84,7 @@ export default function () {
 		drawCard,
 		getDrawCardRes,
 		victoryCheck,
-		getVictoryCheck
-		// listenerOff,,,,,,,,
+		getVictoryCheck,
+		getCardActionRes,
 	}
 }
