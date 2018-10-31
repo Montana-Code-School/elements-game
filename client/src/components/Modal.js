@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Modal } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-let rand = () => ( Math.floor( Math.random() * 20 ) - 10 );
 const modalStyle = {
 	position: "fixed",
 	zIndex: 1040,
@@ -22,8 +21,8 @@ const backdropStyle = {
 const dialogStyle = function () {
 	// we use some psuedo random coords so nested modals don"t
 	// sit right on top of each other.
-	let top = 50 + rand();
-	let left = 50 + rand();
+	let left = 50;
+  let top = 45;
 
 	return {
 		position: "absolute",
