@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+      <meta charset="utf-8">
+    <title>Player Staged Card Flip Animation</title>
+    <!-- <link rel="stylesheets" type="text/css" href="cardanimation.css">
+  <style> -->
+<style>
+/* This is the background of the flip-box container;the flip box must have the same size as this container otherwise you will see another edge of color around the edges of the flip-card. */
+    #flip-box {
+        background-color: green;
+        width: 80%;
+        height: 80%;
+        border: 10px solid rgb(136,69,19);
+        /* perspective: 100%; */
+    }
+/* Animation Properties for the flipping of the box */
+    #flip-box-inner {
+        background-color: orange;
+        position: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 1.5s;
+        transform-style: preserve-3d;
+    }
+
+    #flip-box:hover #flip-box-inner {
+        transform: rotateY(180deg);
+    }
+
+/* This is the container that houses the photo that is going to flip on animation . its size does not correlate well with the background yet*/
+    #flip-box-front {
+        width: ;
+        height: ;
+        backface-visibility: hidden;
+    }
+
+    #flip-box-back {
+        width: 80%;
+        height: 100%;
+        backface-visibility: hidden;
+      transform: rotateY(180deg);
+    }
+</style>
+</head>
+<body>
+
+
+
+        <div id="flip-box-front">
+            <img src=
+            "./images/picture_back_before_discard.png"
+            alt="playingdeckcard"
+            width="100%"
+            height="100%"></img>
+        </div>
+
+    <div class="flip-box-back">
+        <p><img src="./images/picture_back_after_staging.png" alt=" "
+        width="80%"
+        height="100"></img>
+        </p>
+    </div>
+
+
+    <div id="flip-box">
+    <div id="flip-box-inner">
+  <script></script>
+</body>
+</html>This is the front

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+/* This lets you set the styles of the container element while the picture is turning...the "behind the picture container"... */
+	.flip-box {
+	  background-color: rgb(153,204,255);
+	  width: 550px;
+	}
+/* Text and Animation Effects for the flipping of the card  event*/
+	.flip-box-inner {
+    	position: center;
+    	width: 100%;
+    	height: 100%;
+    	text-align: center;
+/* Control how fast you want the picture to complete its flipping animation. */
+    	  transition: transform 1.5s;
+    	  transform-style: preserve-3d;
+	}
+
+    .flip-box-back {
+        transform: rotateY(180deg);
+    }
+
+<!-- /* what actions do you want to have happen when you hover over the flip box */ -->
+	.flip-box:hover .flip-box-inner {
+        <!-- transform: rotate(360deg);
+        transition: transform 1.5s; -->
+        transform: rotateY(180deg);
+        transition: transform 1.5s;
+        webkit-animation-name: spin;
+        -webkit-animation-play-state: running;
+        animation: spin 1.5s linear;
+        <!-- animation: spin 1.5s linear; -->
+        <!-- animation-play-state: running; -->
+        }
+<!-- This is the code that tells the card how it is to move;and in what directions. It also controls how many times on one-hover event that you want it to spin before coming to a stop (the animation ends) -->
+        @keyframes spin
+        {  to {
+            transform: rotate(1turn);
+         }}
+        @-webkit-keyframes spin
+        { to {
+            -webkit-transform: rotate(1turn);
+        }}
+	}
+
+
+<!-- /* Set properties of the box behind the picture */ -->
+	.flip-box-front, .flip-box-back {
+	    position: absolute;
+	    width: 100%;
+	    height: 100%;
+	    backface-visibility: hidden;
+	}
+
+	.flip-box-back {
+	    transform: rotateY(180deg);
+	}
+	</style>
+	</head>
+	<body>
+		<div class="flip-box">
+	  	    <div class="flip-box-inner">
+	           <div class="flip-box-front">
+	                   <img        src="./images/playerstagedcard.png"
+                        alt="card beforestaging" width="100%"
+                        height="100%">
+                        </img>
+	            </div>
+	    <div class="flip-box-back">
+        <div id="cardoptions"></div>
+            <img src="./images/water.png"
+             alt="cardafterstaging" width="100%"
+             height="100%"></img>
+	    </div>
+	        </div>
+	    </div>
+<script src="cardanimation.js"></script>
+</body>
+</html>
