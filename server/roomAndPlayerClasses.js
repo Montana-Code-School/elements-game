@@ -15,7 +15,7 @@ class Player {
 		this.field = new Pile( 0, 0, 0, 0, 0 );
 		this.hand = new Pile( 0, 0, 0, 0, 0 );
 		this.discard = new Pile( 0, 0, 0, 0, 0 );
-		this.stagedCard = "empty";
+		this.stagedCard = "";
 	}
 }
 class Room {
