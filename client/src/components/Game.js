@@ -25,7 +25,8 @@ class Game extends Component {
 				open: false,
 				message: "",
 				hasChoice: false,
-				hasExit: false
+				hasExit: false,
+				hasNoWater: false
 			},
 			room: null,
 			afterFlip: "",
@@ -157,10 +158,9 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You are unable to counter at this time.",
+						"hasNoWater": true
 					}
-				}, function () {
-					this.state.client.sendCounterOfferRes( this.state.room, "noCounter" );
-				} )
+				})
 			}
 		}
 		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
@@ -184,7 +184,11 @@ class Game extends Component {
 		} )
 	}
 	refuseCounter = () => {
-		this.closeOfferModal( "noCounter" );
+		this.setState({"modal": {
+										"hasNoWater": false}
+									}, function() {
+										this.closeOfferModal( "noCounter" );
+									})
 	}
 	acceptCounter = () => {
 		this.closeOfferModal( "blabla" );
@@ -245,6 +249,7 @@ class Game extends Component {
 				accept={this.acceptCounter}
 				isOpen={this.state.modal.open}
 				hasExit={this.state.modal.hasExit}
+				hasNoWater={this.state.modal.hasNoWater}
 				closeModal={this.closeModal}>
 				{this.getModalContent()}
 			</CustomModal>

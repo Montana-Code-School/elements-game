@@ -51,6 +51,8 @@ class CustomModal extends Component {
 			buttonOptions = <Link to="/">
 				<button>Ok</button>
 			</Link>
+		} else if (this.props.hasNoWater) {
+			buttonOptions = <button onClick={this.props.decline}>Ok</button>
 		}
 		return buttonOptions;
 	}
