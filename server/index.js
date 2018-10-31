@@ -125,7 +125,6 @@ io.on( "connection", function ( client ) {
 		client.id === gameOnFlipCard.player1.clientId
 			? opponent = "player2"
 			: opponent = "player1";
-		let card = game
 		gameOnFlipCard = flipCard( gameOnFlipCard, opponent );
 		gameOnFlipCard = playingRoomManager.updateRoom( gameOnFlipCard );
 		io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
