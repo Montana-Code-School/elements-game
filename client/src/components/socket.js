@@ -42,8 +42,11 @@ export default function () {
 	function drawCard( roomName, currentPlayer ) {
 		socket.emit( "drawCard", roomName, currentPlayer );
 	}
-	function drawCardRes( onDrawCardRes ) {
+	function getDrawCardRes( onDrawCardRes ) {
 		socket.on( "drawCardRes", onDrawCardRes );
+	}
+	function victoryCheck( roomName ) {
+		socket.emit( "victoryCheck", roomName )
 	}
 	function disconnect() {
 		socket.disconnect();
@@ -78,7 +81,8 @@ export default function () {
 		sendCounterOfferRes,
 		getCounterOfferRes,
 		drawCard,
-		drawCardRes,
-		// listenerOff,,
+		getDrawCardRes,
+		victoryCheck
+		// listenerOff,,,,,,
 	}
 }

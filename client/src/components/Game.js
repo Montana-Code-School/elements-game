@@ -73,6 +73,7 @@ class Game extends Component {
 		this.state.client.getCounterOffer( this.onCounterOffer );
 		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
 		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
+		this.state.client.getDrawCardRes( this.onDrawCardRes );
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
@@ -208,15 +209,25 @@ class Game extends Component {
 			this.setState( {
 				"opponentsField": data.field,
 				"opponentsStagedCard": data.stagedCard,
-				"turn": data.turn,
-				"afterFlip": ""
+				"afterFlip": data.afterFlip,
+				"message": data.message
 			}, function () {
-				this.state.client.drawCard( this.state.room, this.state.playerName )
+				this.state.client.victoryCheck( this.state.room );
+
+				//shadow modal with this players hand for this player
 			} );
 		} else {
-			this.setState( { "playerField": data.field, "playerStagedCard": data.stagedCard, "turn": data.turn, "afterFlip": "" } );
+			this.setState( {
+				"playerField": data.field,
+				"playerStagedCard": data.stagedCard,
+				"afterFlip": data.afterFlip,
+				"message": ""
+			}, function () {
+				// fire modal with opponnents field for this player light
+				// modal with discard pile for this player
+			} );
 		}
-		this.state.client.drawCardRes( this.onDrawCardRes );
+
 	}
 	onDrawCardRes = ( data ) => {
 		if ( data.playerName === this.state.playerName ) {
