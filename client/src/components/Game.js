@@ -240,7 +240,7 @@ class Game extends Component {
 						<p>njkbkjbjkb</p>
 						</Card> */
 					}
-
+					<ChatBox/>
 					<Card className={classes.field}>
 						<Grid
 							container={true}
