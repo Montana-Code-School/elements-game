@@ -79,24 +79,25 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 	client.on( "click", ( cardType, roomName, afterFlip ) => {
+		console.log( "recieved on click    ", cardType, "roomName   ", roomName, "flip   ", afterFlip )
 		let emitAction = "";
 		let gameOnClick = playingRoomManager.getRoomById( roomName );
 		gameOnClick.afterFlip = afterFlip;
-		gameOnClick = onClick( cardType, gameOnClick );
-		console.log( "back from onclick", gameOnClick.emitAction )
-		emitAction = gameOnClick.emitAction;
-		gameOnClick = playingRoomManager.updateRoom( gameOnClick.game );
-		// console.log( "this is after update: ", game )
+		console.log( "calling onClick", gameOnClick );
+		onClick( cardType, gameOnClick, emitAction );
+		console.log( "return result", gameOnClick )
+		gameOnClick = playingRoomManager.updateRoom( gameOnClick );
+		console.log( "this is after update: ", gameOnClick )
 		let currentPlayer = "";
 		client.id === gameOnClick.player1.clientId
 			? currentPlayer = "player1"
 			: currentPlayer = "player2";
 		switch ( emitAction ) {
 				// case "fireActionEmit": 	io.sockets. in ( roomName ).emit(
-				// emitAction, { "field":,"discard": } ); 	break; case
+				// emitAction, { 		"field":, 		"discard": 	} ); 	break; case
 				// "shadowActionEmit": 	io.sockets. in ( roomName ).emit(
 				// emitAction, { "blabla" } ); 	break; case
-				// "lightActionEmit": io.sockets. in ( roomName ).emit(
+				// "lightActionEmit": 	io.sockets. in ( roomName ).emit(
 				// emitAction, { "blabla" } ); 	break;
 			default:
 				io.sockets. in ( roomName ).emit( "cardClicked", {
@@ -113,10 +114,13 @@ io.on( "connection", function ( client ) {
 			"currentPlayer": client.id,
 		} );
 	} );
-	client.on( "sendCounterOfferRes", function ( roomName ) {
+	client.on( "sendCounterOfferRes", function ( roomName, result ) {
 		console.log( "server recieved counter Offer result" )
-		io.sockets. in ( roomName ).emit( "getCounterOfferRes" )
-	} )
+		io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
+			"result": result,
+			"player": client.id,
+		} )
+	} );
 	client.on( "flipCard", function ( roomName ) {
 		let gameOnFlipCard = playingRoomManager.getRoomById( roomName );
 		let opponent = "";
@@ -125,6 +129,7 @@ io.on( "connection", function ( client ) {
 			: opponent = "player1";
 		gameOnFlipCard = flipCard( gameOnFlipCard, opponent );
 		gameOnFlipCard = onSwitchTurn( gameOnFlipCard );
+		gameOnFlipCard.flipCard = "";
 		gameOnFlipCard = playingRoomManager.updateRoom( gameOnFlipCard );
 		io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
 			"stagedCard": gameOnFlipCard[ opponent ].stagedCard,

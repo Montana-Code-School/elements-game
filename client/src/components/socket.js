@@ -26,12 +26,11 @@ export default function () {
 	function getCounterOffer( onCounterOffer ) {
 		socket.on( "getCounterOffer", onCounterOffer );
 	}
+	function flipCard( roomName ) {
+		socket.emit( "flipCard", roomName );
+	}
 	function sendCounterOfferRes( roomName, result ) {
-		if ( result === "noCounter" ) {
-			socket.emit( "flipCard", roomName );
-		} else {
-			socket.emit( "sendCounterOfferRes", roomName, );
-		}
+		socket.emit( "sendCounterOfferRes", roomName, result )
 	}
 	function getCounterOfferRes( onCounterOfferRes ) {
 		socket.on( "getCounterOfferRes", onCounterOfferRes );
@@ -52,9 +51,8 @@ export default function () {
 		console.log( "onDisconnect happened" )
 		socket.on( "getDisconnect", onDisconnect );
 	}
-	function listenerOff( emit ) {
-		socket.off( `${ emit }` );
-	}
+	// function listenerOff( emit ) { 	socket.off( `${ emit }`
+	// ); }
 	socket.on( 'error', function ( err ) {
 		console.log( 'received socket error:' )
 		console.log( err )
@@ -71,12 +69,13 @@ export default function () {
 		getClickedCard,
 		counterOffer,
 		getCounterOffer,
+		flipCard,
 		getFlippedCardRes,
 		disconnect,
 		getDisconnect,
 		sendCounterOfferRes,
 		getCounterOfferRes,
 		drawCard,
-		drawCardRes,
+		drawCardRes
 	}
 }

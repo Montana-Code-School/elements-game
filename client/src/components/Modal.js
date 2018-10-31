@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Modal, CardMedia, withStyles } from "@material-ui/core";
-
+import { Modal } from "@material-ui/core";
 
 let rand = () => ( Math.floor( Math.random() * 20 ) - 10 );
 const modalStyle = {
@@ -20,8 +19,8 @@ const backdropStyle = {
 };
 
 const dialogStyle = function () {
-	// we use some psuedo random coords so nested modals don"t sit right on top of
-	// each other.
+	// we use some psuedo random coords so nested modals don"t
+	// sit right on top of each other.
 	let top = 50 + rand();
 	let left = 50 + rand();
 
@@ -40,29 +39,30 @@ const dialogStyle = function () {
 
 class CustomModal extends Component {
 
-  getButtonOptions(){
-    let buttonOptions = <button onClick={this.props.closeModal}>Close</button>
-    if (this.props.hasChoice){
-      buttonOptions = [<button onClick={this.props.accept}>Yes</button>,
-                       <button onClick={this.props.decline}>No</button>]
-    }
-    return buttonOptions;
-  }
+	getButtonOptions() {
+		let buttonOptions = <button onClick={this.props.closeModal}>Close</button>
+		if ( this.props.hasChoice ) {
+			buttonOptions = [
+				<button onClick={this.props.accept}>Yes</button>,
+				<button onClick={this.props.decline}>No</button>,
+			]
+		}
+		return buttonOptions;
+	}
 
 	render() {
-		return (
-      <div>
-  			<Modal
-  				style={modalStyle}
-  				backdropstyle={backdropStyle}
-  				open={this.props.isOpen}
-  				onClose={this.props.closeModal}>
-  				<div style={dialogStyle()}>
-            {this.props.children}
-            {this.getButtonOptions()}
-  				</div>
-  			</Modal>
-  		</div> );
+		return ( <div>
+			<Modal
+				style={modalStyle}
+				backdropstyle={backdropStyle}
+				open={this.props.isOpen}
+				onClose={this.props.closeModal}>
+				<div style={dialogStyle()}>
+					{this.props.children}
+					{this.getButtonOptions()}
+				</div>
+			</Modal>
+		</div> );
 	}
 
 }

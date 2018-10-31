@@ -39,7 +39,7 @@ module.exports = function ( client, rooms ) {
 			deck[ randomKey ]--;
 			hand[ randomKey ]++;
 		}
-		return { deck, hand };
+		return { deck, hand, };
 	}
 	flipCard = ( gameOnCardFlip, opponent ) => {
 		let card = gameOnCardFlip[ opponent ].stagedCard;
@@ -68,15 +68,12 @@ module.exports = function ( client, rooms ) {
 		return gameOnCardFlip;
 	}
 
-	onClick = ( cardType, gameOnClick ) => {
-		let gameUpdate = {};
-		let emitAction = "";
+	onClick = ( cardType, gameOnClick, emitAction ) => {
 		let currentPlayer = "player1";
 		let opponent = "player2";
-		if ( gameOnClick.player1.clientInfo === null || gameOnClick.player2.clientInfo === null ) {
-			console.log( "Player Disconnected" );
-			return
-		}
+		// if ( gameOnClick.player1.clientInfo === null ||
+		// gameOnClick.player2.clientInfo === null ) { 	console.log(
+		// "Player Disconnected" ); 	return }
 		if ( gameOnClick.turn === gameOnClick.player1.clientId ) {
 			currentplayer = "player1";
 			opponent = "player2";
@@ -127,7 +124,8 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		return { "game": gameOnClick, "emitAction": emitAction };
+		console.log( "return result before return", gameOnClick, "\nemitAction", emitAction )
+		return { gameOnClick, emitAction };
 	}
 	onSwitchTurn = ( gameOnSwitchTurn ) => {
 		gameOnSwitchTurn.turn === gameOnSwitchTurn.player1.clientId
@@ -147,6 +145,6 @@ module.exports = function ( client, rooms ) {
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn
+		onSwitchTurn,
 	};
 }
