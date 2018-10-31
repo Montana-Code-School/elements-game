@@ -18,14 +18,10 @@ module.exports = function ( client, rooms ) {
 		}
 		console.log( "all rooms", rooms );
 	}
-	drawCard = ( n = 1, player ) => {
+	drawCard = ( n, player ) => {
 		const deck = player.deck;
 		const hand = player.hand;
 		const keys = Object.keys( deck );
-
-		for ( let i = 0; i < n; i++ ) {
-			drawSingleCard();
-		}
 		function drawSingleCard() {
 			if ( keys.length === 0 ) 
 				return;
@@ -38,6 +34,9 @@ module.exports = function ( client, rooms ) {
 			}
 			deck[ randomKey ]--;
 			hand[ randomKey ]++;
+		}
+		for ( let i = 0; i < n; i++ ) {
+			drawSingleCard();
 		}
 		return { deck, hand, };
 	}
@@ -71,9 +70,10 @@ module.exports = function ( client, rooms ) {
 	onClick = ( cardType, gameOnClick, emitAction ) => {
 		let currentPlayer = "player1";
 		let opponent = "player2";
-		// if ( gameOnClick.player1.clientInfo === null ||
-		// gameOnClick.player2.clientInfo === null ) { 	console.log(
-		// "Player Disconnected" ); 	return }
+		if ( gameOnClick.player1.clientInfo === null || gameOnClick.player2.clientInfo === null ) {
+			console.log( "Player Disconnected" );
+			return
+		}
 		if ( gameOnClick.turn === gameOnClick.player1.clientId ) {
 			currentplayer = "player1";
 			opponent = "player2";

@@ -196,11 +196,6 @@ class Game extends Component {
 			this.state.client.getCounterActionRes( this.onActionOfferRes );
 		}
 	}
-	// listenerOff( emit ) { 	this.state.client.listenerOff(
-	// emit ); } onCounterActionRes = () => { 	console.log(
-	// "onCounterOfferRes" );
-	// this.state.client.getFlippedCardRes(
-	// this.onFlippedCardRes ); }
 	onFlippedCardRes = ( data ) => {
 		if ( this.state.playerName === data.playerName ) {
 			this.setState( {
@@ -208,6 +203,7 @@ class Game extends Component {
 				"opponentsStagedCard": data.stagedCard,
 				"turn": data.turn,
 			}, function () {
+				console.log( "trigger call to the server" )
 				this.state.client.drawCard( this.state.room, this.state.playerName )
 			} );
 		} else {
@@ -220,20 +216,31 @@ class Game extends Component {
 			this.setState( {
 				"playerHand": data.hand,
 				"playerDeck": getCount( data.deck ),
-				"message": data.playerMessage
+				"message": data.playerMessage,
+			}, function () {
+				this.listenerOff( "drawCardRes" )
 			} )
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsDeck": getCount( data.deck ),
-				"message": data.opponentsMessage
+				"message": data.opponentsMessage,
 			} )
 		}
+		this.state.client.getClickedCard( this.onClickedCard );
+	}
+	listenerOff( emit ) {
+		this.state.client.listenerOff( emit );
+	}
+	onCounterActionRes = () => {
+		console.log( "onCounterOfferRes" );
+		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 	}
 	getModalContent() {
 		return <p>{this.state.modal.message}</p>
 	}
 	render() {
+		localStorage.debug = 'socket.io-client:socket ,engine.io-client:socket ';
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
 			<CustomModal
