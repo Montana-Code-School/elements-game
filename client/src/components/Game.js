@@ -119,8 +119,8 @@ class Game extends Component {
 		}
 	}
 	clickHandler = ( e ) => {
-		console.log( e.currentTarget.className.split( " " )[ 2 ] )
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
+			console.log("It is not your turn modal")
 			this.setState( {
 				"modal": {
 					"open": true,
@@ -129,17 +129,21 @@ class Game extends Component {
 				}
 			} )
 		} else {
+			console.log(" It is your turn")
 			if ( this.state.afterFlip === "fireAction" && getCount( this.state.opponentsField ) === 0 ) {
+				console.log("this is fire action")
 				this.setState( {
 					"modal": {
 						"open": true,
 						"message": "You are unable to discard card from opponentsField",
 						"buttonFlag": "closeButton"
 					}
+
 				}, function () {
 					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 				} )
 			} else if ( this.state.afterFlip === "lightAction" && getCount( this.state.playerDiscard ) === 0 ) {
+				console.log("this is light action")
 				this.setState( {
 					"modal": {
 						"open": true,
@@ -150,6 +154,7 @@ class Game extends Component {
 					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 				} )
 			} else if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] === 0 ) {
+				console.log("no card exists")
 				this.setState( {
 					"modal": {
 						"open": true,
@@ -158,6 +163,8 @@ class Game extends Component {
 					}
 				} )
 			} else {
+				console.log('last condition')
+				this.closeModal()
 				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 			}
 		}
