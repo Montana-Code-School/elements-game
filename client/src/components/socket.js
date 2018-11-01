@@ -35,6 +35,9 @@ export default function () {
 	function getCounterOfferRes( onCounterOfferRes ) {
 		socket.on( "getCounterOfferRes", onCounterOfferRes );
 	}
+	function getCounterActionRes( onCounterActionRes ) {
+		socket.on( "onCounterActionRes", onCounterActionRes )
+	};
 	function getFlippedCardRes( onFlippedCardRes ) {
 		socket.on( "onFlippedCardRes", onFlippedCardRes );
 	}
@@ -48,18 +51,15 @@ export default function () {
 		socket.on( "drawCardRes", onDrawCardRes );
 	}
 	function victoryCheck( roomName ) {
-		console.log("this is victoryCheck")
 		socket.emit( "victoryCheck", roomName );
 	}
 	function getVictoryCheck( onVictoryCheck ) {
-		console.log("a victory was detected!")
 		socket.on( "onVictoryCheck", onVictoryCheck );
 	}
 	function switchTurn( roomName ) {
 		socket.emit( "switchTurn", roomName );
 	}
 	function getNewTurn( onNewTurn ) {
-		console.log( "listening for getNewTurn" )
 		socket.on( "getNewTurn", onNewTurn );
 	}
 	function disconnect() {
@@ -90,6 +90,7 @@ export default function () {
 		getDisconnect,
 		sendCounterOfferRes,
 		getCounterOfferRes,
+		getCounterActionRes,
 		drawCard,
 		getDrawCardRes,
 		victoryCheck,
