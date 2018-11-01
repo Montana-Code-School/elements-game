@@ -41,8 +41,8 @@ export default function () {
 	function getCardActionRes( onCardActionRes ) {
 		socket.on( "cardActionRes", onCardActionRes );
 	}
-	function drawCard( roomName, currentPlayer ) {
-		socket.emit( "drawCard", roomName, currentPlayer );
+	function drawCard( roomName ) {
+		socket.emit( "drawCard", roomName );
 	}
 	function getDrawCardRes( onDrawCardRes ) {
 		socket.on( "drawCardRes", onDrawCardRes );
@@ -85,6 +85,6 @@ export default function () {
 		getDrawCardRes,
 		victoryCheck,
 		getVictoryCheck,
-		getCardActionRes,
+		getCardActionRes
 	}
 }
