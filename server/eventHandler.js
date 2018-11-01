@@ -18,14 +18,10 @@ module.exports = function ( client, rooms ) {
 		}
 		console.log( "all rooms", rooms );
 	}
-	drawCard = ( n = 1, player ) => {
+	drawCard = ( n, player ) => {
 		const deck = player.deck;
 		const hand = player.hand;
 		const keys = Object.keys( deck );
-
-		for ( let i = 0; i < n; i++ ) {
-			drawSingleCard();
-		}
 		function drawSingleCard() {
 			if ( keys.length === 0 ) 
 				return;
@@ -39,108 +35,106 @@ module.exports = function ( client, rooms ) {
 			deck[ randomKey ]--;
 			hand[ randomKey ]++;
 		}
+		for ( let i = 0; i < n; i++ ) {
+			drawSingleCard();
+		}
 		return { deck, hand };
 	}
-	flipCard = ( game, opponent ) => {
-		let card = game[ opponent ].stagedCard;
-		game[ opponent ].stagedCard = "";
-		game[ opponent ].field[ card ]++;
-		switch ( game[ opponent ].stagedCard ) {
+	flipCard = ( gameOnCardFlip, opponent ) => {
+		let card = gameOnCardFlip[ opponent ].stagedCard;
+		gameOnCardFlip[ opponent ].stagedCard = "";
+		gameOnCardFlip[ opponent ].field[ card ]++;
+		switch ( card ) {
 			case "earth":
-				let deckAndHand = drawCard( 1, game[ opponent ] );
-				game[ opponent ].deck = deckAndHand.deck;
-				game[ opponent ].hand = deckAndHand.hand;
+				let deckAndHand = drawCard( 1, gameOnCardFlip[ opponent ] );
+				gameOnCardFlip[ opponent ].deck = deckAndHand.deck;
+				gameOnCardFlip[ opponent ].hand = deckAndHand.hand;
 				break;
 			case
 				"fire":
-				game.afterFlip = "fireAction";
+				gameOnCardFlip.afterFlip = "fireAction";
 				break;
 			case
 				"shadow":
-				game.afterFlip = "shadowAction";
+				gameOnCardFlip.afterFlip = "shadowAction";
 				break;
 			case "light":
-				game.afterFlip = "lightAction";
+				gameOnCardFlip.afterFlip = "lightAction";
 				break;
 			default:
 				break;
 		}
-		return game;
+		return gameOnCardFlip;
 	}
-
-	onClick = ( cardType, game ) => {
-		let gameUpdate = {};
-		let emitAction = "";
+	onClick = ( cardType, gameOnClick, emitAction ) => {
 		let currentPlayer = "player1";
 		let opponent = "player2";
-		if ( game.player1.clientInfo === null || game.player2.clientInfo === null ) {
+		if ( gameOnClick.player1.clientInfo === null || gameOnClick.player2.clientInfo === null ) {
 			console.log( "Player Disconnected" );
 			return
 		}
-		if ( game.turn === game.player1.clientId ) {
-			currentplayer = "player1";
+		if ( gameOnClick.turn === gameOnClick.player1.clientId ) {
+			currentPlayer = "player1";
 			opponent = "player2";
 		} else {
-			currentplayer = "player2";
+			currentPlayer = "player2";
 			opponent = "player1";
 		}
-		switch ( game.afterFlip ) {
+		switch ( gameOnClick.afterFlip ) {
 			case "fireAction":
-				game[ opponent ].field[ cardType ]--;
-				game[ opponent ].discard[ cardType ]++;
-				game.afterFlip = "";
+				gameOnClick[ opponent ].field[ cardType ]--;
+				gameOnClick[ opponent ].discard[ cardType ]++;
 				emitAction = "fireActionEmit";
+				gameOnClick.afterFlip = "";
 				break;
 			case "counterAction":
-				game[ currentPlayer ].hand[ cardType ]--;
-				game[ currentPlayer ].hand.water--;
-				game[ currentPlayer ].discard[ cardType ]++;
-				game[ currentPlayer ].discard.water++;
-				game[ opponent ].stagedCard = "";
-				game[ opponent ].discard++;
-				game.afterFlip = "";
+				gameOnClick[ opponent ].hand[ cardType ]--;
+				gameOnClick[ opponent ].hand[ "water" ]--;
+				gameOnClick[ opponent ].discard[ cardType ]++;
+				gameOnClick[ opponent ].discard[ "water" ]++;
+				gameOnClick[ currentPlayer ].stagedCard = "";
+				gameOnClick[ currentPlayer ].discard[ cardType ]++;
+				gameOnClick.afterFlip = "";
 				emitAction = "counterActionEmit";
 				break;
 			case "lightAction":
-				// call for discard pile component
-				pick = prompt( `Available cards - Earth: ${ game[ currentPlayer ].discard.earth}, Fire: ${ game[ currentPlayer ].discard.fire}, Water: ${ game[ currentPlayer ].discard.water}, Shadow: ${ game[ currentPlayer ].discard.shadow}, Light: ${ game[ currentPlayer ].discard.light }` );
-				game[ currentPlayer ].discard[ pick ]--;
-				game[ currentPlayer ].hand[ pick ]++;
-				game.afterFlip = "";
+				gameOnClick[ currentPlayer ].discard[ cardType ]--;
+				gameOnClick[ currentPlayer ].hand[ cardType ]++;
 				emitAction = "lightActionEmit";
+				gameOnClick.afterFlip = "";
 				break;
 			case "shadowAction":
-				// pass turn to opponnent
-				game[ opponent ].hand[ pick ]--;
-				game[ opponent ].discard[ pick ]++;
-				game.afterFlip = "";
+				gameOnClick[ opponent ].hand[ cardType ]--;
+				gameOnClick[ opponent ].discard[ cardType ]++;
+				gameOnClick.afterFlip = "";
 				emitAction = "shadowActionEmit";
 				break;
 			default:
-				if ( game[ currentPlayer ].hand[ cardType ] === 0 || game[ currentPlayer ].stagedCard !== "empty" ) {
+				if ( gameOnClick[ currentPlayer ].hand[ cardType ] === 0 || gameOnClick[ currentPlayer ].stagedCard !== "" ) {
 					return;
 				} else {
-					game[ currentPlayer ].hand[ cardType ]--;
-					game[ currentPlayer ].stagedCard = cardType;
-					game.afterFlip = "counterAction";
+					gameOnClick[ currentPlayer ].hand[ cardType ]--;
+					gameOnClick[ currentPlayer ].stagedCard = cardType;
+					gameOnClick.afterFlip = "counterAction";
 					emitAction = "cardClicked";
 				}
 				break;
 		}
-		return { "game": game, "emitAction": emitAction };
+		return { "game": gameOnClick, "emitAction": emitAction };
 	}
-	onSwitchTurn = ( game ) => {
-		game.turn === game.player1.clientId
-			? game.turn = game.player2.clientId
-			: game.turn = game.player1.clientId;
-		return game;
+	onSwitchTurn = ( gameOnSwitchTurn ) => {
+		gameOnSwitchTurn.turn === gameOnSwitchTurn.player1.clientId
+			? gameOnSwitchTurn.turn = gameOnSwitchTurn.player2.clientId
+			: gameOnSwitchTurn.turn = gameOnSwitchTurn.player1.clientId;
+		return gameOnSwitchTurn;
 	}
 	getVictory = ( field ) => {
 		if ( !Object.values( field ).includes( 0 ) ) 
 			return "victory";
-		else 
+		else {
 			return null;
 		}
+	}
 	return {
 		handleJoin,
 		getVictory,
