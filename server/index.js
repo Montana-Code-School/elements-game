@@ -14,8 +14,8 @@ const makeHandlers = require( "./eventHandler" );
 const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
-// room = new Room();
 io.on( "connection", function ( client ) {
+	console.log(client)
 	const { rooms } = io.sockets.adapter;
 	const { Player } = classes;
 	const {
