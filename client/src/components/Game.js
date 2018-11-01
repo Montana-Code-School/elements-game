@@ -27,7 +27,7 @@ class Game extends Component {
 				hasChoice: false,
 				hasExit: false,
 				hasNoWater: false,
-				hasButton: true
+				hasButton: true,
 			},
 			room: null,
 			afterFlip: "",
@@ -121,6 +121,7 @@ class Game extends Component {
 		}
 	}
 	clickHandler = ( e ) => {
+		console.log( e.currentTarget.className.split( " " )[ 2 ] )
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
 			this.setState( {
 				"modal": {
@@ -129,7 +130,25 @@ class Game extends Component {
 				}
 			} )
 		} else {
-			if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] === 0 ) {
+			if ( this.state.afterFlip === "fireAction" && getCount( this.state.opponentsField ) === 0 ) {
+				this.setState( {
+					"modal": {
+						"open": true,
+						"message": "You are unable to discard card from opponentsField",
+					}
+				}, function () {
+					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+				} )
+			} else if ( this.state.afterFlip === "lightAction" && getCount( this.state.playerDiscard ) === 0 ) {
+				this.setState( {
+					"modal": {
+						"open": true,
+						"message": "There is no cards in discard pile ",
+					}
+				}, function () {
+					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+				} )
+			} else if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] === 0 ) {
 				this.setState( {
 					"modal": {
 						"open": true,
@@ -137,7 +156,6 @@ class Game extends Component {
 					}
 				} )
 			} else {
-				console.log( "card clicked", e.currentTarget.className.split( " " )[2], "afterFlip", this.state.afterFlip )
 				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
 			}
 		}
@@ -215,51 +233,65 @@ class Game extends Component {
 			if ( result.player === this.state.playerName ) {
 				this.state.client.flipCard( this.state.room );
 			}
-		} else {}
+		} else {
+			if ( result.player === this.state.playerName ) {
+				console.log( "i made and emit" )
+			} else {
+				console.log( "i didn't" )
+			}
+		}
 	}
 	onFlippedCardRes = ( data ) => {
-		console.log("this is onFlippedCardRes")
+		console.log( "this is onFlippedCardRes", data, this.state.playerName, this.state.turn )
 		if ( this.state.playerName === data.playerName ) {
 			this.setState( {
 				"opponentsField": data.field,
 				"opponentsStagedCard": data.stagedCard,
+				"opponentsHand": getCount( data.hand ),
+				"opponentsDeck": getCount( data.deck ),
 				"afterFlip": data.afterFlip,
 				"message": data.message
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
-				if (this.state.afterFlip === "shadowAction") {
-					this.setState({
+				if ( this.state.afterFlip === "shadowAction" ) {
+					this.setState( {
 						"modal": {
 							"open": true,
-							"hasButton": false
-				    }})
+							"hasButton": false,
+						}
+					} )
 				}
 			} );
 		} else {
 			this.setState( {
+				"playerDeck": getCount( data.deck ),
+				"playerHand": data.hand,
 				"playerField": data.field,
 				"playerStagedCard": data.stagedCard,
 				"afterFlip": data.afterFlip,
-				"message": data.message
+				"message": data.message,
 			}, function () {
-				if (this.state.afterFlip === "lightAction") {
-					this.setState({
+				if ( this.state.afterFlip === "lightAction" ) {
+					this.setState( {
 						"modal": {
 							"open": true,
-							"hasButton": false
-						}})
-				} else if (this.state.afterFlip === "fireAction") {
-					this.setState({
+							"hasButton": false,
+						}
+					} )
+				} else if ( this.state.afterFlip === "fireAction" ) {
+					this.setState( {
 						"modal": {
 							"open": true,
-							"hasButton": false
-						}})
+							"hasButton": false,
+						}
+					} )
 				}
 			} );
 		}
 
 	}
 	onDrawCardRes = ( data ) => {
+		console.log( "drawCardRes", data )
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
 				"playerHand": data.hand,
@@ -282,98 +314,124 @@ class Game extends Component {
 		}
 	}
 	onCardActionRes = ( data ) => {
-		let player1 = "";
-		let player2 = "";
-		if ( data.currentPlayer === this.state.playerName ) {
-			player1 = "player";
-			player2 = "opponent";
-		} else {
-			console.log( "wrong thingy" )
-			player1 = "opponent";
-			player2 = "player";
-		}
+		console.log( "data", data )
 		switch ( data.emitAction ) {
 			case "fireActionEmit":
-				this.setState( {
-					afterFlip: data.afterFlip,
-					[ `${ player2 }sField` ]: data.field,
-					[ `${ player2 }sDiscard` ]: getCount( data.discard )
-				} )
+				if ( data.currentPlayer === this.state.playerName ) {
+					this.setState( {
+						"afterFlip": data.afterFlip,
+						"opponentsField": data.field,
+						"opponentsDiscard": getCount( data.discard ),
+						"turn": data.turn,
+						"message": data.opponentsMessage,
+					} )
+				} else {
+					this.setState( {
+						"afterFlip": data.afterFlip,
+						"playerField": data.field,
+						"playerDiscard": data.discard,
+						"turn": data.turn,
+						"message": data.playerMessage,
+					}, function () {
+						console.log( "my turn to draw" )
+						this.state.client.drawCard( this.state.room )
+					} )
+				}
 				break;
 			case "lightActionEmit":
-				this.setState( {
-					afterFlip: data.afterFlip,
-					[ `${ player1 }Discard` ]: data.discard,
-					[ `${ player1 }Hand` ]: data.hand
-				} )
+				if ( data.currentPlayer === this.state.playerName ) {
+					this.setState( { "afterFlip": data.afterFlip, "playerDiscard": data.discard, "playerHand": data.hand, "turn": data.turn, "message": data.opponentsMessage } )
+				} else {
+					this.setState( {
+						"afterFlip": data.afterFlip,
+						"opponentsDiscard": getCount( data.discard ),
+						"opponentsHand": getCount( data.hand ),
+						"turn": data.turn,
+						"message": data.playerMessage,
+					}, function () {
+						console.log( "my turn to draw" )
+						this.state.client.drawCard( this.state.room )
+					} )
+				}
 				break;
 			default:
 				if ( data.currentPlayer === this.state.playerName ) {
-					console.log( "if" )
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"playerHand": data.hand,
-						"playerDiscard": data.discard
+						"playerDiscard": data.discard,
+						"turn": data.turn,
+						"message": data.playerMessage
 					}, function () {
-						console.log( this.state )
+						console.log( "my turn to draw" )
+						this.state.client.drawCard( this.state.room )
 					} )
 				} else {
-					console.log( "else" )
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"opponentsHand": getCount( data.hand ),
-						"opponentsDiscard": getCount( data.discard )
+						"opponentsDiscard": getCount( data.discard ),
+						"turn": data.turn,
+						"message": data.opponentsMessage
 					} )
 				}
 				break;
 		}
 	}
 	getModalContent = () => {
-		if (this.state.afterFlip === "shadowAction"){
+		if ( this.state.afterFlip === "shadowAction" ) {
 			const cards = this.state.playerHand
-			return [<p>Please select an element in your hand to discard.</p>,
-							<CardDisplay/>,
-							<Grid
-								container={true}
-								direction="row"
-								justify="space-around"
-								alignItems="center">
-								<p>{cards[ "water" ]}</p>
-								<p>{cards[ "earth" ]}</p>
-								<p>{cards[ "light" ]}</p>
-								<p>{cards[ "shadow" ]}</p>
-								<p>{cards[ "fire" ]}</p>
-							</Grid>]
-		} else if (this.state.afterFlip === "lightAction") {
+			return [
+				<p>Please select an element in your hand to discard.</p>,
+				<CardDisplay onClick={this.clickHandler}/>,
+				<Grid
+					container={true}
+					direction="row"
+					justify="space-around"
+					alignItems="center">
+					<p>{cards[ "water" ]}</p>
+					<p>{cards[ "earth" ]}</p>
+					<p>{cards[ "light" ]}</p>
+					<p>{cards[ "shadow" ]}</p>
+					<p>{cards[ "fire" ]}</p>
+				</Grid>,
+			]
+		} else if ( this.state.afterFlip === "lightAction" ) {
 			const cards = this.state.playerDiscard
-			return [<p>Please select an element in your discard to put in your hand.</p>,
-							<CardDisplay/>,
-							<Grid
-								container={true}
-								direction="row"
-								justify="space-around"
-								alignItems="center">
-								<p>{cards[ "water" ]}</p>
-								<p>{cards[ "earth" ]}</p>
-								<p>{cards[ "light" ]}</p>
-								<p>{cards[ "shadow" ]}</p>
-								<p>{cards[ "fire" ]}</p>
-							</Grid>]
-		} else if (this.state.afterFlip === "fireAction") {
+			return [
+				<p>Please select an element in your discard to put in your
+					hand.</p>,
+				<CardDisplay onClick={this.clickHandler}/>,
+				<Grid
+					container={true}
+					direction="row"
+					justify="space-around"
+					alignItems="center">
+					<p>{cards[ "water" ]}</p>
+					<p>{cards[ "earth" ]}</p>
+					<p>{cards[ "light" ]}</p>
+					<p>{cards[ "shadow" ]}</p>
+					<p>{cards[ "fire" ]}</p>
+				</Grid>,
+			]
+		} else if ( this.state.afterFlip === "fireAction" ) {
 			const cards = this.state.opponentsField
-			return [<p>Please select one of your opponent's elements on the field to discard.</p>,
-							<CardDisplay/>,
-							<Grid
-								container={true}
-								direction="row"
-								justify="space-around"
-								alignItems="center">
-								<p>{cards[ "water" ]}</p>
-								<p>{cards[ "earth" ]}</p>
-								<p>{cards[ "light" ]}</p>
-								<p>{cards[ "shadow" ]}</p>
-								<p>{cards[ "fire" ]}</p>
-							</Grid>]
+			return [
+				<p>Please select one of your opponent's elements on the
+					field to discard.</p>,
+				<CardDisplay onClick={this.clickHandler}/>,
+				<Grid
+					container={true}
+					direction="row"
+					justify="space-around"
+					alignItems="center">
+					<p>{cards[ "water" ]}</p>
+					<p>{cards[ "earth" ]}</p>
+					<p>{cards[ "light" ]}</p>
+					<p>{cards[ "shadow" ]}</p>
+					<p>{cards[ "fire" ]}</p>
+				</Grid>,
+			]
 		} else {
 			return <p>{this.state.modal.message}</p>
 		}
@@ -396,17 +454,17 @@ class Game extends Component {
 				container={true}
 				direction="column"
 				justify="space-evenly"
-			alignItems="center">
+				alignItems="center">
 				<Grid
 					container={true}
 					direction="row"
 					justify="space-around"
-				alignItems="center">
+					alignItems="center">
 					<p>{
 							this.state.opponentsStagedCard === ""
 								? "0"
 								: "1"
-					}</p>
+						}</p>
 					<GameCard className="opponentsStack"/>
 					<p>{this.state.opponentsHand}</p>
 					<Card className={classes.multicardDisplay}>
@@ -422,14 +480,14 @@ class Game extends Component {
 					container={true}
 					direction="row"
 					justify="space-around"
-				alignItems="center">
+					alignItems="center">
 					<ChatBox/>
 					<Card className={classes.field}>
 						<Grid
 							container={true}
 							direction="row"
 							justify="space-around"
-						alignItems="center">
+							alignItems="center">
 							<p>{this.state.opponentsField[ "water" ]}</p>
 							<p>{this.state.opponentsField[ "earth" ]}</p>
 							<p>{this.state.opponentsField[ "light" ]}</p>
@@ -447,7 +505,7 @@ class Game extends Component {
 							container={true}
 							direction="row"
 							justify="space-around"
-						alignItems="center">
+							alignItems="center">
 							<p>{this.state.playerField[ "water" ]}</p>
 							<p>{this.state.playerField[ "earth" ]}</p>
 							<p>{this.state.playerField[ "light" ]}</p>
@@ -461,7 +519,7 @@ class Game extends Component {
 					container={true}
 					direction="row"
 					justify="space-around"
-				alignItems="center">
+					alignItems="center">
 					<p>{this.state.playerDeck}</p>
 					<GameCard className="playerDeck"/>
 					<p>{getCount( this.state.playerDiscard )}</p>
