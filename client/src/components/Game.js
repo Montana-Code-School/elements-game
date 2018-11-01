@@ -3,7 +3,7 @@ import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
 import CustomModal from "./Modal";
 import ChatBox from "./ChatBox"
-import { Grid, Card, withStyles, } from "@material-ui/core";
+import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
 
@@ -24,7 +24,7 @@ class Game extends Component {
 			modal: {
 				open: false,
 				message: "",
-				buttonFlag: "",
+				buttonFlag: ""
 			},
 			room: null,
 			afterFlip: "",
@@ -39,30 +39,30 @@ class Game extends Component {
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0
+				earth: 0,
 			},
 			playerHand: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0
+				earth: 0,
 			},
 			playerField: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0
+				earth: 0,
 			},
 			playerDiscard: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0
+				earth: 0,
 			},
-			playerStagedCard: ""
+			playerStagedCard: "",
 		};
 		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
@@ -70,6 +70,7 @@ class Game extends Component {
 		this.state.client.getClickedCard( this.onClickedCard );
 		this.state.client.getCounterOffer( this.onCounterOffer );
 		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
+		this.state.client.getCounterActionRes( this.onCardActionRes );
 		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 		this.state.client.getDrawCardRes( this.onDrawCardRes );
 		this.state.client.getVictoryCheck( this.onVictoryCheck );
@@ -82,7 +83,7 @@ class Game extends Component {
 			"modal": {
 				"open": true,
 				"message": data,
-				"buttonFlag": "homeButton"
+				"buttonFlag": "homeButton",
 			}
 		}, function () {
 			this.state.client.disconnect();
@@ -92,7 +93,7 @@ class Game extends Component {
 		this.setState( {
 			room: data.roomName,
 			playerName: data.playerName,
-			turn: data.turn,
+			turn: data.turn
 		}, function () {
 			if ( this.state.playerName !== this.state.turn ) {
 				this.state.client.initialDraw( this.state.room );
@@ -106,7 +107,7 @@ class Game extends Component {
 				playerHand: data.player1.hand,
 				opponentsDeck: getCount( data.player2.deck ),
 				opponentsHand: getCount( data.player2.hand ),
-				message: data.player1.message,
+				message: data.player1.message
 			} )
 		} else {
 			this.setState( {
@@ -114,73 +115,37 @@ class Game extends Component {
 				playerHand: data.player2.hand,
 				opponentsDeck: getCount( data.player1.deck ),
 				opponentsHand: getCount( data.player1.hand ),
-				message: data.player2.message
+				message: data.player2.message,
 			} )
 		}
 	}
 	clickHandler = ( e ) => {
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
-			console.log("It is not your turn modal")
 			this.setState( {
 				"modal": {
 					"open": true,
 					"message": "It is not your turn.",
-					"buttonFlag": "closeButton"
+					"buttonFlag": "closeButton",
 				}
 			} )
 		} else {
-			console.log(" It is your turn")
-			if ( this.state.afterFlip === "fireAction" && getCount( this.state.opponentsField ) === 0 ) {
-				console.log("this is fire action")
-				this.setState( {
-					"modal": {
-						"open": true,
-						"message": "You are unable to discard card from opponentsField",
-						"buttonFlag": "closeButton"
-					}
-
-				}, function () {
-					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
-				} )
-			} else if ( this.state.afterFlip === "lightAction" && getCount( this.state.playerDiscard ) === 0 ) {
-				console.log("this is light action")
-				this.setState( {
-					"modal": {
-						"open": true,
-						"message": "There is no cards in discard pile ",
-						"buttonFlag": "closeButton"
-					}
-				}, function () {
-					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
-				} )
-			} else if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] === 0 ) {
-				console.log("no card exists")
-				this.setState( {
-					"modal": {
-						"open": true,
-						"message": "You unable to play this card",
-						"buttonFlag": "closeButton"
-					}
-				} )
-			} else {
-				console.log('last condition')
-				this.closeModal()
-				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
-			}
+			console.log( 'last condition' )
+			this.closeModal()
+			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip )
 		}
 	}
 	onClickedCard = ( data ) => {
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
 				"playerHand": data.hand,
-				"playerStagedCard": data.stagedCard,
+				"playerStagedCard": data.stagedCard
 			}, function () {
 				this.state.client.counterOffer( this.state.room );
 			} );
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
-				"opponentsStagedCard": data.stagedCard,
+				"opponentsStagedCard": data.stagedCard
 			} )
 		}
 	}
@@ -193,7 +158,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "Would you like to counter? ",
-						"buttonFlag": "choiceButton"
+						"buttonFlag": "choiceButton",
 					}
 				} )
 			} else if ( this.state.playerHand.water === 0 ) {
@@ -201,7 +166,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You are unable to counter at this time.",
-						"buttonFlag": "noWaterButton"
+						"buttonFlag": "noWaterButton",
 					}
 				} )
 			}
@@ -227,33 +192,36 @@ class Game extends Component {
 		this.closeOfferModal( "noCounter" );
 	}
 	acceptCounter = () => {
-		// this.setState( { 	"modal": { 		"buttonFlaf": false 	} } )
+		this.closeOfferModal( "counter" );
 	}
 	onCounterOfferRes = ( result ) => {
 		if ( result.result === "noCounter" ) {
 			if ( result.player === this.state.playerName ) {
 				this.state.client.flipCard( this.state.room );
 			}
+		} else if ( result.result === "counter" ) {
+			this.setState( { "afterFlip": result.afterFlip } )
+		}
+	}
+	onCounterActionRes = ( result ) => {
+		if ( result.player === this.state.playerName ) {
+			this.setState( {
+				"playerHand": result.counteringPlayerHand,
+				"playerDiscard": result.counteringPlayerDiscard,
+				"opponentsStagedCard": result.playerStagedCard,
+				"opponentsDiscard": getCount( result.playerDiscard ),
+				"afterFlip": result.afterFlip,
+			}, function () {
+				this.state.client.switchTurn( this.state.room );
+			} )
 		} else {
-			if ( result.player === this.state.playerName ) {
-				this.setState( {
-					"playerHand": result.counteringPlayerHand,
-					"playerDiscard": result.counteringPlayerDiscard,
-					"opponentsStagedCard": result.playerStagedCard,
-					"opponentsDiscard": getCount( result.playerDiscard ),
-					"afterFlip": result.afterFlip
-				}, function () {
-					this.state.client.switchTurn( this.state.room );
-				} )
-			} else {
-				this.setState( {
-					"opponentsHand": result.counteringPlayerHand,
-					"opponentsDiscard": getCount( result.counteringPlayerDiscard ),
-					"playerStagedCard": result.playerStagedCard,
-					"playerDiscard": result.playerDiscard,
-					"afterFlip": result.afterFlip,
-				} )
-			}
+			this.setState( {
+				"opponentsHand": result.counteringPlayerHand,
+				"opponentsDiscard": getCount( result.counteringPlayerDiscard ),
+				"playerStagedCard": result.playerStagedCard,
+				"playerDiscard": result.playerDiscard,
+				"afterFlip": result.afterFlip
+			} )
 		}
 	}
 	onFlippedCardRes = ( data ) => {
@@ -265,14 +233,14 @@ class Game extends Component {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsDeck": getCount( data.deck ),
 				"afterFlip": data.afterFlip,
-				"message": data.message,
+				"message": data.message
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
 					this.setState( {
 						"modal": {
 							"open": true,
-							"buttonFlag": "noButton"
+							"buttonFlag": "noButton",
 						}
 					} )
 				} else if ( this.state.afterFlip !== "shadowAction" && this.state.afterFlip !== "lightAction" && this.state.afterFlip !== "fireAction" ) {
@@ -286,20 +254,20 @@ class Game extends Component {
 				"playerField": data.field,
 				"playerStagedCard": data.stagedCard,
 				"afterFlip": data.afterFlip,
-				"message": data.message,
+				"message": data.message
 			}, function () {
 				if ( this.state.afterFlip === "lightAction" ) {
 					this.setState( {
 						"modal": {
 							"open": true,
-							"buttonFlag": "noButton"
+							"buttonFlag": "noButton",
 						}
 					} )
 				} else if ( this.state.afterFlip === "fireAction" ) {
 					this.setState( {
 						"modal": {
 							"open": true,
-							"buttonFlag": "noButton"
+							"buttonFlag": "noButton",
 						}
 					} )
 				}
@@ -313,13 +281,13 @@ class Game extends Component {
 			this.setState( {
 				"playerHand": data.hand,
 				"playerDeck": getCount( data.deck ),
-				"message": data.playerMessage,
+				"message": data.playerMessage
 			} )
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsDeck": getCount( data.deck ),
-				"message": data.opponentsMessage,
+				"message": data.opponentsMessage
 			} )
 		}
 	}
@@ -329,7 +297,7 @@ class Game extends Component {
 				"modal": {
 					"open": true,
 					"message": data.playerMessage,
-					"buttonFlag": "homeButton"
+					"buttonFlag": "homeButton",
 				}
 			}, function () {
 				this.state.client.disconnect();
@@ -339,7 +307,7 @@ class Game extends Component {
 				"modal": {
 					"open": true,
 					"message": data.opponentsMessage,
-					"buttonFlag": "homeButton"
+					"buttonFlag": "homeButton",
 				}
 			}, function () {
 				this.state.client.disconnect();
@@ -353,13 +321,13 @@ class Game extends Component {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"opponentsField": data.field,
-						"opponentsDiscard": getCount( data.discard ),
+						"opponentsDiscard": getCount( data.discard )
 					} )
 				} else {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"playerField": data.field,
-						"playerDiscard": data.discard
+						"playerDiscard": data.discard,
 					}, function () {
 						console.log( "my turn to draw" )
 						this.state.client.switchTurn( this.state.room );
@@ -368,12 +336,12 @@ class Game extends Component {
 				break;
 			case "lightActionEmit":
 				if ( data.currentPlayer === this.state.playerName ) {
-					this.setState( { "afterFlip": data.afterFlip, "playerDiscard": data.discard, "playerHand": data.hand } )
+					this.setState( { "afterFlip": data.afterFlip, "playerDiscard": data.discard, "playerHand": data.hand, } )
 				} else {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"opponentsDiscard": getCount( data.discard ),
-						"opponentsHand": getCount( data.hand )
+						"opponentsHand": getCount( data.hand ),
 					}, function () {
 						console.log( "my turn now" )
 						this.state.client.switchTurn( this.state.room );
@@ -385,7 +353,7 @@ class Game extends Component {
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"playerHand": data.hand,
-						"playerDiscard": data.discard
+						"playerDiscard": data.discard,
 					}, function () {
 						console.log( "my turn now" )
 						this.state.client.switchTurn( this.state.room )
@@ -394,7 +362,7 @@ class Game extends Component {
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"opponentsHand": getCount( data.hand ),
-						"opponentsDiscard": getCount( data.discard )
+						"opponentsDiscard": getCount( data.discard ),
 					} )
 				}
 				break;
@@ -405,12 +373,12 @@ class Game extends Component {
 		if ( data.currentPlayer === this.state.playerName ) {
 			this.setState( {
 				"turn": data.turn,
-				"message": data.playerMessage
+				"message": data.playerMessage,
 			}, function () {
 				this.state.client.drawCard( this.state.room );
 			} );
 		} else {
-			this.setState( { "turn": data.turn, "message": data.opponnentsMessage } );
+			this.setState( { "turn": data.turn, "message": data.opponnentsMessage, } );
 		}
 	}
 	getModalContent = () => {

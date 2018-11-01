@@ -35,6 +35,9 @@ export default function () {
 	function getCounterOfferRes( onCounterOfferRes ) {
 		socket.on( "getCounterOfferRes", onCounterOfferRes );
 	}
+	function getCounterActionRes( onCounterActionRes ) {
+		socket.on( "onCounterActionRes", onCounterActionRes )
+	};
 	function getFlippedCardRes( onFlippedCardRes ) {
 		socket.on( "onFlippedCardRes", onFlippedCardRes );
 	}
@@ -88,12 +91,13 @@ export default function () {
 		getDisconnect,
 		sendCounterOfferRes,
 		getCounterOfferRes,
+		getCounterActionRes,
 		drawCard,
 		getDrawCardRes,
 		victoryCheck,
 		switchTurn,
 		getNewTurn,
 		getVictoryCheck,
-		getCardActionRes,
+		getCardActionRes
 	}
 }
