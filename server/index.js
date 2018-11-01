@@ -24,7 +24,7 @@ io.on( "connection", function ( client ) {
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn
+		onSwitchTurn,
 	} = makeHandlers( client, rooms );
 	clientManager.addClient( client );
 	client.on( "join", function () {
@@ -41,7 +41,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": gameOnJoin.name,
 				"playerName": client.id,
-				"turn": gameOnJoin.turn,
+				"turn": gameOnJoin.turn
 			} );
 			//if room exist,but there is only one player
 		} else if ( gameOnJoin.player2 === null ) {
@@ -53,7 +53,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": gameOnJoin.name,
 				"playerName": client.id,
-				"turn": gameOnJoin.turn,
+				"turn": gameOnJoin.turn
 			} );
 		}
 	} );
@@ -68,13 +68,13 @@ io.on( "connection", function ( client ) {
 				"player1": {
 					"deck": gameOnInitialDraw.player1.deck,
 					"hand": gameOnInitialDraw.player1.hand,
-					"message": "Your turn",
+					"message": "Your turn"
 				},
 				"player2": {
 					"deck": gameOnInitialDraw.player2.deck,
 					"hand": gameOnInitialDraw.player2.hand,
-					"message": "waiting for opponent",
-				}
+					"message": "waiting for opponent"
+				},
 			} );
 		}
 	} );
@@ -99,8 +99,6 @@ io.on( "connection", function ( client ) {
 		console.log( emitAction )
 		switch ( emitAction ) {
 			case "counterActionEmit":
-				gameOnClick = onSwitchTurn( gameOnClick );
-				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 					"result": "counter",
 					"playerDiscard": gameOnClick[ currentPlayer ].discard,
@@ -108,42 +106,30 @@ io.on( "connection", function ( client ) {
 					"opponentsStagedCard": gameOnClick[ opponent ].stagedCard,
 					"opponentsDiscard": gameOnClick[ opponent ].discard,
 					"afterFlip": gameOnClick.afterFlip,
-					"player": client.id,
-					"turn": gameOnClick.turn,
-					"playerMessage": "Your turn",
-					"opponnentsMessage": "Waiting for opponent",
+					"player": client.id
 				} )
 				break;
 			case "fireActionEmit":
-				gameOnClick = onSwitchTurn( gameOnClick );
 				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"field": gameOnClick[ opponent ].field,
 					"discard": gameOnClick[ opponent ].discard,
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
-					"currentPlayer": client.id,
-					"turn": gameOnClick.turn,
-					"playerMessage": "Your turn",
-					"opponnentsMessage": "Waiting for opponent",
+					"currentPlayer": client.id
 				} );
 				break;
 			case "shadowActionEmit":
-				gameOnClick = onSwitchTurn( gameOnClick );
 				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"discard": gameOnClick[ currentPlayer ].discard,
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
-					"currentPlayer": client.id,
-					"turn": gameOnClick.turn,
-					"playerMessage": "Your turn",
-					"opponnentsMessage": "Waiting for opponent",
+					"currentPlayer": client.id
 				} );
 				break;
 			case "lightActionEmit":
-				gameOnClick = onSwitchTurn( gameOnClick );
 				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"hand": gameOnClick[ currentPlayer ].hand,
@@ -151,16 +137,13 @@ io.on( "connection", function ( client ) {
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
 					"currentPlayer": client.id,
-					"turn": gameOnClick.turn,
-					"playerMessage": "Your turn",
-					"opponnentsMessage": "Waiting for opponent",
 				} );
 				break;
 			default:
 				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"stagedCard": gameOnClick[ currentPlayer ].stagedCard,
-					"playerName": client.id,
+					"playerName": client.id
 				} );
 				break;
 		}
@@ -168,13 +151,13 @@ io.on( "connection", function ( client ) {
 	client.on( "counterOffer", function ( roomName ) {
 		io.sockets. in ( roomName ).emit( "getCounterOffer", {
 			"message": "Waiting for opponent...",
-			"currentPlayer": client.id
+			"currentPlayer": client.id,
 		} );
 	} );
 	client.on( "sendCounterOfferRes", function ( roomName, result ) {
 		io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 			"result": result,
-			"player": client.id
+			"player": client.id,
 		} )
 	} );
 	client.on( "flipCard", function ( roomName ) {
@@ -195,6 +178,17 @@ io.on( "connection", function ( client ) {
 			"message": "  was flipped",
 		} );
 	} );
+	client.on( "switchTurn", function ( roomName ) {
+		let gameOnSwitchTurn = playingRoomManager.getRoomById( roomName );
+		gameOnSwitchTurn = onSwitchTurn( gameOnSwitchTurn );
+		gameOnSwitchTurn = playingRoomManager.updateRoom( gameOnSwitchTurn );
+		io.sockets. in ( roomName ).emit( "getNewTurn", {
+			"currentPlayer": client.id,
+			"turn": gameOnSwitchTurn.turn,
+			"playerMessage": "Your turn",
+			"opponnentsMessage": "Waiting for opponent",
+		} )
+	} )
 	client.on( "drawCard", function ( roomName ) {
 		console.log( "drawCard " )
 		let player = "player1";
@@ -209,7 +203,7 @@ io.on( "connection", function ( client ) {
 			"hand": gameOnCardDraw[ player ].hand,
 			"playerName": client.id,
 			"playerMessage": "Your turn",
-			"opponentsMessage": "waiting for opponent"
+			"opponentsMessage": "waiting for opponent",
 		} );
 	} )
 	client.on( "disconnect", function () {
@@ -231,13 +225,13 @@ io.on( "connection", function ( client ) {
 			io.sockets. in ( roomName ).emit( "gameOnVictoryCheck", {
 				"playerMessage": "YOU WON!",
 				"opponentsMessage": "YOU LOST!",
-				"playerName": gameOnVictoryCheck.player1.clientId
+				"playerName": gameOnVictoryCheck.player1.clientId,
 			} );
 		} else if ( getVictory( gameOnVictoryCheck.player2.field ) === "victory" ) {
 			io.sockets. in ( roomName ).emit( "gameOnVictoryCheck", {
 				"playerMessage": "YOU WON!",
 				"opponentsMessage": "YOU LOST!",
-				"playerName": gameOnVictoryCheck.player2.clientId
+				"playerName": gameOnVictoryCheck.player2.clientId,
 			} );
 		}
 	} )
