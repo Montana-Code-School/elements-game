@@ -24,7 +24,7 @@ class DiscardPile extends Component {
 				component="img"
 				alt={this.props.className}
 				className={this.props.className}
-				image={require( `../images/discard_back.png` )}/>
+				image={require( `../images/discard.png` )}/>
 			<CustomModal
 				isOpen={this.state.showModal}
 				closeModal={this.close}>
