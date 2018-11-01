@@ -83,14 +83,13 @@ module.exports = function ( client, rooms ) {
 		}
 		switch ( gameOnClick.afterFlip ) {
 			case "fireAction":
-				if ( gameOnClick[ opponent ].field[ cardType ] >= 1 ) {
-					gameOnClick[ opponent ].field[ cardType ]--;
-					gameOnClick[ opponent ].discard[ cardType ]++;
-					emitAction = "fireActionEmit";
-				}
+				gameOnClick[ opponent ].field[ cardType ]--;
+				gameOnClick[ opponent ].discard[ cardType ]++;
+				emitAction = "fireActionEmit";
 				gameOnClick.afterFlip = "";
 				break;
 			case "counterAction":
+				console.log( "counterAction" )
 				gameOnClick[ currentPlayer ].hand[ cardType ]--;
 				gameOnClick[ currentPlayer ].hand.water--;
 				gameOnClick[ currentPlayer ].discard[ cardType ]++;
@@ -101,11 +100,9 @@ module.exports = function ( client, rooms ) {
 				emitAction = "counterActionEmit";
 				break;
 			case "lightAction":
-				if ( gameOnClick[ opponent ].discard[ cardType ] >= 1 ) {
-					gameOnClick[ currentPlayer ].discard[ cardType ]--;
-					gameOnClick[ currentPlayer ].hand[ cardType ]++;
-					emitAction = "lightActionEmit";
-				}
+				gameOnClick[ currentPlayer ].discard[ cardType ]--;
+				gameOnClick[ currentPlayer ].hand[ cardType ]++;
+				emitAction = "lightActionEmit";
 				gameOnClick.afterFlip = "";
 				break;
 			case "shadowAction":
