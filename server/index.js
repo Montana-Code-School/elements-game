@@ -237,6 +237,11 @@ io.on( "connection", function ( client ) {
 				"opponentsMessage": "YOU LOST!",
 				"playerName": gameOnVictoryCheck.player2.clientId,
 			} );
+		} else {
+			io.sockets. in ( roomName ).emit( "onVictoryCheck", {
+				"playerName": client.id,
+				"playerMessage": "keep playing",
+			} )
 		}
 	} )
 	client.on( "error", function ( err ) {
