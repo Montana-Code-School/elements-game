@@ -73,7 +73,8 @@ class Game extends Component {
 		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 		this.state.client.getDrawCardRes( this.onDrawCardRes );
 		this.state.client.getVictoryCheck( this.onVictoryCheck );
-		this.state.client.getCardActionRes( this.onCardActionRes )
+		this.state.client.getCardActionRes( this.onCardActionRes );
+		this.state.client.getNewTurn( this.onNewTurn );
 		this.state.client.getDisconnect( this.onDisconnect );
 	}
 	onDisconnect = ( data ) => {
@@ -228,7 +229,7 @@ class Game extends Component {
 			}
 		} else {
 			if ( result.player === this.state.playerName ) {
-				console.log( "i made and emit" )
+				console.log( "i made an emit" )
 			} else {
 				console.log( "i didn't" )
 			}
@@ -243,7 +244,7 @@ class Game extends Component {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsDeck": getCount( data.deck ),
 				"afterFlip": data.afterFlip,
-				"message": data.message
+				"message": data.message,
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
@@ -253,6 +254,8 @@ class Game extends Component {
 							"buttonFlag": "noButton"
 						}
 					} )
+				} else if ( this.state.afterFlip !== "shadowAction" && this.state.afterFlip !== "lightAction" && this.state.afterFlip !== "fireAction" ) {
+					this.state.client.switchTurn( this.state.room );
 				}
 			} );
 		} else {
@@ -323,7 +326,6 @@ class Game extends Component {
 		}
 	}
 	onCardActionRes = ( data ) => {
-		console.log( "data", data )
 		switch ( data.emitAction ) {
 			case "fireActionEmit":
 				if ( data.currentPlayer === this.state.playerName ) {
@@ -331,35 +333,29 @@ class Game extends Component {
 						"afterFlip": data.afterFlip,
 						"opponentsField": data.field,
 						"opponentsDiscard": getCount( data.discard ),
-						"turn": data.turn,
-						"message": data.opponentsMessage,
 					} )
 				} else {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"playerField": data.field,
-						"playerDiscard": data.discard,
-						"turn": data.turn,
-						"message": data.playerMessage,
+						"playerDiscard": data.discard
 					}, function () {
 						console.log( "my turn to draw" )
-						this.state.client.drawCard( this.state.room )
+						this.state.client.switchTurn( this.state.room );
 					} )
 				}
 				break;
 			case "lightActionEmit":
 				if ( data.currentPlayer === this.state.playerName ) {
-					this.setState( { "afterFlip": data.afterFlip, "playerDiscard": data.discard, "playerHand": data.hand, "turn": data.turn, "message": data.opponentsMessage } )
+					this.setState( { "afterFlip": data.afterFlip, "playerDiscard": data.discard, "playerHand": data.hand } )
 				} else {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"opponentsDiscard": getCount( data.discard ),
-						"opponentsHand": getCount( data.hand ),
-						"turn": data.turn,
-						"message": data.playerMessage,
+						"opponentsHand": getCount( data.hand )
 					}, function () {
-						console.log( "my turn to draw" )
-						this.state.client.drawCard( this.state.room )
+						console.log( "my turn now" )
+						this.state.client.switchTurn( this.state.room );
 					} )
 				}
 				break;
@@ -368,23 +364,37 @@ class Game extends Component {
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"playerHand": data.hand,
-						"playerDiscard": data.discard,
-						"turn": data.turn,
-						"message": data.playerMessage
+						"playerDiscard": data.discard
 					}, function () {
-						console.log( "my turn to draw" )
-						this.state.client.drawCard( this.state.room )
+						console.log( "my turn now" )
+						this.state.client.switchTurn( this.state.room )
 					} )
 				} else {
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"opponentsHand": getCount( data.hand ),
-						"opponentsDiscard": getCount( data.discard ),
-						"turn": data.turn,
-						"message": data.opponentsMessage
+						"opponentsDiscard": getCount( data.discard )
 					} )
 				}
 				break;
+		}
+	}
+	onNewTurn = ( data ) => {
+		console.log( "onNewTurn" )
+		if ( data.currentPlayer === this.state.playerName ) {
+			this.setState( {
+				"turn": data.turn,
+				"message": data.playerMessage
+			}, function () {
+				this.state.client.drawCard( this.state.room );
+			} );
+		} else {
+			this.setState( {
+				"turn": data.turn,
+				"message": data.opponnentsMessage
+			}, function () {
+				console.log( data.opponnentsMessage );
+			} );
 		}
 	}
 	getModalContent = () => {
