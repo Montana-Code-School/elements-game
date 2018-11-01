@@ -70,6 +70,7 @@ class Game extends Component {
 		this.state.client.getClickedCard( this.onClickedCard );
 		this.state.client.getCounterOffer( this.onCounterOffer );
 		this.state.client.getCounterOfferRes( this.onCounterOfferRes );
+		this.state.client.getCounterActionRes( this.onCounterActionRes );
 		this.state.client.getFlippedCardRes( this.onFlippedCardRes );
 		this.state.client.getDrawCardRes( this.onDrawCardRes );
 		this.state.client.getVictoryCheck( this.onVictoryCheck );
@@ -119,19 +120,18 @@ class Game extends Component {
 		}
 	}
 	clickHandler = ( e ) => {
-	        if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
-	            this.setState( {
-	                "modal": {
-	                    "open": true,
-	                    "message": "It is not your turn.",
-	                    "buttonFlag": "closeButton"
-	                }
-	            } )
-	        } else {
-	                this.closeModal()
-	                this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip )
-	        }
-	    }
+		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
+			this.setState( {
+				"modal": {
+					"open": true,
+					"message": "It is not your turn.",
+				}
+			} )
+		} else {
+			this.closeModal()
+			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip )
+		}
+	}
 	onClickedCard = ( data ) => {
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
@@ -170,70 +170,55 @@ class Game extends Component {
 			}
 		}
 	}
-	closeModal = () => {
-		this.setState( {
-			"modal": {
-				"open": false
-			}
-		} )
-	}
-	closeOfferModal = ( result ) => {
-		this.setState( {
-			"modal": {
-				"open": false
-			}
-		}, function () {
-			this.state.client.sendCounterOfferRes( this.state.room, result );
-		} )
-	}
 	refuseCounter = () => {
 		this.closeOfferModal( "noCounter" );
 	}
 	acceptCounter = () => {
-		this.setState( {
-			"modal": {
-				"open": false
-			}
-		}, function () {
-			this.setState( {
-				"modal": {
-					"open": true,
-					"message": "This is the counter modal",
-					"buttonFlag": "closeButton"
-				}
-		}, function () {
-			console.log("this is afterflip:   ", this.state.afterFlip)
-		})
-	})}
+		this.closeOfferModal( "counter" );
+
+	}
 	onCounterOfferRes = ( result ) => {
 		if ( result.result === "noCounter" ) {
 			if ( result.player === this.state.playerName ) {
 				this.state.client.flipCard( this.state.room );
 			}
-		} else {
+		} else if ( result.result === "counter" ) {
 			if ( result.player === this.state.playerName ) {
 				this.setState( {
-					"playerHand": result.counteringPlayerHand,
-					"playerDiscard": result.counteringPlayerDiscard,
-					"opponentsStagedCard": result.playerStagedCard,
-					"opponentsDiscard": getCount( result.playerDiscard ),
-					"afterFlip": result.afterFlip
-				}, function () {
-					this.state.client.switchTurn( this.state.room );
-				} )
-			} else {
-				this.setState( {
-					"opponentsHand": result.counteringPlayerHand,
-					"opponentsDiscard": getCount( result.counteringPlayerDiscard ),
-					"playerStagedCard": result.playerStagedCard,
-					"playerDiscard": result.playerDiscard,
 					"afterFlip": result.afterFlip,
+					"modal": {
+						"open": true,
+						"message": "This is the counter modal",
+						"buttonFlag": "closeButton"
+					}
 				} )
 			}
+		} else {
+			this.setState( { "afterFlip": result.afterFlip } )
+		}
+	}
+	onCounterActionRes = ( result ) => {
+		if ( result.player === this.state.playerName ) {
+			this.setState( {
+				"playerHand": result.counteringPlayerHand,
+				"playerDiscard": result.counteringPlayerDiscard,
+				"opponentsStagedCard": result.playerStagedCard,
+				"opponentsDiscard": getCount( result.playerDiscard ),
+				"afterFlip": result.afterFlip
+			}, function () {
+				this.state.client.switchTurn( this.state.room );
+			} )
+		} else {
+			this.setState( {
+				"opponentsHand": getCount( result.counteringPlayerHand ),
+				"opponentsDiscard": getCount( result.counteringPlayerDiscard ),
+				"playerStagedCard": result.playerStagedCard,
+				"playerDiscard": result.playerDiscard,
+				"afterFlip": result.afterFlip,
+			} )
 		}
 	}
 	onFlippedCardRes = ( data ) => {
-		console.log( "this is onFlippedCardRes", data, this.state.playerName, this.state.turn )
 		if ( this.state.playerName === data.playerName ) {
 			this.setState( {
 				"opponentsField": data.field,
@@ -243,7 +228,6 @@ class Game extends Component {
 				"afterFlip": data.afterFlip,
 				"message": data.message,
 			}, function () {
-				console.log("victory check sent to socket.js")
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
 					this.setState( {
@@ -282,10 +266,8 @@ class Game extends Component {
 				}
 			} );
 		}
-
 	}
 	onDrawCardRes = ( data ) => {
-		console.log( "drawCardRes", data )
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
 				"playerHand": data.hand,
@@ -301,7 +283,6 @@ class Game extends Component {
 		}
 	}
 	onVictoryCheck = ( data ) => {
-		console.log("this is victory data:   ", data)
 		if ( this.state.playerName === data.playerName ) {
 			this.setState( {
 				"modal": {
@@ -339,7 +320,6 @@ class Game extends Component {
 						"playerField": data.field,
 						"playerDiscard": data.discard
 					}, function () {
-						console.log( "my turn to draw" )
 						this.state.client.switchTurn( this.state.room );
 					} )
 				}
@@ -353,7 +333,6 @@ class Game extends Component {
 						"opponentsDiscard": getCount( data.discard ),
 						"opponentsHand": getCount( data.hand )
 					}, function () {
-						console.log( "my turn now" )
 						this.state.client.switchTurn( this.state.room );
 					} )
 				}
@@ -365,7 +344,6 @@ class Game extends Component {
 						"playerHand": data.hand,
 						"playerDiscard": data.discard
 					}, function () {
-						console.log( "my turn now" )
 						this.state.client.switchTurn( this.state.room )
 					} )
 				} else {
@@ -379,7 +357,6 @@ class Game extends Component {
 		}
 	}
 	onNewTurn = ( data ) => {
-		console.log( "onNewTurn" )
 		if ( data.currentPlayer === this.state.playerName ) {
 			this.setState( {
 				"turn": data.turn,
@@ -402,11 +379,11 @@ class Game extends Component {
 					direction="row"
 					justify="space-around"
 					alignItems="center">
-					<p>{cards[ "water" ]}</p>
-					<p>{cards[ "earth" ]}</p>
-					<p>{cards[ "light" ]}</p>
-					<p>{cards[ "shadow" ]}</p>
-					<p>{cards[ "fire" ]}</p>
+					<p>{this.state.playerHand[ "water" ]}</p>
+					<p>{this.state.playerHand[ "earth" ]}</p>
+					<p>{this.state.playerHand[ "light" ]}</p>
+					<p>{this.state.playerHand[ "shadow" ]}</p>
+					<p>{this.state.playerHand[ "fire" ]}</p>
 				</Grid>,
 			]
 		} else if ( this.state.afterFlip === "lightAction" ) {
@@ -445,7 +422,7 @@ class Game extends Component {
 					<p>{cards[ "fire" ]}</p>
 				</Grid>,
 			]
-		} else if (this.state.afterFlip === "counterAction") {
+		} else if ( this.state.afterFlip === "counterAction" ) {
 			const cards = this.state.playerHand
 			return [
 				<p>Please select another element to discard along with water.</p>,
@@ -465,6 +442,22 @@ class Game extends Component {
 		} else {
 			return <p>{this.state.modal.message}</p>
 		}
+	}
+	closeModal = () => {
+		this.setState( {
+			"modal": {
+				"open": false
+			}
+		} )
+	}
+	closeOfferModal = ( result ) => {
+		this.setState( {
+			"modal": {
+				"open": false
+			}
+		}, function () {
+			this.state.client.sendCounterOfferRes( this.state.room, result );
+		} )
 	}
 	render() {
 		const { classes } = this.props;
