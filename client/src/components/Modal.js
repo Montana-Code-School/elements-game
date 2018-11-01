@@ -52,7 +52,9 @@ class CustomModal extends Component {
 			</Link>
 		} else if (this.props.hasNoWater) {
 			buttonOptions = <button onClick={this.props.decline}>Ok</button>
-		}
+		} else if (this.props.hasButton === false){
+			buttonOptions = null
+	}
 		return buttonOptions;
 	}
 
