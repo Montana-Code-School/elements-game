@@ -40,21 +40,31 @@ const dialogStyle = function () {
 class CustomModal extends Component {
 
 	getButtonOptions() {
-		let buttonOptions = <button onClick={this.props.closeModal}>Close</button>
-		if ( this.props.hasChoice ) {
-			buttonOptions = [
-				<button onClick={this.props.accept}>Yes</button>,
-				<button onClick={this.props.decline}>No</button>,
-			]
-		} else if (this.props.hasExit) {
-			buttonOptions = <Link to="/">
-				<button>Ok</button>
-			</Link>
-		} else if (this.props.hasNoWater) {
-			buttonOptions = <button onClick={this.props.decline}>Ok</button>
-		} else if (this.props.hasButton === false){
-			buttonOptions = null
-	}
+		let buttonOptions = null
+		switch ( this.props.buttonFlag) {
+			case "choiceButton":
+				buttonOptions = [
+					<button onClick={this.props.accept}>Yes</button>,
+					<button onClick={this.props.decline}>No</button>,
+				]
+				break;
+			case "homeButton":
+				buttonOptions = <Link to="/">
+					<button>Ok</button>
+				</Link>
+				break;
+			case "noWaterButton":
+				buttonOptions = <button onClick={this.props.decline}>Ok</button>
+				break;
+			case "noButton":
+				buttonOptions = null
+				break;
+			case "closeButton":
+				buttonOptions = <button onClick={this.props.closeModal}>Close</button>
+				break;
+			default:
+				break;
+		}
 		return buttonOptions;
 	}
 

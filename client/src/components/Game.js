@@ -24,10 +24,7 @@ class Game extends Component {
 			modal: {
 				open: false,
 				message: "",
-				hasChoice: false,
-				hasExit: false,
-				hasNoWater: false,
-				hasButton: true,
+				buttonFlag: "",
 			},
 			room: null,
 			afterFlip: "",
@@ -84,7 +81,7 @@ class Game extends Component {
 			"modal": {
 				"open": true,
 				"message": data,
-				"hasExit": true
+				"buttonFlag": "homeButton"
 			}
 		}, function () {
 			this.state.client.disconnect();
@@ -127,6 +124,7 @@ class Game extends Component {
 				"modal": {
 					"open": true,
 					"message": "It is not your turn.",
+					"buttonFlag": "closeButton"
 				}
 			} )
 		} else {
@@ -135,6 +133,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You are unable to discard card from opponentsField",
+						"buttonFlag": "closeButton"
 					}
 				}, function () {
 					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
@@ -144,6 +143,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "There is no cards in discard pile ",
+						"buttonFlag": "closeButton"
 					}
 				}, function () {
 					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
@@ -153,6 +153,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You unable to play this card",
+						"buttonFlag": "closeButton"
 					}
 				} )
 			} else {
@@ -184,7 +185,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "Would you like to counter? ",
-						"hasChoice": true
+						"buttonFlag": "choiceButton"
 					}
 				} )
 			} else if ( this.state.playerHand.water === 0 ) {
@@ -192,7 +193,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You are unable to counter at this time.",
-						"hasNoWater": true,
+						"buttonFlag": "noWaterButton"
 					}
 				} )
 			}
@@ -202,7 +203,6 @@ class Game extends Component {
 		this.setState( {
 			"modal": {
 				"open": false,
-				"hasChoice": false,
 			}
 		} )
 	}
@@ -210,21 +210,14 @@ class Game extends Component {
 		this.setState( {
 			"modal": {
 				"open": false,
-				"hasChoice": false,
 			}
 		}, function () {
 			this.state.client.sendCounterOfferRes( this.state.room, result );
 		} )
 	}
 	refuseCounter = () => {
-		this.setState( {
-			"modal": {
-				"hasNoWater": false
-			}
-		}, function () {
 			this.closeOfferModal( "noCounter" );
-		} )
-	}
+		}
 	acceptCounter = () => {
 		this.closeOfferModal( "blabla" );
 	}
@@ -257,7 +250,7 @@ class Game extends Component {
 					this.setState( {
 						"modal": {
 							"open": true,
-							"hasButton": false,
+							"buttonFlag": "noButton"
 						}
 					} )
 				}
@@ -275,14 +268,14 @@ class Game extends Component {
 					this.setState( {
 						"modal": {
 							"open": true,
-							"hasButton": false,
+							"buttonFlag": "noButton"
 						}
 					} )
 				} else if ( this.state.afterFlip === "fireAction" ) {
 					this.setState( {
 						"modal": {
 							"open": true,
-							"hasButton": false,
+							"buttonFlag": "noButton"
 						}
 					} )
 				}
@@ -308,9 +301,25 @@ class Game extends Component {
 	}
 	onVictoryCheck = ( data ) => {
 		if ( this.state.playerName === data.playerName ) {
-			//use modal for win data.playerMessage
+			this.setState( {
+				"modal": {
+					"open": true,
+					"message": data.playerMessage,
+					"buttonFlag": "homeButton"
+				}
+			}, function () {
+				this.state.client.disconnect();
+			} );
 		} else {
-			//use modal for loooooser data.opponentsMessage
+			this.setState( {
+				"modal": {
+					"open": true,
+					"message": data.opponentsMessage,
+					"buttonFlag": "homeButton"
+				}
+			}, function () {
+				this.state.client.disconnect();
+			} );
 		}
 	}
 	onCardActionRes = ( data ) => {
@@ -444,10 +453,7 @@ class Game extends Component {
 				decline={this.refuseCounter}
 				accept={this.acceptCounter}
 				isOpen={this.state.modal.open}
-				hasExit={this.state.modal.hasExit}
-				hasNoWater={this.state.modal.hasNoWater}
-				closeModal={this.closeModal}
-				hasButton={this.state.modal.hasButton}>
+				buttonFlag={this.state.modal.buttonFlag}>
 				{this.getModalContent()}
 			</CustomModal>
 			<Grid
