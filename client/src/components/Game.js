@@ -26,7 +26,8 @@ class Game extends Component {
 				message: "",
 				hasChoice: false,
 				hasExit: false,
-				hasNoWater: false
+				hasNoWater: false,
+				hasButton: true
 			},
 			room: null,
 			afterFlip: "",
@@ -230,8 +231,8 @@ class Game extends Component {
 					this.setState({
 						"modal": {
 							"open": true,
-							"message": "this is shadowAction modal."
-						}})
+							"hasButton": false
+				    }})
 				}
 			} );
 		} else {
@@ -245,13 +246,13 @@ class Game extends Component {
 					this.setState({
 						"modal": {
 							"open": true,
-							"message": "this is lightAction modal."
+							"hasButton": false
 						}})
 				} else if (this.state.afterFlip === "fireAction") {
 					this.setState({
 						"modal": {
 							"open": true,
-							"message": "this is fireAction modal."
+							"hasButton": false
 						}})
 				}
 			} );
@@ -387,7 +388,8 @@ class Game extends Component {
 				isOpen={this.state.modal.open}
 				hasExit={this.state.modal.hasExit}
 				hasNoWater={this.state.modal.hasNoWater}
-				closeModal={this.closeModal}>
+				closeModal={this.closeModal}
+				hasButton={this.state.modal.hasButton}>
 				{this.getModalContent()}
 			</CustomModal>
 			<Grid
