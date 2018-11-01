@@ -12,7 +12,7 @@ class Player {
 		this.clientInfo = clientInfo;
 		this.clientId = clientId;
 		this.deck = new Pile( 5, 5, 5, 5, 5 );
-		this.field = new Pile( 0, 0, 0, 0, 0 );
+		this.field = new Pile( 1, 1, 1, 1, 0 );
 		this.hand = new Pile( 0, 0, 0, 0, 0 );
 		this.discard = new Pile( 0, 0, 0, 0, 0 );
 		this.stagedCard = "";

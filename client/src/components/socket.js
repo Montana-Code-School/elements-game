@@ -51,9 +51,11 @@ export default function () {
 		socket.on( "drawCardRes", onDrawCardRes );
 	}
 	function victoryCheck( roomName ) {
+		console.log("this is victoryCheck")
 		socket.emit( "victoryCheck", roomName );
 	}
 	function getVictoryCheck( onVictoryCheck ) {
+		console.log("a victory was detected!")
 		socket.on( "onVictoryCheck", onVictoryCheck );
 	}
 	function switchTurn( roomName ) {
