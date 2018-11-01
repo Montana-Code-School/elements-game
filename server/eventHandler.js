@@ -23,7 +23,7 @@ module.exports = function ( client, rooms ) {
 		const hand = player.hand;
 		const keys = Object.keys( deck );
 		function drawSingleCard() {
-			if ( keys.length === 0 ) 
+			if ( keys.length === 0 )
 				return;
 			const randomIndex = Math.floor( Math.random() * keys.length );
 			const randomKey = keys[ randomIndex ];
@@ -131,10 +131,11 @@ module.exports = function ( client, rooms ) {
 		return gameOnSwitchTurn;
 	}
 	getVictory = ( field ) => {
-		if ( !Object.values( field ).includes( 0 ) ) 
+		if ( !Object.values( field ).includes( 0 ) )
 			return "victory";
-		else 
+		else {
 			return null;
+		}
 		}
 	return {
 		handleJoin,

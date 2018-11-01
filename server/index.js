@@ -222,13 +222,13 @@ io.on( "connection", function ( client ) {
 		let gameOnVictoryCheck = playingRoomManager.getRoomById( roomName );
 
 		if ( getVictory( gameOnVictoryCheck.player1.field ) === "victory" ) {
-			io.sockets. in ( roomName ).emit( "gameOnVictoryCheck", {
+			io.sockets. in ( roomName ).emit( "onVictoryCheck", {
 				"playerMessage": "YOU WON!",
 				"opponentsMessage": "YOU LOST!",
 				"playerName": gameOnVictoryCheck.player1.clientId,
 			} );
 		} else if ( getVictory( gameOnVictoryCheck.player2.field ) === "victory" ) {
-			io.sockets. in ( roomName ).emit( "gameOnVictoryCheck", {
+			io.sockets. in ( roomName ).emit( "onVictoryCheck", {
 				"playerMessage": "YOU WON!",
 				"opponentsMessage": "YOU LOST!",
 				"playerName": gameOnVictoryCheck.player2.clientId,
