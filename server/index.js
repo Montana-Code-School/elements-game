@@ -96,15 +96,15 @@ io.on( "connection", function ( client ) {
 			currentPlayer = "player2";
 			opponent = "player1";
 		}
-		console.log( emitAction )
 		switch ( emitAction ) {
 			case "counterActionEmit":
+				console.log( "sending onCounterOfferRes" )
 				io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 					"result": "counter",
-					"playerDiscard": gameOnClick[ currentPlayer ].discard,
-					"playerHand": gameOnClick[ currentPlayer ].hand,
-					"opponentsStagedCard": gameOnClick[ opponent ].stagedCard,
-					"opponentsDiscard": gameOnClick[ opponent ].discard,
+					"counteringPlayerDiscard": gameOnClick[ currentPlayer ].discard,
+					"counteringPlayerHand": gameOnClick[ currentPlayer ].hand,
+					"playerStagedCard": gameOnClick[ opponent ].stagedCard,
+					"playerDiscard": gameOnClick[ opponent ].discard,
 					"afterFlip": gameOnClick.afterFlip,
 					"player": client.id
 				} )

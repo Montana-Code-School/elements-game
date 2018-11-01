@@ -210,24 +210,24 @@ class Game extends Component {
 	closeModal = () => {
 		this.setState( {
 			"modal": {
-				"open": false,
+				"open": false
 			}
 		} )
 	}
 	closeOfferModal = ( result ) => {
 		this.setState( {
 			"modal": {
-				"open": false,
+				"open": false
 			}
 		}, function () {
 			this.state.client.sendCounterOfferRes( this.state.room, result );
 		} )
 	}
 	refuseCounter = () => {
-			this.closeOfferModal( "noCounter" );
-		}
+		this.closeOfferModal( "noCounter" );
+	}
 	acceptCounter = () => {
-		this.closeOfferModal( "blabla" );
+		// this.setState( { 	"modal": { 		"buttonFlaf": false 	} } )
 	}
 	onCounterOfferRes = ( result ) => {
 		if ( result.result === "noCounter" ) {
@@ -236,9 +236,23 @@ class Game extends Component {
 			}
 		} else {
 			if ( result.player === this.state.playerName ) {
-				console.log( "i made an emit" )
+				this.setState( {
+					"playerHand": result.counteringPlayerHand,
+					"playerDiscard": result.counteringPlayerDiscard,
+					"opponentsStagedCard": result.playerStagedCard,
+					"opponentsDiscard": getCount( result.playerDiscard ),
+					"afterFlip": result.afterFlip
+				}, function () {
+					this.state.client.switchTurn( this.state.room );
+				} )
 			} else {
-				console.log( "i didn't" )
+				this.setState( {
+					"opponentsHand": result.counteringPlayerHand,
+					"opponentsDiscard": getCount( result.counteringPlayerDiscard ),
+					"playerStagedCard": result.playerStagedCard,
+					"playerDiscard": result.playerDiscard,
+					"afterFlip": result.afterFlip,
+				} )
 			}
 		}
 	}
@@ -396,12 +410,7 @@ class Game extends Component {
 				this.state.client.drawCard( this.state.room );
 			} );
 		} else {
-			this.setState( {
-				"turn": data.turn,
-				"message": data.opponnentsMessage
-			}, function () {
-				console.log( data.opponnentsMessage );
-			} );
+			this.setState( { "turn": data.turn, "message": data.opponnentsMessage } );
 		}
 	}
 	getModalContent = () => {
@@ -470,7 +479,8 @@ class Game extends Component {
 				decline={this.refuseCounter}
 				accept={this.acceptCounter}
 				isOpen={this.state.modal.open}
-				buttonFlag={this.state.modal.buttonFlag}>
+				buttonFlag={this.state.modal.buttonFlag}
+				closeModal={this.closeModal}>
 				{this.getModalContent()}
 			</CustomModal>
 			<Grid
