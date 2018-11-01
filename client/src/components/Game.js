@@ -119,56 +119,19 @@ class Game extends Component {
 		}
 	}
 	clickHandler = ( e ) => {
-		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
-			console.log("It is not your turn modal")
-			this.setState( {
-				"modal": {
-					"open": true,
-					"message": "It is not your turn.",
-					"buttonFlag": "closeButton"
-				}
-			} )
-		} else {
-			console.log(" It is your turn")
-			if ( this.state.afterFlip === "fireAction" && getCount( this.state.opponentsField ) === 0 ) {
-				console.log("this is fire action")
-				this.setState( {
-					"modal": {
-						"open": true,
-						"message": "You are unable to discard card from opponentsField",
-						"buttonFlag": "closeButton"
-					}
-
-				}, function () {
-					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
-				} )
-			} else if ( this.state.afterFlip === "lightAction" && getCount( this.state.playerDiscard ) === 0 ) {
-				console.log("this is light action")
-				this.setState( {
-					"modal": {
-						"open": true,
-						"message": "There is no cards in discard pile ",
-						"buttonFlag": "closeButton"
-					}
-				}, function () {
-					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
-				} )
-			} else if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] === 0 ) {
-				console.log("no card exists")
-				this.setState( {
-					"modal": {
-						"open": true,
-						"message": "You unable to play this card",
-						"buttonFlag": "closeButton"
-					}
-				} )
-			} else {
-				console.log('last condition')
-				this.closeModal()
-				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
-			}
-		}
-	}
+	        if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
+	            this.setState( {
+	                "modal": {
+	                    "open": true,
+	                    "message": "It is not your turn.",
+	                    "buttonFlag": "closeButton"
+	                }
+	            } )
+	        } else {
+	                this.closeModal()
+	                this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip )
+	        }
+	    }
 	onClickedCard = ( data ) => {
 		if ( data.playerName === this.state.playerName ) {
 			this.setState( {
@@ -227,8 +190,21 @@ class Game extends Component {
 		this.closeOfferModal( "noCounter" );
 	}
 	acceptCounter = () => {
-		// this.setState( { 	"modal": { 		"buttonFlaf": false 	} } )
-	}
+		this.setState( {
+			"modal": {
+				"open": false
+			}
+		}, function () {
+			this.setState( {
+				"modal": {
+					"open": true,
+					"message": "This is the counter modal",
+					"buttonFlag": "closeButton"
+				}
+		}, function () {
+			console.log("this is afterflip:   ", this.state.afterFlip)
+		})
+	})}
 	onCounterOfferRes = ( result ) => {
 		if ( result.result === "noCounter" ) {
 			if ( result.player === this.state.playerName ) {
@@ -267,6 +243,7 @@ class Game extends Component {
 				"afterFlip": data.afterFlip,
 				"message": data.message,
 			}, function () {
+				console.log("victory check sent to socket.js")
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
 					this.setState( {
@@ -324,6 +301,7 @@ class Game extends Component {
 		}
 	}
 	onVictoryCheck = ( data ) => {
+		console.log("this is victory data:   ", data)
 		if ( this.state.playerName === data.playerName ) {
 			this.setState( {
 				"modal": {
@@ -454,6 +432,23 @@ class Game extends Component {
 			return [
 				<p>Please select one of your opponent's elements on the
 					field to discard.</p>,
+				<CardDisplay onClick={this.clickHandler}/>,
+				<Grid
+					container={true}
+					direction="row"
+					justify="space-around"
+					alignItems="center">
+					<p>{cards[ "water" ]}</p>
+					<p>{cards[ "earth" ]}</p>
+					<p>{cards[ "light" ]}</p>
+					<p>{cards[ "shadow" ]}</p>
+					<p>{cards[ "fire" ]}</p>
+				</Grid>,
+			]
+		} else if (this.state.afterFlip === "counterAction") {
+			const cards = this.state.playerHand
+			return [
+				<p>Please select another element to discard along with water.</p>,
 				<CardDisplay onClick={this.clickHandler}/>,
 				<Grid
 					container={true}
