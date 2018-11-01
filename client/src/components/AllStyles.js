@@ -28,20 +28,20 @@ const Card = theme => ( {
 		width: "100%",
 		height: "inherit",
 		margin: "auto",
+		background: "linear-gradient(to right bottom, #430089, #82ffa1)",
+		paddingTop: "5%",
+
 		// margin: "auto", paddingTop: "1", paddingLeft: "18%", paddingRight: "18%",
-		[theme.breakpoints.between( "xs", "sm" )]: {
-			paddingTop: "5%",
-			backgroundColor: "blue"
-		},
-		[ theme.breakpoints.only( "md" ) ]: {
-			paddingTop: "5%",
-			// paddingBottom: "5%",
-			backgroundColor: "green",
-		},
+		// [theme.breakpoints.between( "xs", "sm" )]: {
+		// 	paddingTop: "5%",
+		// },
+		// [ theme.breakpoints.only( "md" ) ]: {
+		// 	paddingTop: "5%",
+		// 	// paddingBottom: "5%",
+		// },
 		[theme.breakpoints.between( "lg", "xl" )]: {
 			paddingTop: "2%",
 			// paddingBottom: "2%",
-			backgroundColor: "red"
 		},
 	},
 } );
