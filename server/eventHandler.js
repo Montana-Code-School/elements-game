@@ -23,7 +23,7 @@ module.exports = function ( client, rooms ) {
 		const hand = player.hand;
 		const keys = Object.keys( deck );
 		function drawSingleCard() {
-			if ( keys.length === 0 )
+			if ( keys.length === 0 ) 
 				return;
 			const randomIndex = Math.floor( Math.random() * keys.length );
 			const randomKey = keys[ randomIndex ];
@@ -38,7 +38,7 @@ module.exports = function ( client, rooms ) {
 		for ( let i = 0; i < n; i++ ) {
 			drawSingleCard();
 		}
-		return { deck, hand, };
+		return { deck, hand };
 	}
 	flipCard = ( gameOnCardFlip, opponent ) => {
 		let card = gameOnCardFlip[ opponent ].stagedCard;
@@ -66,7 +66,6 @@ module.exports = function ( client, rooms ) {
 		}
 		return gameOnCardFlip;
 	}
-
 	onClick = ( cardType, gameOnClick, emitAction ) => {
 		let currentPlayer = "player1";
 		let opponent = "player2";
@@ -89,13 +88,12 @@ module.exports = function ( client, rooms ) {
 				gameOnClick.afterFlip = "";
 				break;
 			case "counterAction":
-				console.log( "counterAction" )
-				gameOnClick[ currentPlayer ].hand[ cardType ]--;
-				gameOnClick[ currentPlayer ].hand.water--;
+				gameOnClick[ opponent ].hand[ cardType ]--;
+				gameOnClick[ opponent ].hand[ "water" ]--;
+				gameOnClick[ opponent ].discard[ cardType ]++;
+				gameOnClick[ opponent ].discard[ "water" ]++;
+				gameOnClick[ currentPlayer ].stagedCard = "";
 				gameOnClick[ currentPlayer ].discard[ cardType ]++;
-				gameOnClick[ currentPlayer ].discard.water++;
-				gameOnClick[ opponent ].stagedCard = "";
-				gameOnClick[ opponent ].discard++;
 				gameOnClick.afterFlip = "";
 				emitAction = "counterActionEmit";
 				break;
@@ -122,7 +120,7 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		return { "game": gameOnClick, "emitAction": emitAction, };
+		return { "game": gameOnClick, "emitAction": emitAction };
 	}
 	onSwitchTurn = ( gameOnSwitchTurn ) => {
 		gameOnSwitchTurn.turn === gameOnSwitchTurn.player1.clientId
@@ -131,18 +129,18 @@ module.exports = function ( client, rooms ) {
 		return gameOnSwitchTurn;
 	}
 	getVictory = ( field ) => {
-		if ( !Object.values( field ).includes( 0 ) )
+		if ( !Object.values( field ).includes( 0 ) ) 
 			return "victory";
 		else {
 			return null;
 		}
-		}
+	}
 	return {
 		handleJoin,
 		getVictory,
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn,
+		onSwitchTurn
 	};
 }
