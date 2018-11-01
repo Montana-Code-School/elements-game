@@ -233,7 +233,6 @@ class Game extends Component {
 							"message": "this is shadowAction modal."
 						}})
 				}
-				//shadow modal with this players hand for this player
 			} );
 		} else {
 			this.setState( {
@@ -255,8 +254,6 @@ class Game extends Component {
 							"message": "this is fireAction modal."
 						}})
 				}
-				// fire modal with opponnents field for this player light
-				// modal with discard pile for this player
 			} );
 		}
 
@@ -331,7 +328,54 @@ class Game extends Component {
 		}
 	}
 	getModalContent = () => {
-		return <p>{this.state.modal.message}</p>
+		if (this.state.afterFlip === "shadowAction"){
+			const cards = this.state.playerHand
+			return [<p>Please select an element in your hand to discard.</p>,
+							<CardDisplay/>,
+							<Grid
+								container={true}
+								direction="row"
+								justify="space-around"
+								alignItems="center">
+								<p>{cards[ "water" ]}</p>
+								<p>{cards[ "earth" ]}</p>
+								<p>{cards[ "light" ]}</p>
+								<p>{cards[ "shadow" ]}</p>
+								<p>{cards[ "fire" ]}</p>
+							</Grid>]
+		} else if (this.state.afterFlip === "lightAction") {
+			const cards = this.state.playerDiscard
+			return [<p>Please select an element in your discard to put in your hand.</p>,
+							<CardDisplay/>,
+							<Grid
+								container={true}
+								direction="row"
+								justify="space-around"
+								alignItems="center">
+								<p>{cards[ "water" ]}</p>
+								<p>{cards[ "earth" ]}</p>
+								<p>{cards[ "light" ]}</p>
+								<p>{cards[ "shadow" ]}</p>
+								<p>{cards[ "fire" ]}</p>
+							</Grid>]
+		} else if (this.state.afterFlip === "fireAction") {
+			const cards = this.state.opponentsField
+			return [<p>Please select one of your opponent's elements on the field to discard.</p>,
+							<CardDisplay/>,
+							<Grid
+								container={true}
+								direction="row"
+								justify="space-around"
+								alignItems="center">
+								<p>{cards[ "water" ]}</p>
+								<p>{cards[ "earth" ]}</p>
+								<p>{cards[ "light" ]}</p>
+								<p>{cards[ "shadow" ]}</p>
+								<p>{cards[ "fire" ]}</p>
+							</Grid>]
+		} else {
+			return <p>{this.state.modal.message}</p>
+		}
 	}
 	render() {
 		const { classes } = this.props;
