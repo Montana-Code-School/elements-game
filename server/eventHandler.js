@@ -88,6 +88,7 @@ module.exports = function ( client, rooms ) {
 				gameOnClick.afterFlip = "";
 				break;
 			case "counterAction":
+				console.log( "player2/n  ", gameOnClick[currentPlayer], )
 				gameOnClick[ opponent ].hand[ cardType ]--;
 				gameOnClick[ opponent ].hand[ "water" ]--;
 				gameOnClick[ opponent ].discard[ cardType ]++;
@@ -96,6 +97,7 @@ module.exports = function ( client, rooms ) {
 				gameOnClick[ currentPlayer ].discard[ cardType ]++;
 				gameOnClick.afterFlip = "";
 				emitAction = "counterActionEmit";
+				console.log( "player2/n  ", gameOnClick[ currentPlayer ] )
 				break;
 			case "lightAction":
 				gameOnClick[ currentPlayer ].discard[ cardType ]--;

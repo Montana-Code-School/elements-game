@@ -14,7 +14,6 @@ const makeHandlers = require( "./eventHandler" );
 const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
-// room = new Room();
 io.on( "connection", function ( client ) {
 	const { rooms } = io.sockets.adapter;
 	const { Player } = classes;
@@ -24,7 +23,7 @@ io.on( "connection", function ( client ) {
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn,
+		onSwitchTurn
 	} = makeHandlers( client, rooms );
 	clientManager.addClient( client );
 	client.on( "join", function () {
@@ -41,7 +40,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": gameOnJoin.name,
 				"playerName": client.id,
-				"turn": gameOnJoin.turn
+				"turn": gameOnJoin.turn,
 			} );
 			//if room exist,but there is only one player
 		} else if ( gameOnJoin.player2 === null ) {
@@ -53,7 +52,7 @@ io.on( "connection", function ( client ) {
 			client.emit( "roomJoin", {
 				"roomName": gameOnJoin.name,
 				"playerName": client.id,
-				"turn": gameOnJoin.turn
+				"turn": gameOnJoin.turn,
 			} );
 		}
 	} );
@@ -68,13 +67,13 @@ io.on( "connection", function ( client ) {
 				"player1": {
 					"deck": gameOnInitialDraw.player1.deck,
 					"hand": gameOnInitialDraw.player1.hand,
-					"message": "Your turn"
+					"message": "Your turn",
 				},
 				"player2": {
 					"deck": gameOnInitialDraw.player2.deck,
 					"hand": gameOnInitialDraw.player2.hand,
-					"message": "waiting for opponent"
-				},
+					"message": "waiting for opponent",
+				}
 			} );
 		}
 	} );
@@ -105,7 +104,7 @@ io.on( "connection", function ( client ) {
 					"playerStagedCard": gameOnClick[ opponent ].stagedCard,
 					"playerDiscard": gameOnClick[ opponent ].discard,
 					"afterFlip": gameOnClick.afterFlip,
-					"player": client.id,
+					"player": client.id
 				} )
 				break;
 			case "fireActionEmit":
@@ -115,7 +114,7 @@ io.on( "connection", function ( client ) {
 					"discard": gameOnClick[ opponent ].discard,
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
-					"currentPlayer": client.id
+					"currentPlayer": client.id,
 				} );
 				break;
 			case "shadowActionEmit":
@@ -125,7 +124,7 @@ io.on( "connection", function ( client ) {
 					"discard": gameOnClick[ currentPlayer ].discard,
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
-					"currentPlayer": client.id
+					"currentPlayer": client.id,
 				} );
 				break;
 			case "lightActionEmit":
@@ -135,14 +134,14 @@ io.on( "connection", function ( client ) {
 					"discard": gameOnClick[ currentPlayer ].discard,
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
-					"currentPlayer": client.id,
+					"currentPlayer": client.id
 				} );
 				break;
 			default:
 				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"stagedCard": gameOnClick[ currentPlayer ].stagedCard,
-					"playerName": client.id
+					"playerName": client.id,
 				} );
 				break;
 		}
@@ -150,14 +149,14 @@ io.on( "connection", function ( client ) {
 	client.on( "counterOffer", function ( roomName ) {
 		io.sockets. in ( roomName ).emit( "getCounterOffer", {
 			"message": "Waiting for opponent...",
-			"currentPlayer": client.id,
+			"currentPlayer": client.id
 		} );
 	} );
 	client.on( "sendCounterOfferRes", function ( roomName, result ) {
 		if ( result === "noCounter" ) {
 			io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 				"result": result,
-				"player": client.id,
+				"player": client.id
 			} )
 		} else {
 			let gameOnCounter = playingRoomManager.getRoomById( roomName );
@@ -166,7 +165,7 @@ io.on( "connection", function ( client ) {
 			io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 				"afterFlip": "counterAction",
 				"result": result,
-				"player": client.id,
+				"player": client.id
 			} )
 		}
 	} );
@@ -185,7 +184,7 @@ io.on( "connection", function ( client ) {
 			"field": gameOnFlipCard[ opponent ].field,
 			"playerName": client.id,
 			"afterFlip": gameOnFlipCard.afterFlip,
-			"message": "  was flipped",
+			"message": "  was flipped"
 		} );
 	} );
 	client.on( "switchTurn", function ( roomName ) {
@@ -196,7 +195,7 @@ io.on( "connection", function ( client ) {
 			"currentPlayer": client.id,
 			"turn": gameOnSwitchTurn.turn,
 			"playerMessage": "Your turn",
-			"opponnentsMessage": "Waiting for opponent",
+			"opponnentsMessage": "Waiting for opponent"
 		} )
 	} )
 	client.on( "drawCard", function ( roomName ) {
@@ -212,7 +211,7 @@ io.on( "connection", function ( client ) {
 			"hand": gameOnCardDraw[ player ].hand,
 			"playerName": client.id,
 			"playerMessage": "Your turn",
-			"opponentsMessage": "waiting for opponent",
+			"opponentsMessage": "waiting for opponent"
 		} );
 	} )
 	client.on( "disconnect", function () {
@@ -229,18 +228,18 @@ io.on( "connection", function ( client ) {
 			io.sockets. in ( roomName ).emit( "onVictoryCheck", {
 				"playerMessage": "YOU WON!",
 				"opponentsMessage": "YOU LOST!",
-				"playerName": gameOnVictoryCheck.player1.clientId,
+				"playerName": gameOnVictoryCheck.player1.clientId
 			} );
 		} else if ( getVictory( gameOnVictoryCheck.player2.field ) === "victory" ) {
 			io.sockets. in ( roomName ).emit( "onVictoryCheck", {
 				"playerMessage": "YOU WON!",
 				"opponentsMessage": "YOU LOST!",
-				"playerName": gameOnVictoryCheck.player2.clientId,
+				"playerName": gameOnVictoryCheck.player2.clientId
 			} );
 		} else {
 			io.sockets. in ( roomName ).emit( "onVictoryCheck", {
 				"playerName": client.id,
-				"playerMessage": "keep playing",
+				"playerMessage": "keep playing"
 			} )
 		}
 	} )

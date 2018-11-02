@@ -1,6 +1,6 @@
 const io = require( 'socket.io-client' )
 export default function () {
-	const socket = io.connect( "http://localhost:5000" );
+	const socket = io.connect( "https://pacific-headland-28113.herokuapp.com/" );
 
 	function join() {
 		socket.emit( "join" );
@@ -97,6 +97,6 @@ export default function () {
 		switchTurn,
 		getNewTurn,
 		getVictoryCheck,
-		getCardActionRes,
+		getCardActionRes
 	}
 }
