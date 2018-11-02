@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { CardMedia, withStyles, } from "@material-ui/core";
+import { CardMedia, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import DiscardPile from "./DiscardPile";
 class GameCard extends Component {
@@ -40,6 +40,13 @@ class GameCard extends Component {
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
 				image={require( `../images/opponentDeck.png` )}/>
+		} else if ( this.props.parent === "field" ) {
+			return <CardMedia
+				component="img"
+				alt={this.props.className}
+				className={`${ this.props.className} ${ classes.fieldCard }`}
+				image={require( `../images/${ this.props.className }.png` )}
+				onClick={this.props.onClick}/>
 		} else {
 			return <CardMedia
 				component="img"

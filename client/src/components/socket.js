@@ -1,19 +1,26 @@
 const io = require( 'socket.io-client' )
 export default function () {
-	const socket = io.connect( "http://localhost:5000" );
-
+	// http://192.168.137.112:5000/ opening socket and
+	// specifiying address it should listen
+	const socket = io.connect( "https://elements-game.herokuapp.com/" );
+	// send message to server about client wanting to join the
+	// room
 	function join() {
 		socket.emit( "join" );
 	};
+	//listener to the roomJoin event  from the server
 	function getRoomJoin( onRoomJoin ) {
 		socket.on( "roomJoin", onRoomJoin );
 	}
+	//send message to the server about making initial draw
 	function initialDraw( roomName ) {
 		socket.emit( "initialDraw", roomName );
 	}
+	// getting results of the initial draw from server
 	function getInitialDrawRes( onInitialDrawRes ) {
 		socket.on( "initialDrawRes", onInitialDrawRes );
 	};
+	// sending
 	function clickCard( card, roomName, afterFlip ) {
 		socket.emit( "click", card, roomName, afterFlip );
 	}
