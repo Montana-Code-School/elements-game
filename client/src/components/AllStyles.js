@@ -3,36 +3,37 @@ const Card = theme => ( {
 		width: "8%",
 		marginTop: "1%",
 		marginBottom: "1%",
-		margin: ".1%",
+		margin: ".1%"
 	},
 	multicardDisplayCard: {
 		width: "10%",
 		marginTop: "1%",
 		marginBottom: "1%",
-		margin: ".1%",
+		margin: ".1%"
 	},
 	multicardDisplay: {
 		width: "45%",
 		height: "40%",
-		margin: "1%"
+		margin: "1%",
 	},
 	field: {
 		width: "40%",
-		height: "40%",
+		height: "40%"
 	},
 	chat: {
 		width: "25%",
-		height: "70%",
+		height: "70%"
 	},
 	page: {
-		width: "100%",
-		height: "inherit",
-		// margin: "auto",
+		width: "90%",
+		height: "90%",
 		background: "linear-gradient(to right bottom, #430089, #82ffa1)",
-		// paddingTop: "5%",
-		flexDirection: "column",
-		[theme.breakpoints.between( "lg", "xl" )]: {
-			// paddingTop: "2%"
+		paddingTop: "8.5%",
+		paddingLeft: "5%",
+		paddingRight: "5%",
+		[theme.breakpoints.between( "md", "xl" )]: {
+			paddingTop: "3%",
+			paddingBottom: "2.5%",
 		},
 	},
 } );
@@ -50,5 +51,5 @@ const Card = theme => ( {
 // background: #eee; }   #messages { margin-bottom: 40px } }
 export {
 	Card,
-	// Chat,,,,,,
+	// Chat,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 }
