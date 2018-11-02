@@ -5,7 +5,7 @@ const app = express();
 const path = require( "path" );
 const port = process.env.PORT || 5000;
 const server = require( 'http' ).createServer( app );
-const io = require( "socket.io" )( server );
+const io = require( "socket.io" ).listen( server );
 
 const classes = require( "./roomAndPlayerClasses" )
 const ClientManager = require( "./clientManager" );
@@ -15,6 +15,7 @@ const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
 io.on( "connection", function ( client ) {
+	console.log(client)
 	const { rooms } = io.sockets.adapter;
 	const { Player } = classes;
 	const {
