@@ -80,6 +80,7 @@ io.on( "connection", function ( client ) {
 	client.on( "click", ( cardType, roomName, afterFlip ) => {
 		let emitAction = "";
 		let gameOnClick = playingRoomManager.getRoomById( roomName );
+		console.log( gameOnClick )
 		gameOnClick.afterFlip = afterFlip;
 		let res = onClick( cardType, gameOnClick, emitAction );
 		gameOnClick = res.game;
@@ -175,6 +176,7 @@ io.on( "connection", function ( client ) {
 		client.id === gameOnFlipCard.player1.clientId
 			? opponent = "player2"
 			: opponent = "player1";
+		let card = gameOnFlipCard[ opponent ].stagedCard;
 		gameOnFlipCard = flipCard( gameOnFlipCard, opponent );
 		gameOnFlipCard = playingRoomManager.updateRoom( gameOnFlipCard );
 		io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
@@ -184,7 +186,7 @@ io.on( "connection", function ( client ) {
 			"field": gameOnFlipCard[ opponent ].field,
 			"playerName": client.id,
 			"afterFlip": gameOnFlipCard.afterFlip,
-			"message": "  was flipped",
+			"message": `${ card } was flipped`,
 		} );
 	} );
 	client.on( "switchTurn", function ( roomName ) {
@@ -248,12 +250,15 @@ io.on( "connection", function ( client ) {
 		console.log( err );
 	} )
 } );
+//if this production mode
 if ( process.env.NODE_ENV === "production" ) {
+	//path
 	app.use( express.static( path.join( __dirname, "../client/build" ) ) );
 	app.get( "/", function ( req, res ) {
 		res.sendFile( path.join( __dirname, "../client/build", "index.html" ) );
 	} );
 }
+//server listens to the specified port
 server.listen( port, function ( err ) {
 	if ( err ) {
 		console.log( "error", err )

@@ -18,28 +18,23 @@ const backdropStyle = {
 	opacity: 0.5
 };
 
-const dialogStyle = function () {
-	let left = 50;
-  let top = 45;
-
-	return {
-		position: "absolute",
-		width: 400,
-		top: top + "%",
-		left: left + "%",
-		transform: `translate(-${ top}%, -${ left }%)`,
-		border: "1px solid #e5e5e5",
-		backgroundColor: "white",
-		boxShadow: "0 5px 15px rgba(0,0,0,.5)",
-		padding: 20
-	};
+const dialogStyle = {
+	position: "absolute",
+	width: 400,
+	top: "45%",
+	left: "50%",
+	transform: "translate(-45%, -50%)",
+	border: "1px solid #e5e5e5",
+	backgroundColor: "white",
+	boxShadow: "0 5px 15px rgba(0,0,0,.5)",
+	padding: 20
 };
 
 class CustomModal extends Component {
 
 	getButtonOptions() {
 		let buttonOptions = null
-		switch ( this.props.buttonFlag) {
+		switch ( this.props.buttonFlag ) {
 			case "choiceButton":
 				buttonOptions = [
 					<button onClick={this.props.accept}>Yes</button>,
@@ -73,7 +68,7 @@ class CustomModal extends Component {
 				backdropstyle={backdropStyle}
 				open={this.props.isOpen}
 				onClose={this.props.closeModal}>
-				<div style={dialogStyle()}>
+				<div style={dialogStyle}>
 					{this.props.children}
 					{this.getButtonOptions()}
 				</div>

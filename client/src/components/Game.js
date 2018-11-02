@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
 import CustomModal from "./Modal";
-import ChatBox from "./ChatBox"
-import { Grid, Card, withStyles } from "@material-ui/core";
+import { Grid, Card, withStyles, } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from './socket';
 
@@ -24,7 +23,7 @@ class Game extends Component {
 			modal: {
 				open: false,
 				message: "",
-				buttonFlag: ""
+				buttonFlag: "",
 			},
 			room: null,
 			afterFlip: "",
@@ -39,30 +38,30 @@ class Game extends Component {
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
 			playerHand: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
 			playerField: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
 			playerDiscard: {
 				fire: 0,
 				water: 0,
 				light: 0,
 				shadow: 0,
-				earth: 0,
+				earth: 0
 			},
-			playerStagedCard: "",
+			playerStagedCard: ""
 		};
 		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
@@ -83,7 +82,7 @@ class Game extends Component {
 			"modal": {
 				"open": true,
 				"message": data,
-				"buttonFlag": "homeButton",
+				"buttonFlag": "homeButton"
 			}
 		}, function () {
 			this.state.client.disconnect();
@@ -93,7 +92,7 @@ class Game extends Component {
 		this.setState( {
 			room: data.roomName,
 			playerName: data.playerName,
-			turn: data.turn
+			turn: data.turn,
 		}, function () {
 			if ( this.state.playerName !== this.state.turn ) {
 				this.state.client.initialDraw( this.state.room );
@@ -107,7 +106,7 @@ class Game extends Component {
 				playerHand: data.player1.hand,
 				opponentsDeck: getCount( data.player2.deck ),
 				opponentsHand: getCount( data.player2.hand ),
-				message: data.player1.message
+				message: data.player1.message,
 			} )
 		} else {
 			this.setState( {
@@ -115,7 +114,7 @@ class Game extends Component {
 				playerHand: data.player2.hand,
 				opponentsDeck: getCount( data.player1.deck ),
 				opponentsHand: getCount( data.player1.hand ),
-				message: data.player2.message,
+				message: data.player2.message
 			} )
 		}
 	}
@@ -124,27 +123,15 @@ class Game extends Component {
 			this.setState( {
 				"modal": {
 					"open": true,
-					"message": "It is not your turn."
+					"message": "It is not your turn.",
 				}
 			} )
 		} else {
-			this.closeModal()
-			this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip )
-		}
-	}
-	onClickedCard = ( data ) => {
-		if ( data.playerName === this.state.playerName ) {
-			this.setState( {
-				"playerHand": data.hand,
-				"playerStagedCard": data.stagedCard
-			}, function () {
-				this.state.client.counterOffer( this.state.room );
-			} );
-		} else {
-			this.setState( {
-				"opponentsHand": getCount( data.hand ),
-				"opponentsStagedCard": data.stagedCard
-			} )
+			if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] > 0 || this.state.playerDiscard[e.currentTarget.className.split( " " )[ 2 ]] > 0 || this.state.opponentsField[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) {
+				console.log( "have card in hand", e.target.parentElement.className.split( " " ) );
+				this.closeModal();
+				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+			}
 		}
 	}
 	onCounterOffer = ( data ) => {
@@ -156,7 +143,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "Would you like to counter? ",
-						"buttonFlag": "choiceButton",
+						"buttonFlag": "choiceButton"
 					}
 				} )
 			} else if ( this.state.playerHand.water === 0 ) {
@@ -164,7 +151,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "You are unable to counter at this time.",
-						"buttonFlag": "noWaterButton",
+						"buttonFlag": "noWaterButton"
 					}
 				} )
 			}
@@ -188,8 +175,8 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": "This is the counter modal",
-						"buttonFlag": "closeButton",
-					},
+						"buttonFlag": "closeButton"
+					}
 				} )
 			}
 		} else {
@@ -203,7 +190,7 @@ class Game extends Component {
 				"playerDiscard": result.counteringPlayerDiscard,
 				"opponentsStagedCard": result.playerStagedCard,
 				"opponentsDiscard": getCount( result.playerDiscard ),
-				"afterFlip": result.afterFlip,
+				"afterFlip": result.afterFlip
 			}, function () {
 				this.state.client.switchTurn( this.state.room );
 			} )
@@ -213,7 +200,7 @@ class Game extends Component {
 				"opponentsDiscard": getCount( result.counteringPlayerDiscard ),
 				"playerStagedCard": result.playerStagedCard,
 				"playerDiscard": result.playerDiscard,
-				"afterFlip": result.afterFlip
+				"afterFlip": result.afterFlip,
 			} )
 		}
 	}
@@ -225,16 +212,28 @@ class Game extends Component {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsDeck": getCount( data.deck ),
 				"afterFlip": data.afterFlip,
-				"message": data.message
+				"message": data.message,
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
-					this.setState( {
-						"modal": {
-							"open": true,
-							"buttonFlag": "noButton",
-						}
-					} )
+					if ( this.state.opponentsHand === 0 ) {
+						this.setState( {
+							"modal": {
+								"open": true,
+								"message": "There are no elements in your hand to discard.",
+								"buttonFlag": "closeButton",
+							}
+						}, function () {
+							this.state.client.clickCard( "none", this.state.room, this.state.afterFlip )
+						} )
+					} else {
+						this.setState( {
+							"modal": {
+								"open": true,
+								"buttonFlag": "noButton"
+							}
+						} )
+					}
 				} else if ( this.state.afterFlip !== "shadowAction" && this.state.afterFlip !== "lightAction" && this.state.afterFlip !== "fireAction" ) {
 					this.state.client.switchTurn( this.state.room );
 				}
@@ -246,22 +245,46 @@ class Game extends Component {
 				"playerField": data.field,
 				"playerStagedCard": data.stagedCard,
 				"afterFlip": data.afterFlip,
-				"message": data.message
+				"message": data.message,
 			}, function () {
 				if ( this.state.afterFlip === "lightAction" ) {
-					this.setState( {
-						"modal": {
-							"open": true,
-							"buttonFlag": "noButton",
-						}
-					} )
+					if ( getCount( this.state.playerDiscard ) === 0 ) {
+						this.setState( {
+							"modal": {
+								"open": true,
+								message: "There are no elements in your discard.",
+								"buttonFlag": "closeButton"
+							}
+						}, function () {
+							this.state.client.clickCard( "none", this.state.room, this.state.afterFlip )
+						} )
+					} else {
+						this.setState( {
+							"modal": {
+								"open": true,
+								"buttonFlag": "noButton"
+							}
+						} )
+					}
 				} else if ( this.state.afterFlip === "fireAction" ) {
-					this.setState( {
-						"modal": {
-							"open": true,
-							"buttonFlag": "noButton",
-						}
-					} )
+					if ( getCount( this.state.opponentsField ) === 0 ) {
+						this.setState( {
+							"modal": {
+								"open": true,
+								message: "There are no elements on the opponents field",
+								"buttonFlag": "closeButton"
+							}
+						}, function () {
+							this.state.client.clickCard( "none", this.state.room, this.state.afterFlip )
+						} )
+					} else {
+						this.setState( {
+							"modal": {
+								"open": true,
+								"buttonFlag": "noButton"
+							}
+						} )
+					}
 				}
 			} );
 		}
@@ -271,13 +294,13 @@ class Game extends Component {
 			this.setState( {
 				"playerHand": data.hand,
 				"playerDeck": getCount( data.deck ),
-				"message": data.playerMessage
+				"message": data.playerMessage,
 			} )
 		} else {
 			this.setState( {
 				"opponentsHand": getCount( data.hand ),
 				"opponentsDeck": getCount( data.deck ),
-				"message": data.opponentsMessage
+				"message": data.opponentsMessage,
 			} )
 		}
 	}
@@ -288,7 +311,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": data.playerMessage,
-						"buttonFlag": "homeButton",
+						"buttonFlag": "homeButton"
 					}
 				}, function () {
 					this.state.client.disconnect();
@@ -298,7 +321,7 @@ class Game extends Component {
 					"modal": {
 						"open": true,
 						"message": data.opponentsMessage,
-						"buttonFlag": "homeButton",
+						"buttonFlag": "homeButton"
 					}
 				}, function () {
 					this.state.client.disconnect();
@@ -313,13 +336,13 @@ class Game extends Component {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"opponentsField": data.field,
-						"opponentsDiscard": getCount( data.discard )
+						"opponentsDiscard": getCount( data.discard ),
 					} )
 				} else {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"playerField": data.field,
-						"playerDiscard": data.discard,
+						"playerDiscard": data.discard
 					}, function () {
 						this.state.client.switchTurn( this.state.room );
 					} )
@@ -327,12 +350,12 @@ class Game extends Component {
 				break;
 			case "lightActionEmit":
 				if ( data.currentPlayer === this.state.playerName ) {
-					this.setState( { "afterFlip": data.afterFlip, "playerDiscard": data.discard, "playerHand": data.hand, } )
+					this.setState( { "afterFlip": data.afterFlip, "playerDiscard": data.discard, "playerHand": data.hand } )
 				} else {
 					this.setState( {
 						"afterFlip": data.afterFlip,
 						"opponentsDiscard": getCount( data.discard ),
-						"opponentsHand": getCount( data.hand ),
+						"opponentsHand": getCount( data.hand )
 					}, function () {
 						this.state.client.switchTurn( this.state.room );
 					} )
@@ -343,7 +366,7 @@ class Game extends Component {
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"playerHand": data.hand,
-						"playerDiscard": data.discard,
+						"playerDiscard": data.discard
 					}, function () {
 						this.state.client.switchTurn( this.state.room )
 					} )
@@ -351,7 +374,7 @@ class Game extends Component {
 					this.setState( {
 						afterFlip: data.afterFlip,
 						"opponentsHand": getCount( data.hand ),
-						"opponentsDiscard": getCount( data.discard ),
+						"opponentsDiscard": getCount( data.discard )
 					} )
 				}
 				break;
@@ -361,20 +384,20 @@ class Game extends Component {
 		if ( data.currentPlayer === this.state.playerName ) {
 			this.setState( {
 				"turn": data.turn,
-				"message": data.playerMessage,
+				"message": data.playerMessage
 			}, function () {
 				this.state.client.drawCard( this.state.room );
 			} );
 		} else {
-			this.setState( { "turn": data.turn, "message": data.opponnentsMessage, } );
+			this.setState( { "turn": data.turn, "message": data.opponnentsMessage } );
 		}
 	}
 	getModalContent = () => {
-		if ( this.state.afterFlip === "shadowAction" ) {
+		if ( this.state.afterFlip === "shadowAction" && this.state.opponentsHand > 0 ) {
 			const cards = this.state.playerHand
-			return [
-				<p>Please select an element in your hand to discard.</p>,
-				<CardDisplay onClick={this.clickHandler}/>,
+			return ( <div>
+				<p>Please select an element in your hand to discard.</p>
+				<CardDisplay onClick={this.clickHandler} className="modal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -385,14 +408,14 @@ class Game extends Component {
 					<p>{cards[ "light" ]}</p>
 					<p>{cards[ "shadow" ]}</p>
 					<p>{cards[ "fire" ]}</p>
-				</Grid>,
-			]
-		} else if ( this.state.afterFlip === "lightAction" ) {
+				</Grid>
+			</div> )
+		} else if ( this.state.afterFlip === "lightAction" && getCount( this.state.playerDiscard ) > 0 ) {
 			const cards = this.state.playerDiscard
-			return [
+			return ( <div>
 				<p>Please select an element in your discard to put in your
-					hand.</p>,
-				<CardDisplay onClick={this.clickHandler}/>,
+					hand.</p>
+				<CardDisplay onClick={this.clickHandler} className="modal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -403,14 +426,14 @@ class Game extends Component {
 					<p>{cards[ "light" ]}</p>
 					<p>{cards[ "shadow" ]}</p>
 					<p>{cards[ "fire" ]}</p>
-				</Grid>,
-			]
-		} else if ( this.state.afterFlip === "fireAction" ) {
-			const cards = this.state.opponentsField
-			return [
+				</Grid>
+			</div> )
+		} else if ( this.state.afterFlip === "fireAction" && getCount( this.state.opponentsField ) > 0 ) {
+			const cards = this.state.opponentsField;
+			return ( <div>
 				<p>Please select one of your opponent's elements on the
-					field to discard.</p>,
-				<CardDisplay onClick={this.clickHandler}/>,
+					field to discard.</p>
+				<CardDisplay onClick={this.clickHandler} className="modal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -421,13 +444,13 @@ class Game extends Component {
 					<p>{cards[ "light" ]}</p>
 					<p>{cards[ "shadow" ]}</p>
 					<p>{cards[ "fire" ]}</p>
-				</Grid>,
-			]
-		} else if ( this.state.afterFlip === "counterAction" ) {
+				</Grid>
+			</div> )
+		} else if ( this.state.afterFlip === "counterAction" && getCount( this.state.playerHand ) >= 2 ) {
 			const cards = this.state.playerHand
-			return [
-				<p>Please select another element to discard along with water.</p>,
-				<CardDisplay onClick={this.clickHandler}/>,
+			return ( <div>
+				<p>Please select another element to discard along with water.</p>
+				<CardDisplay onClick={this.clickHandler} className="modal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -438,8 +461,8 @@ class Game extends Component {
 					<p>{cards[ "light" ]}</p>
 					<p>{cards[ "shadow" ]}</p>
 					<p>{cards[ "fire" ]}</p>
-				</Grid>,
-			]
+				</Grid>
+			</div> )
 		} else {
 			return <p>{this.state.modal.message}</p>
 		}
@@ -460,6 +483,8 @@ class Game extends Component {
 			this.state.client.sendCounterOfferRes( this.state.room, result );
 		} )
 	}
+	// <Grid 	container={true} 	direction="row"
+	// justify="space-around" alignItems="center">
 	render() {
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
@@ -497,43 +522,33 @@ class Game extends Component {
 					<p>{this.state.opponentsDeck}</p>
 					<GameCard className="opponentsDeck"/>
 				</Grid>
+
 				<Grid
 					container={true}
 					direction="row"
 					justify="space-around"
 					alignItems="center">
-					<ChatBox/>
-					<Card className={classes.field}>
-						<Grid
-							container={true}
-							direction="row"
-							justify="space-around"
-							alignItems="center">
-							<p>{this.state.opponentsField[ "water" ]}</p>
-							<p>{this.state.opponentsField[ "earth" ]}</p>
-							<p>{this.state.opponentsField[ "light" ]}</p>
-							<p>{this.state.opponentsField[ "shadow" ]}</p>
-							<p>{this.state.opponentsField[ "fire" ]}</p>
-						</Grid>
-						<CardDisplay
-							className="opponentsField"
-							onClick={this.clickHandler}/>
-						<p>{this.state.message}</p>
-						<CardDisplay
-							className="playerField"
-							onClick={this.clickHandler}/>
-						<Grid
-							container={true}
-							direction="row"
-							justify="space-around"
-							alignItems="center">
-							<p>{this.state.playerField[ "water" ]}</p>
-							<p>{this.state.playerField[ "earth" ]}</p>
-							<p>{this.state.playerField[ "light" ]}</p>
-							<p>{this.state.playerField[ "shadow" ]}</p>
-							<p>{this.state.playerField[ "fire" ]}</p>
-						</Grid>
-					</Card>
+					<p>{this.state.opponentsField[ "water" ]}</p>
+					<p>{this.state.opponentsField[ "earth" ]}</p>
+					<p>{this.state.opponentsField[ "light" ]}</p>
+					<p>{this.state.opponentsField[ "shadow" ]}</p>
+					<p>{this.state.opponentsField[ "fire" ]}</p>
+				</Grid>
+				<CardDisplay className="opponentsField"/>
+				<Grid container={true} direction="row" justify="center">
+					<p>{this.state.message}</p>
+				</Grid>
+				<CardDisplay className="playerField"/>
+				<Grid
+					container={true}
+					direction="row"
+					justify="space-around"
+					alignItems="center">
+					<p>{this.state.playerField[ "water" ]}</p>
+					<p>{this.state.playerField[ "earth" ]}</p>
+					<p>{this.state.playerField[ "light" ]}</p>
+					<p>{this.state.playerField[ "shadow" ]}</p>
+					<p>{this.state.playerField[ "fire" ]}</p>
 				</Grid>
 				<Grid
 					container={true}
