@@ -127,9 +127,19 @@ class Game extends Component {
 				}
 			} )
 		} else {
-			if ( ( e.target.parentElement.className.split( " " )[ 3 ] === "playerHand" && this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) || ( e.target.parentElement.className.split( " " )[ 3 ] === "fireActionModal" && this.state.opponentsField[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) || ( e.target.parentElement.className.split( " " )[ 3 ] === "lightActionModal" && this.state.playerDiscard[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) ) {
+			let onClickedCardName = e.currentTarget.className.split( " " )[ 2 ];
+			let parent = e.target.parentElement.className.split( " " )[ 3 ];
+			if ( ( ( parent === "playerHand" || parent === "shadowActionModal" ) && this.state.playerHand[ onClickedCardName ] > 0 ) || ( parent === "fireActionModal" && this.state.opponentsField[ onClickedCardName ] > 0 ) || ( parent === "lightActionModal" && this.state.playerDiscard[ onClickedCardName ] > 0 ) ) {
 				this.closeModal();
 				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+			} else if ( parent === "counterActionModal" ) {
+				if ( onClickedCardName === "water" && this.state.playerHand[ onClickedCardName ] >= 2 ) {
+					this.closeModal();
+					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+				} else if ( onClickedCardName !== "water" && this.state.playerHand[ onClickedCardName ] > 0 ) {
+					this.closeModal();
+					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+				}
 			} else {
 				this.setState( {
 					"modal": {
