@@ -1,10 +1,7 @@
 const io = require( 'socket.io-client' )
 export default function () {
-	// https://thawing-gorge-45352.herokuapp.com/
-	// "http://localhost:5000" "http://192.168.1.5:3000/"
-	// opening socket and specifiying address it should listen
-	// to const socket = io.connect(
-	// "http://192.168.137.112:3000/" );
+	// https://thawing-gorge-45352.herokuapp.com/ opening socket
+	// and specifiying address it should listen
 	const socket = io.connect( "http://192.168.137.112:5000/" );
 	// send message to server about client wanting to join the
 	// room
@@ -105,6 +102,6 @@ export default function () {
 		switchTurn,
 		getNewTurn,
 		getVictoryCheck,
-		getCardActionRes,
+		getCardActionRes
 	}
 }
