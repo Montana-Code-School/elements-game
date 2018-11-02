@@ -92,8 +92,8 @@ module.exports = function ( client, rooms ) {
 				gameOnClick[ opponent ].hand[ "water" ]--;
 				gameOnClick[ opponent ].discard[ cardType ]++;
 				gameOnClick[ opponent ].discard[ "water" ]++;
+				gameOnClick[ currentPlayer ].discard[ gameOnClick[ currentPlayer ].stagedCard ]++;
 				gameOnClick[ currentPlayer ].stagedCard = "";
-				gameOnClick[ currentPlayer ].discard[ cardType ]++;
 				gameOnClick.afterFlip = "";
 				emitAction = "counterActionEmit";
 				break;

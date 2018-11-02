@@ -15,7 +15,6 @@ const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
 io.on( "connection", function ( client ) {
-	console.log(client)
 	const { rooms } = io.sockets.adapter;
 	const { Player } = classes;
 	const {
