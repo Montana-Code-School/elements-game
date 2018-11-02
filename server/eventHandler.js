@@ -38,7 +38,7 @@ module.exports = function ( client, rooms ) {
 		for ( let i = 0; i < n; i++ ) {
 			drawSingleCard();
 		}
-		return { deck, hand };
+		return { deck, hand, };
 	}
 	flipCard = ( gameOnCardFlip, opponent ) => {
 		let card = gameOnCardFlip[ opponent ].stagedCard;
@@ -88,24 +88,30 @@ module.exports = function ( client, rooms ) {
 				gameOnClick.afterFlip = "";
 				break;
 			case "counterAction":
-				gameOnClick[ opponent ].hand[ cardType ]--;
-				gameOnClick[ opponent ].hand[ "water" ]--;
-				gameOnClick[ opponent ].discard[ cardType ]++;
-				gameOnClick[ opponent ].discard[ "water" ]++;
-				gameOnClick[ currentPlayer ].discard[ gameOnClick[ currentPlayer ].stagedCard ]++;
-				gameOnClick[ currentPlayer ].stagedCard = "";
+				if ( cardType !== "none" ) {
+					gameOnClick[ opponent ].hand[ cardType ]--;
+					gameOnClick[ opponent ].hand[ "water" ]--;
+					gameOnClick[ opponent ].discard[ cardType ]++;
+					gameOnClick[ opponent ].discard[ "water" ]++;
+					gameOnClick[ currentPlayer ].discard[ gameOnClick[ currentPlayer ].stagedCard ]++;
+					gameOnClick[ currentPlayer ].stagedCard = "";
+				}
 				gameOnClick.afterFlip = "";
 				emitAction = "counterActionEmit";
 				break;
 			case "lightAction":
-				gameOnClick[ currentPlayer ].discard[ cardType ]--;
-				gameOnClick[ currentPlayer ].hand[ cardType ]++;
+				if ( cardType !== "none" ) {
+					gameOnClick[ currentPlayer ].discard[ cardType ]--;
+					gameOnClick[ currentPlayer ].hand[ cardType ]++;
+				}
 				emitAction = "lightActionEmit";
 				gameOnClick.afterFlip = "";
 				break;
 			case "shadowAction":
-				gameOnClick[ opponent ].hand[ cardType ]--;
-				gameOnClick[ opponent ].discard[ cardType ]++;
+				if ( cardType !== "none" ) {
+					gameOnClick[ opponent ].hand[ cardType ]--;
+					gameOnClick[ opponent ].discard[ cardType ]++;
+				}
 				gameOnClick.afterFlip = "";
 				emitAction = "shadowActionEmit";
 				break;
@@ -120,7 +126,7 @@ module.exports = function ( client, rooms ) {
 				}
 				break;
 		}
-		return { "game": gameOnClick, "emitAction": emitAction };
+		return { "game": gameOnClick, "emitAction": emitAction, };
 	}
 	onSwitchTurn = ( gameOnSwitchTurn ) => {
 		gameOnSwitchTurn.turn === gameOnSwitchTurn.player1.clientId
@@ -141,6 +147,6 @@ module.exports = function ( client, rooms ) {
 		drawCard,
 		flipCard,
 		onClick,
-		onSwitchTurn
+		onSwitchTurn,
 	};
 }
