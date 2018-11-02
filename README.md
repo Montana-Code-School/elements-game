@@ -1,6 +1,6 @@
 ### [Gameplay Instructions](https://docs.google.com/document/d/1HHIA1LgYNFDwX3jqK-7cGXw943NPmsdY-GeA4rEfUAA/edit?usp=sharing "Instructions")
 
-### [Live Example](https://thawing-gorge-45352.herokuapp.com/ "Elements HerokuApp")
+### [Live Example](https://elements-game.herokuapp.com/)
 
 
 ### Local Setup:
@@ -15,7 +15,7 @@ The App's back-end uses `Node.js` and runs on port 5000 while the front-end uses
  1. Clone the repo and `cd` into the `root` directory.
  2. Use `npm install` to install necessary server dependencies.
  3. When finished `cd client/` and again run `npm install` for front end dependencies.
- 4. To play the game locally you will need to open the `client/src/components/socket.js` file in your preferred text editor and change line that reads `const socket = io.connect( "http://192.168.137.112:5000/" );` to read `const socket = io.connect( "http://localhost:5000" );` then save the file. (This line will be within the first few lines of the file.)
+ 4. To play the game locally you will need to open the `client/src/components/socket.js` file in your preferred text editor and change line that reads `const socket = io.connect( "https://elements-game.herokuapp.com/" );` to read `const socket = io.connect( "http://localhost:5000" );` then save the file. (This line will be within the first few lines of the file.)
  5. `cd` back into the `root` directory and use `npm run dev`. This will open a browser session of the app on `localhost:3000`.
  6. You will then need to open another browser to the same address.
  7. Once both browsers are open you may click `start game` on both, at which point both windows will act as a seperate client and cards will be dealt to each.
