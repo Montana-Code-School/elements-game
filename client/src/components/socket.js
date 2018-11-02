@@ -1,6 +1,7 @@
 const io = require( 'socket.io-client' )
 export default function () {
-	const socket = io.connect( "https://thawing-gorge-45352.herokuapp.com/" );
+	// https://thawing-gorge-45352.herokuapp.com/
+	const socket = io.connect( "http://localhost:5000" );
 
 	function join() {
 		socket.emit( "join" );

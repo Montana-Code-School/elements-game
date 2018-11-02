@@ -175,7 +175,6 @@ class Game extends Component {
 	}
 	acceptCounter = () => {
 		this.closeOfferModal( "counter" );
-
 	}
 	onCounterOfferRes = ( result ) => {
 		if ( result.result === "noCounter" ) {
@@ -198,7 +197,6 @@ class Game extends Component {
 		}
 	}
 	onCounterActionRes = ( result ) => {
-		console.log( result );
 		if ( result.player === this.state.playerName ) {
 			this.setState( {
 				"playerHand": result.counteringPlayerHand,
@@ -463,7 +461,6 @@ class Game extends Component {
 		} )
 	}
 	render() {
-		localStorage.debug = 'socket.io-client:socket ,engine.io-client:socket ';
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>
 			<CustomModal
@@ -500,7 +497,6 @@ class Game extends Component {
 					<p>{this.state.opponentsDeck}</p>
 					<GameCard className="opponentsDeck"/>
 				</Grid>
-
 				<Grid
 					container={true}
 					direction="row"
@@ -539,7 +535,6 @@ class Game extends Component {
 						</Grid>
 					</Card>
 				</Grid>
-
 				<Grid
 					container={true}
 					direction="row"
