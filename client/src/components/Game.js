@@ -127,11 +127,32 @@ class Game extends Component {
 				}
 			} )
 		} else {
-			if ( this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] > 0 || this.state.playerDiscard[e.currentTarget.className.split( " " )[ 2 ]] > 0 || this.state.opponentsField[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) {
-				console.log( "have card in hand", e.target.parentElement.className.split( " " ) );
+			if ( ( e.target.parentElement.className.split( " " )[ 3 ] === "playerHand" && this.state.playerHand[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) || ( e.target.parentElement.className.split( " " )[ 3 ] === "fireActionModal" && this.state.opponentsField[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) || ( e.target.parentElement.className.split( " " )[ 3 ] === "lightActionModal" && this.state.playerDiscard[e.currentTarget.className.split( " " )[ 2 ]] > 0 ) ) {
 				this.closeModal();
 				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+			} else {
+				this.setState( {
+					"modal": {
+						"open": true,
+						"message": "You are unable to play this element.",
+					}
+				} )
 			}
+		}
+	}
+	onClickedCard = ( data ) => {
+		if ( data.playerName === this.state.playerName ) {
+			this.setState( {
+				"playerHand": data.hand,
+				"playerStagedCard": data.stagedCard
+			}, function () {
+				this.state.client.counterOffer( this.state.room );
+			} );
+		} else {
+			this.setState( {
+				"opponentsHand": getCount( data.hand ),
+				"opponentsStagedCard": data.stagedCard
+			} )
 		}
 	}
 	onCounterOffer = ( data ) => {
@@ -397,7 +418,9 @@ class Game extends Component {
 			const cards = this.state.playerHand
 			return ( <div>
 				<p>Please select an element in your hand to discard.</p>
-				<CardDisplay onClick={this.clickHandler} className="modal"/>
+				<CardDisplay
+					onClick={this.clickHandler}
+					className="shadowActionModal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -415,7 +438,9 @@ class Game extends Component {
 			return ( <div>
 				<p>Please select an element in your discard to put in your
 					hand.</p>
-				<CardDisplay onClick={this.clickHandler} className="modal"/>
+				<CardDisplay
+					onClick={this.clickHandler}
+					className="lightActionModal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -433,7 +458,9 @@ class Game extends Component {
 			return ( <div>
 				<p>Please select one of your opponent's elements on the
 					field to discard.</p>
-				<CardDisplay onClick={this.clickHandler} className="modal"/>
+				<CardDisplay
+					onClick={this.clickHandler}
+					className="fireActionModal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -450,7 +477,9 @@ class Game extends Component {
 			const cards = this.state.playerHand
 			return ( <div>
 				<p>Please select another element to discard along with water.</p>
-				<CardDisplay onClick={this.clickHandler} className="modal"/>
+				<CardDisplay
+					onClick={this.clickHandler}
+					className="counterActionModal"/>
 				<Grid
 					container={true}
 					direction="row"
@@ -483,8 +512,6 @@ class Game extends Component {
 			this.state.client.sendCounterOfferRes( this.state.room, result );
 		} )
 	}
-	// <Grid 	container={true} 	direction="row"
-	// justify="space-around" alignItems="center">
 	render() {
 		const { classes } = this.props;
 		return ( <Card className={classes.page}>

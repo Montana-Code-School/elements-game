@@ -15,7 +15,7 @@ export default class CardDisplay extends Component {
 				<GameCard className="cardBack"/>
 				<GameCard className="cardBack"/>
 			</Grid> )
-		} else if ( this.props.className === "playerHand" || this.props.className === "modal" ) {
+		} else if ( this.props.className === "playerHand" || this.props.className === "fireActionModal" || this.props.className === "lightActionModal" || this.props.className === "shadowActionModal" || this.props.className === "counterActionModal" ) {
 			return ( <Grid
 				container={true}
 				direction="row"
@@ -45,7 +45,7 @@ export default class CardDisplay extends Component {
 				container={true}
 				direction="row"
 				justify="space-around"
-							 alignItems="center">
+				alignItems="center">
 				<GameCard className="water"/>
 				<GameCard className="earth"/>
 				<GameCard className="light"/>

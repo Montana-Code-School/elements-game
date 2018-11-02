@@ -2,14 +2,20 @@ const io = require( 'socket.io-client' )
 export default function () {
 	// https://thawing-gorge-45352.herokuapp.com/
 	// "http://localhost:5000" "http://192.168.1.5:3000/"
-	const socket = io.connect( "http://192.168.137.112:3000/" );
-
+	// opening socket and specifiying address it should listen
+	// to const socket = io.connect(
+	// "http://192.168.137.112:3000/" );
+	const socket = io.connect( "http://192.168.137.112:5000/" );
+	// send message to server about client wanting to join the
+	// room
 	function join() {
 		socket.emit( "join" );
 	};
+	//listener to the roomJoin event  from the server
 	function getRoomJoin( onRoomJoin ) {
 		socket.on( "roomJoin", onRoomJoin );
 	}
+	//send message to the server about making initial draw
 	function initialDraw( roomName ) {
 		socket.emit( "initialDraw", roomName );
 	}
@@ -99,6 +105,6 @@ export default function () {
 		switchTurn,
 		getNewTurn,
 		getVictoryCheck,
-		getCardActionRes
+		getCardActionRes,
 	}
 }

@@ -80,11 +80,12 @@ io.on( "connection", function ( client ) {
 	client.on( "click", ( cardType, roomName, afterFlip ) => {
 		let emitAction = "";
 		let gameOnClick = playingRoomManager.getRoomById( roomName );
-		console.log( gameOnClick )
 		gameOnClick.afterFlip = afterFlip;
+		console.log( "before res" )
 		let res = onClick( cardType, gameOnClick, emitAction );
 		gameOnClick = res.game;
 		emitAction = res.emitAction
+		console.log( emitAction )
 		gameOnClick.afterFlip = "";
 		gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 		let currentPlayer = "";
@@ -119,6 +120,7 @@ io.on( "connection", function ( client ) {
 				} );
 				break;
 			case "shadowActionEmit":
+				console.log( "inside of shadow" );
 				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"hand": gameOnClick[ currentPlayer ].hand,
@@ -139,6 +141,7 @@ io.on( "connection", function ( client ) {
 				} );
 				break;
 			default:
+				console.log( "first click" )
 				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"stagedCard": gameOnClick[ currentPlayer ].stagedCard,
