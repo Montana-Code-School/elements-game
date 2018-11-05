@@ -278,7 +278,7 @@ class Game extends Component {
       }, function() {
         this.state.client.victoryCheck(this.state.room);
         if (this.state.afterFlip === "shadowAction") {
-          if (this.state.opponentsHand === 0) {
+          if (this.state.opponent.hand === 0) {
             this.setState({
               "modal": {
                 "open": true,
@@ -330,7 +330,7 @@ class Game extends Component {
             })
           }
         } else if (this.state.afterFlip === "fireAction") {
-          if (this.getCount(this.state.opponentsField) === 0) {
+          if (this.getCount(this.state.opponent.field) === 0) {
             this.setState({
               "modal": {
                 "open": true,
@@ -467,7 +467,7 @@ class Game extends Component {
     }
   }
   getModalContent = () => {
-    if (this.state.afterFlip === "shadowAction" && this.state.opponentsHand > 0) {
+    if (this.state.afterFlip === "shadowAction" && this.state.opponent.hand > 0) {
       return (<div>
         <p>Please select an element in your hand to discard.</p>
         <CardDisplay onClick={this.clickHandler} className="shadowActionModal"/>
@@ -524,18 +524,18 @@ class Game extends Component {
                 ? "0"
                 : "1"
             }</p>
-          <GameCard className="opponentsStack"/>
+          <GameCard className="opponentStack"/>
           <p>{this.getCount(this.state.opponent.hand)}</p>
           <Card className={classes.multicardDisplay}>
-            <CardDisplay className="opponentsHand"/>
+            <CardDisplay className="opponentHand"/>
           </Card>
           <p>{this.state.opponent.discard}</p>
-          <GameCard className="opponentsDiscard"/>
+          <GameCard className="opponentDiscard"/>
           <p>{this.state.opponent.deck}</p>
-          <GameCard className="opponentsDeck"/>
+          <GameCard className="opponentDeck"/>
         </Grid>
         <CardCount cards={this.state.opponent.field}/>
-        <CardDisplay className="opponentsField"/>
+        <CardDisplay className="opponentField"/>
         <Grid container={true} direction="row" justify="center">
           <p>{this.state.message}</p>
         </Grid>
