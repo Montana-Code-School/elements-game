@@ -130,7 +130,8 @@ class Game extends Component {
       this.setState({
         modal: {
           open: true,
-          message: "It is not your turn."
+          message: "It is not your turn.",
+          "buttonFlag": "closeButton"
         }
       })
     } else if (this.state.turn === this.state.playerName && this.state.player.stagedCard !== "" && this.state.afterFlip === "") {
@@ -153,7 +154,8 @@ class Game extends Component {
         this.setState({
           modal: {
             open: true,
-            message: "You are unable to play this element."
+            message: "You are unable to play this element.",
+            buttonFlag: "closeButton"
           }
         })
       }
@@ -221,7 +223,7 @@ class Game extends Component {
           modal: {
             open: true,
             message: "This is the counter modal",
-            buttonFlag: "closeButton"
+            buttonFlag: "noButton"
           }
         })
       }
