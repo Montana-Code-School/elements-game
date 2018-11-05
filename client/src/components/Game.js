@@ -127,13 +127,7 @@ class Game extends Component {
   }
   clickHandler = (e) => {
     if (this.state.turn !== this.state.playerName && this.state.afterFlip === "") {
-      this.setState({
-        modal: {
-          open: true,
-          message: "It is not your turn.",
-          "buttonFlag": "closeButton"
-        }
-      })
+      this.modalContent("closeButton", "It is not your turn.")
     } else if (this.state.turn === this.state.playerName && this.state.player.stagedCard !== "" && this.state.afterFlip === "") {
       this.setState({"message": "Element is already played, wait for opponent"})
     } else {
@@ -151,13 +145,7 @@ class Game extends Component {
           this.state.client.clickCard(e.currentTarget.className.split(" ")[2], this.state.room, this.state.afterFlip);
         }
       } else {
-        this.setState({
-          modal: {
-            open: true,
-            message: "You are unable to play this element.",
-            buttonFlag: "closeButton"
-          }
-        })
+        this.modalContent("closeButton", "You are unable to play this element.")
       }
     }
   }
@@ -187,21 +175,9 @@ class Game extends Component {
       this.setState({message: data.message})
     } else {
       if (this.state.player.hand.water >= 1 && (this.state.player.hand.earth >= 1 || this.state.player.hand.shadow >= 1 || this.state.player.hand.light >= 1 || this.state.player.hand.fire >= 1)) {
-        this.setState({
-          modal: {
-            open: true,
-            message: "Would you like to counter? ",
-            buttonFlag: "choiceButton"
-          }
-        })
+        this.modalContent("choiceButton", "Would you like to counter?")
       } else if (this.state.player.hand.water === 0) {
-        this.setState({
-          modal: {
-            open: true,
-            message: "You are unable to counter at this time.",
-            buttonFlag: "noWaterButton"
-          }
-        })
+        this.modalContent("noWaterButton", "You are unable to counter at this time.")
       }
     }
   }
@@ -219,13 +195,8 @@ class Game extends Component {
     } else if (result.result === "counter") {
       if (result.player === this.state.playerName) {
         this.setState({
-          afterFlip: result.afterFlip,
-          modal: {
-            open: true,
-            message: "This is the counter modal",
-            buttonFlag: "noButton"
-          }
-        })
+          afterFlip: result.afterFlip
+        }, this.modalContent("noButton", "This is the counter modal"))
       }
     } else {
       this.setState({"afterFlip": result.afterFlip})
@@ -279,22 +250,9 @@ class Game extends Component {
         this.state.client.victoryCheck(this.state.room);
         if (this.state.afterFlip === "shadowAction") {
           if (this.state.opponent.hand === 0) {
-            this.setState({
-              "modal": {
-                "open": true,
-                "message": "There are no elements in your hand to discard.",
-                "buttonFlag": "closeButton"
-              }
-            }, function() {
-              this.state.client.clickCard("none", this.state.room, this.state.afterFlip)
-            })
+            this.modalContent("closeButton", "There are no elements in your hand to discard.", this.state.client.clickCard.bind(this, "none", this.state.room, this.state.afterFlip))
           } else {
-            this.setState({
-              "modal": {
-                "open": true,
-                "buttonFlag": "noButton"
-              }
-            })
+            this.modalContent("noButton")
           }
         } else if (this.state.afterFlip !== "shadowAction" && this.state.afterFlip !== "lightAction" && this.state.afterFlip !== "fireAction") {
           this.state.client.switchTurn(this.state.room);
@@ -312,41 +270,15 @@ class Game extends Component {
       }, function() {
         if (this.state.afterFlip === "lightAction") {
           if (this.getCount(this.state.player.discard) === 0) {
-            this.setState({
-              "modal": {
-                "open": true,
-                message: "There are no elements in your discard.",
-                "buttonFlag": "closeButton"
-              }
-            }, function() {
-              this.state.client.clickCard("none", this.state.room, this.state.afterFlip)
-            })
+            this.modalContent("closeButton", "There are no elements in your discard.", this.state.client.clickCard.bind(this, "none", this.state.room, this.state.afterFlip))
           } else {
-            this.setState({
-              "modal": {
-                "open": true,
-                "buttonFlag": "noButton"
-              }
-            })
+            this.modalContent("noButton")
           }
         } else if (this.state.afterFlip === "fireAction") {
           if (this.getCount(this.state.opponent.field) === 0) {
-            this.setState({
-              "modal": {
-                "open": true,
-                message: "There are no elements on the opponents field",
-                "buttonFlag": "closeButton"
-              }
-            }, function() {
-              this.state.client.clickCard("none", this.state.room, this.state.afterFlip)
-            })
+            this.modalContent("closeButton", "There are no elements on the opponents field", this.state.client.clickCard.bind(this, "none", this.state.room, this.state.afterFlip))
           } else {
-            this.setState({
-              "modal": {
-                "open": true,
-                "buttonFlag": "noButton"
-              }
-            })
+            this.modalContent("noButton")
           }
         }
       });
@@ -369,30 +301,29 @@ class Game extends Component {
       this.setState({opponent, "message": data.opponentsMessage})
     }
   }
+  modalContent = (buttonFlag, message = "", triggerFunction = null) => {
+    this.setState({
+      modal: {
+        open: true,
+        message: message,
+        buttonFlag: buttonFlag
+      }
+    }, function() {
+      if (triggerFunction !== null) {
+        triggerFunction()
+      }
+    })
+  }
   onVictoryCheck = (data) => {
     if (data.playerMessage !== "keep playing") {
       if (this.state.playerName === data.playerName) {
         this.setState({
-          afterFlip: "",
-          "modal": {
-            "open": true,
-            "message": data.playerMessage,
-            "buttonFlag": "homeButton"
-          }
-        }, function() {
-          this.state.client.disconnect();
-        });
+          afterFlip: ""
+        }, this.modalContent("homeButton", data.playerMessage, this.state.client.disconnect.bind(this)))
       } else {
         this.setState({
-          afterFlip: "",
-          "modal": {
-            "open": true,
-            "message": data.opponentsMessage,
-            "buttonFlag": "homeButton"
-          }
-        }, function() {
-          this.state.client.disconnect();
-        });
+          afterFlip: ""
+        }, this.modalContent("homeButton", data.opponentsMessage, this.state.client.disconnect.bind(this)))
       }
     }
   }
