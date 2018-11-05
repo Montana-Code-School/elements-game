@@ -30,7 +30,7 @@ class Room {
 	constructor( roomName, clientInfo ) {
 		this.name = roomName;
 		this.turn = clientInfo.id;
-		this.afterFlip = null;
+		this.afterFlip = "";
 		this.player1 = new Player( clientInfo, clientInfo.id );
 		this.player2 = null;
 	}
@@ -38,5 +38,5 @@ class Room {
 
 module.exports = {
 	Room,
-	Player
+	Player,
 }
