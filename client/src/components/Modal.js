@@ -66,8 +66,7 @@ class CustomModal extends Component {
 			<Modal
 				style={modalStyle}
 				backdropstyle={backdropStyle}
-				open={this.props.isOpen}
-				onClose={this.props.closeModal}>
+				open={this.props.isOpen}>
 				<div style={dialogStyle}>
 					{this.props.children}
 					{this.getButtonOptions()}
