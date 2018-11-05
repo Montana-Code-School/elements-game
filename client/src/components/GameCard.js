@@ -10,13 +10,13 @@ class GameCard extends Component {
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
-				image={require( `../images/deck.png` )}/>
+				image="https://s3-us-west-2.amazonaws.com/elements-photos/deck.png"/>
 		} else if ( this.props.className === "opponentsDiscard" ) {
 			return <CardMedia
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
-				image={require( `../images/opponentDiscard.png` )}/>
+				image="https://s3-us-west-2.amazonaws.com/elements-photos/opponentDiscard.png"/>
 		} else if ( this.props.className === "playerDiscard" ) {
 			return <DiscardPile
 				className={this.props.className}
@@ -27,32 +27,32 @@ class GameCard extends Component {
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
-				image={require( `../images/staged.png` )}/>
+				image="https://s3-us-west-2.amazonaws.com/elements-photos/staged.png"/>
 		} else if ( this.props.className === "opponentsStack" ) {
 			return <CardMedia
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
-				image={require( `../images/opponentStaged.png` )}/>
+				image="https://s3-us-west-2.amazonaws.com/elements-photos/opponentStaged.png"/>
 		} else if ( this.props.className === "opponentsDeck" ) {
 			return <CardMedia
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.card }`}
-				image={require( `../images/opponentDeck.png` )}/>
+				image="https://s3-us-west-2.amazonaws.com/elements-photos/opponentDeck.png"/>
 		} else if ( this.props.parent === "field" ) {
 			return <CardMedia
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.fieldCard }`}
-				image={require( `../images/${ this.props.className }.png` )}
+				image={`https://s3-us-west-2.amazonaws.com/elements-photos/${ this.props.className }.png`}
 				onClick={this.props.onClick}/>
 		} else {
 			return <CardMedia
 				component="img"
 				alt={this.props.className}
 				className={`${ this.props.className} ${ classes.multicardDisplayCard }`}
-				image={require( `../images/${ this.props.className }.png` )}
+				image={`https://s3-us-west-2.amazonaws.com/elements-photos/${ this.props.className }.png`}
 				onClick={this.props.onClick}/>
 		}
 	}
