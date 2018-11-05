@@ -8,7 +8,7 @@
 .container {
   width: 51.2%;
   height: 30%;
-  background: linear-gradient(to right, rgba(14, 43, 89, 0.8), 25%, rgba(79, 13, 13, 0.8), 75%, rgba(9, 43, 16, 0.8));
+  background: linear-gradient(to right, rgba(14, 43, 89, 0.8), 33%, rgba(79, 13, 13, 0.8), 66%, rgba(9, 43, 16, 0.8));
   position: absolute;
   top: 30vh;
   left: 24vw;

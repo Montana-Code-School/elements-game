@@ -521,8 +521,8 @@ class Game extends Component {
         <PlayArea playerName="opponent" playerInfo={this.state.opponent}/>
         <CardCount cards={this.state.opponent.field}/>
         <CardDisplay className="opponentField"/>
-        <Grid container={true} direction="row" justify="center">
-          <p>{this.state.message}</p>
+        <Grid container={true} direction="row" justify="left">
+          <p className={classes.statusMessage}>{this.state.message}</p>
         </Grid>
         <CardDisplay className="playerField"/>
         <CardCount cards={this.state.player.field}/>
