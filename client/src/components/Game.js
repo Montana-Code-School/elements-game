@@ -1,11 +1,11 @@
 import React, {Component} from "react";
 import CardDisplay from "./CardDisplay";
-import GameCard from "./GameCard";
 import CustomModal from "./Modal";
 import {Grid, Card, withStyles} from "@material-ui/core";
 import {Card as styles} from "./AllStyles";
 import socket from "./socket";
 import CardCount from "./CardCount"
+import PlayArea from "./PlayArea"
 
 class Game extends Component {
   constructor() {
@@ -114,13 +114,13 @@ class Game extends Component {
     if (this.state.playerName === this.state.turn) {
       player.hand = data.player1.hand;
       player.deck = this.getCount(data.player1.deck);
-      opponent.hand = data.player2.hand;
+      opponent.hand = this.getCount(data.player2.hand);
       opponent.deck = this.getCount(data.player2.deck);
       this.setState({player, opponent, message: data.player1.message});
     } else {
       player.hand = data.player2.hand;
       player.deck = this.getCount(data.player2.deck);
-      opponent.hand = data.player1.hand;
+      opponent.hand = this.getCount(data.player1.hand);
       opponent.deck = this.getCount(data.player1.deck);
       this.setState({player, opponent, message: data.player2.message});
     }
@@ -449,45 +449,15 @@ class Game extends Component {
         {this.getModalContent()}
       </CustomModal>
       <Grid container={true} direction="column" justify="space-evenly" alignItems="center">
-        <Grid container={true} direction="row" justify="space-around" alignItems="center">
-          <p>{
-              this.state.opponent.stagedCard === ""
-                ? "0"
-                : "1"
-            }</p>
-          <GameCard className="opponentStack"/>
-          <p>{this.getCount(this.state.opponent.hand)}</p>
-          <Card className={classes.multicardDisplay}>
-            <CardDisplay className="opponentHand"/>
-          </Card>
-          <p>{this.state.opponent.discard}</p>
-          <GameCard className="opponentDiscard"/>
-          <p>{this.state.opponent.deck}</p>
-          <GameCard className="opponentDeck"/>
-        </Grid>
+        <PlayArea playerName="opponent" playerInfo={this.state.opponent}/>
         <CardCount cards={this.state.opponent.field}/>
         <CardDisplay className="opponentField"/>
-        <Grid container={true} direction="row" justify="center">
-          <p>{this.state.message}</p>
+        <Grid container={true} direction="row" justify="left">
+          <p className={classes.statusMessage}>{this.state.message}</p>
         </Grid>
         <CardDisplay className="playerField"/>
         <CardCount cards={this.state.player.field}/>
-        <Grid container={true} direction="row" justify="space-around" alignItems="center">
-          <p>{this.state.player.deck}</p>
-          <GameCard className="playerDeck"/>
-          <p>{this.getCount(this.state.player.discard)}</p>
-          <GameCard className="playerDiscard" onClick={this.clickHandler} cards={this.state.player.discard}/>
-          <Card className={classes.multicardDisplay}>
-            <CardDisplay className="playerHand" onClick={this.clickHandler}/>
-            <CardCount cards={this.state.player.hand}/>
-          </Card>
-          <p>{
-              this.state.player.stagedCard === ""
-                ? "0"
-                : "1"
-            }</p>
-          <GameCard className="playerStack"/>
-        </Grid>
+        <PlayArea clickHandler={this.clickHandler} playerName="player" playerInfo={this.state.player}/>
       </Grid>
     </Card>)
   }
