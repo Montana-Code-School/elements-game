@@ -1,87 +1,135 @@
+//require 'socket.io-client'
 const io = require( 'socket.io-client' )
+
 export default function () {
 	// http://192.168.137.112:5000/ opening socket and
-	// specifiying address it should listen
-	const socket = io.connect( "https://elements-game.herokuapp.com/" );
-	// send message to server about client wanting to join the
-	// room
+	// specifiying address it should listen to
+	// https://elements-game.herokuapp.com/"
+	const socket = io.connect( "http://localhost:5000" );
+
 	function join() {
+		// sending message to server about client wanting to join
+		// the room
 		socket.emit( "join" );
 	};
-	//listener to the roomJoin event  from the server
+
 	function getRoomJoin( onRoomJoin ) {
+		//listener to the roomJoin event  from the server
 		socket.on( "roomJoin", onRoomJoin );
-	}
-	//send message to the server about making initial draw
+	};
+
 	function initialDraw( roomName ) {
+		//sending message to the server about making initial draw
 		socket.emit( "initialDraw", roomName );
-	}
-	// getting results of the initial draw from server
+	};
+
 	function getInitialDrawRes( onInitialDrawRes ) {
+		// listener to the game state from server after initial draw
+		// result
 		socket.on( "initialDrawRes", onInitialDrawRes );
 	};
-	// sending
+
 	function clickCard( card, roomName, afterFlip ) {
+		// sending message to the server about the click that was
+		// made
 		socket.emit( "click", card, roomName, afterFlip );
-	}
-	function getClickedCard( onClickedCard ) {
-		socket.on( "cardClicked", onClickedCard );
-	}
-	function counterOffer( roomName ) {
-		socket.emit( "counterOffer", roomName );
-	}
-	function getCounterOffer( onCounterOffer ) {
-		socket.on( "getCounterOffer", onCounterOffer );
-	}
-	function flipCard( roomName ) {
-		socket.emit( "flipCard", roomName );
-	}
-	function sendCounterOfferRes( roomName, result ) {
-		socket.emit( "sendCounterOfferRes", roomName, result );
-	}
-	function getCounterOfferRes( onCounterOfferRes ) {
-		socket.on( "getCounterOfferRes", onCounterOfferRes );
-	}
-	function getCounterActionRes( onCounterActionRes ) {
-		socket.on( "onCounterActionRes", onCounterActionRes )
 	};
+
+	function getClickedCard( onClickedCard ) {
+		// listener to the game state from the server after card was
+		// clicked
+		socket.on( "cardClicked", onClickedCard );
+	};
+
+	function counterOffer( roomName ) {
+		// sending message to the server to trigger counter offer
+		// for opponent
+		socket.emit( "counterOffer", roomName );
+	};
+
+	function getCounterOffer( onCounterOffer ) {
+		//listener to the counter offer from server
+		socket.on( "getCounterOffer", onCounterOffer );
+	};
+
+	function sendCounterOfferRes( roomName, result ) {
+		// sending message to the server about players decision to
+		// counter
+		socket.emit( "sendCounterOfferRes", roomName, result );
+	};
+
+	function getCounterOfferRes( onCounterOfferRes ) {
+		// listener to the information from server depending on
+		// players decisions to counter
+		socket.on( "getCounterOfferRes", onCounterOfferRes );
+	};
+
+	function getCounterActionRes( onCounterActionRes ) {
+		//listener to the game state after counter action result
+		socket.on( "onCounterActionRes", onCounterActionRes );
+	};
+
+	function flipCard( roomName ) {
+		//sending message to the server to trigger flipCard function
+		socket.emit( "flipCard", roomName );
+	};
+
 	function getFlippedCardRes( onFlippedCardRes ) {
+		//listener to the game state after card was flipped
 		socket.on( "onFlippedCardRes", onFlippedCardRes );
-	}
+	};
+
 	function getCardActionRes( onCardActionRes ) {
+		// listener to the game state after card effect was
+		// triggered
 		socket.on( "cardActionRes", onCardActionRes );
 	}
 	function drawCard( roomName ) {
+		//sending message to the server to trigger drawCard function
 		socket.emit( "drawCard", roomName );
-	}
+	};
+
 	function getDrawCardRes( onDrawCardRes ) {
+		//listener to the game state after card was drawn
 		socket.on( "drawCardRes", onDrawCardRes );
-	}
+	};
+
 	function victoryCheck( roomName ) {
+		//sending message to the server to make victory check
 		socket.emit( "victoryCheck", roomName );
-	}
+	};
+
 	function getVictoryCheck( onVictoryCheck ) {
+		//listener to the result of victory check function
 		socket.on( "onVictoryCheck", onVictoryCheck );
-	}
+	};
+
 	function switchTurn( roomName ) {
+		//sending message to the server to switch turns
 		socket.emit( "switchTurn", roomName );
-	}
+	};
+
 	function getNewTurn( onNewTurn ) {
+		//listener to the game state after turns were switched
 		socket.on( "getNewTurn", onNewTurn );
-	}
+	};
+
 	function disconnect() {
+		//manually disconnect user
 		socket.disconnect();
-	}
+	};
+
 	function getDisconnect( onDisconnect ) {
+		//listener to the disconnect message from server
 		socket.on( "getDisconnect", onDisconnect );
-	}
+	};
+
+	//listener to errors from server
 	socket.on( 'error', function ( err ) {
 		console.log( 'received socket error:' );
 		console.log( err );
 	} );
-	// socket.setTimeout(function () {    console.log('2 seconds
-	// passed, closing the socket');    socket.close();  },
-	// 5000);
+
 	return {
 		join,
 		getRoomJoin,
@@ -104,6 +152,6 @@ export default function () {
 		switchTurn,
 		getNewTurn,
 		getVictoryCheck,
-		getCardActionRes,
+		getCardActionRes
 	}
 }

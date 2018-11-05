@@ -46,7 +46,7 @@ io.on( "connection", function ( client ) {
 		} else if ( gameOnJoin.player2 === null ) {
 			//add second player to the room
 			gameOnJoin.player2 = new Player( client, client.id )
-			gameOnJoin = playingRoomManager.updateRoom( gameOnJoin );
+			playingRoomManager.updateRoom( gameOnJoin );
 			// pass information to client with room name,turn and client
 			// id
 			client.emit( "roomJoin", {
@@ -60,9 +60,9 @@ io.on( "connection", function ( client ) {
 		let gameOnInitialDraw = playingRoomManager.getRoomById( roomName )
 		// Find specific room for  initialDraw
 		if ( gameOnInitialDraw.player1.clientInfo && gameOnInitialDraw.player2.clientInfo ) {
-			drawCard( 4, gameOnInitialDraw.player1 );
-			drawCard( 4, gameOnInitialDraw.player2 );
-			gameOnInitialDraw = playingRoomManager.updateRoom( gameOnInitialDraw );
+			drawCard( 4, gameOnInitialDraw.player1.deck, gameOnInitialDraw.player1.hand );
+			drawCard( 4, gameOnInitialDraw.player2.deck, gameOnInitialDraw.player2.hand );
+			playingRoomManager.updateRoom( gameOnInitialDraw );
 			io.sockets. in ( roomName ).emit( "initialDrawRes", {
 				"player1": {
 					"deck": gameOnInitialDraw.player1.deck,
@@ -85,7 +85,7 @@ io.on( "connection", function ( client ) {
 		gameOnClick = res.game;
 		emitAction = res.emitAction
 		gameOnClick.afterFlip = "";
-		gameOnClick = playingRoomManager.updateRoom( gameOnClick );
+		playingRoomManager.updateRoom( gameOnClick );
 		let currentPlayer = "";
 		if ( client.id === gameOnClick.player1.clientId ) {
 			currentPlayer = "player1";
@@ -108,7 +108,6 @@ io.on( "connection", function ( client ) {
 				} )
 				break;
 			case "fireActionEmit":
-				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"field": gameOnClick[ opponent ].field,
 					"discard": gameOnClick[ opponent ].discard,
@@ -118,7 +117,6 @@ io.on( "connection", function ( client ) {
 				} );
 				break;
 			case "shadowActionEmit":
-				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"discard": gameOnClick[ currentPlayer ].discard,
@@ -128,7 +126,6 @@ io.on( "connection", function ( client ) {
 				} );
 				break;
 			case "lightActionEmit":
-				gameOnClick = playingRoomManager.updateRoom( gameOnClick );
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"discard": gameOnClick[ currentPlayer ].discard,
@@ -161,7 +158,7 @@ io.on( "connection", function ( client ) {
 		} else {
 			let gameOnCounter = playingRoomManager.getRoomById( roomName );
 			gameOnCounter.afterFlip = result;
-			gameOnCounter = playingRoomManager.updateRoom( gameOnCounter );
+			playingRoomManager.updateRoom( gameOnCounter );
 			io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 				"afterFlip": "counterAction",
 				"result": result,
@@ -176,8 +173,8 @@ io.on( "connection", function ( client ) {
 			? opponent = "player2"
 			: opponent = "player1";
 		let card = gameOnFlipCard[ opponent ].stagedCard;
-		gameOnFlipCard = flipCard( gameOnFlipCard, opponent );
-		gameOnFlipCard = playingRoomManager.updateRoom( gameOnFlipCard );
+		flipCard( gameOnFlipCard, opponent );
+		playingRoomManager.updateRoom( gameOnFlipCard );
 		io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
 			"deck": gameOnFlipCard[ opponent ].deck,
 			"hand": gameOnFlipCard[ opponent ].hand,
@@ -191,7 +188,7 @@ io.on( "connection", function ( client ) {
 	client.on( "switchTurn", function ( roomName ) {
 		let gameOnSwitchTurn = playingRoomManager.getRoomById( roomName );
 		gameOnSwitchTurn = onSwitchTurn( gameOnSwitchTurn );
-		gameOnSwitchTurn = playingRoomManager.updateRoom( gameOnSwitchTurn );
+		playingRoomManager.updateRoom( gameOnSwitchTurn );
 		io.sockets. in ( roomName ).emit( "getNewTurn", {
 			"currentPlayer": client.id,
 			"turn": gameOnSwitchTurn.turn,
@@ -212,9 +209,9 @@ io.on( "connection", function ( client ) {
 				"playerName": client.id
 			} )
 		} else {
-			drawCard( 1, gameOnCardDraw[ player ] );
+			drawCard( 1, gameOnCardDraw[ player ].deck, gameOnCardDraw[ player ].hand );
 		}
-		gameOnCardDraw = playingRoomManager.updateRoom( gameOnCardDraw );
+		playingRoomManager.updateRoom( gameOnCardDraw );
 		io.sockets. in ( roomName ).emit( "drawCardRes", {
 			"deck": gameOnCardDraw[ player ].deck,
 			"hand": gameOnCardDraw[ player ].hand,
@@ -223,14 +220,7 @@ io.on( "connection", function ( client ) {
 			"opponentsMessage": "Waiting for opponent..."
 		} );
 	} );
-	client.on( "disconnect", function () {
-		console.log( "client disconnect...", client.id );
-		const roomName = playingRoomManager.findRoomByClient( client.id );
-		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
-					" the Home Page." )
-		clientManager.deleteClient( client );
-		playingRoomManager.deleteRoom( roomName );
-	} );
+
 	client.on( "victoryCheck", function ( roomName ) {
 		let gameOnVictoryCheck = playingRoomManager.getRoomById( roomName );
 		if ( getVictory( gameOnVictoryCheck.player1.field ) === "victory" ) {
@@ -252,6 +242,26 @@ io.on( "connection", function ( client ) {
 			} )
 		}
 	} );
+
+	client.on( "leave", function () {
+		console.log( "client left the room" )
+	} )
+
+	client.on( "disconnect", function () {
+		console.log( "client disconnect...", client.id );
+		const roomName = playingRoomManager.findRoomByClient( client.id );
+		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
+					" the Home Page." )
+		clientManager.deleteClient( client );
+		playingRoomManager.deleteRoom( roomName );
+	} );
+
+	setTimeout( () => {
+		const roomName = playingRoomManager.findRoomByClient( client.id );
+		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
+					" the Home Page." )
+	}, 45000 );
+
 	client.on( "error", function ( err ) {
 		console.log( "received error from client:", client.id );
 		console.log( err );

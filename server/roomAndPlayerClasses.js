@@ -1,3 +1,5 @@
+// class pile that being used to represent deck,hand,field
+// and discard
 class Pile {
 	constructor( fire, water, light, shadow, earth ) {
 		this.fire = fire;
@@ -7,6 +9,9 @@ class Pile {
 		this.earth = earth;
 	}
 }
+
+// class player that keeps information about each user
+// separately
 class Player {
 	constructor( clientInfo, clientId ) {
 		this.clientInfo = clientInfo;
@@ -18,6 +23,9 @@ class Player {
 		this.stagedCard = "";
 	}
 }
+
+// class room that contain information about one playing
+// room and both users in it
 class Room {
 	constructor( roomName, clientInfo ) {
 		this.name = roomName;
@@ -27,7 +35,8 @@ class Room {
 		this.player2 = null;
 	}
 }
+
 module.exports = {
 	Room,
-	Player,
+	Player
 }
