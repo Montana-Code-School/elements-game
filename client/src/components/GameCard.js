@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {CardMedia, withStyles} from "@material-ui/core";
 import {Card as styles} from "./AllStyles";
-import DiscardPile from "./DiscardPile";
 class GameCard extends Component {
   render() {
     const {classes} = this.props;
