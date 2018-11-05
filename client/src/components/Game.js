@@ -1,11 +1,11 @@
 import React, {Component} from "react";
 import CardDisplay from "./CardDisplay";
-import GameCard from "./GameCard";
 import CustomModal from "./Modal";
 import {Grid, Card, withStyles} from "@material-ui/core";
 import {Card as styles} from "./AllStyles";
 import socket from "./socket";
 import CardCount from "./CardCount"
+import PlayArea from "./PlayArea"
 
 class Game extends Component {
   constructor() {
@@ -114,25 +114,20 @@ class Game extends Component {
     if (this.state.playerName === this.state.turn) {
       player.hand = data.player1.hand;
       player.deck = this.getCount(data.player1.deck);
-      opponent.hand = data.player2.hand;
+      opponent.hand = this.getCount(data.player2.hand);
       opponent.deck = this.getCount(data.player2.deck);
       this.setState({player, opponent, message: data.player1.message});
     } else {
       player.hand = data.player2.hand;
       player.deck = this.getCount(data.player2.deck);
-      opponent.hand = data.player1.hand;
+      opponent.hand = this.getCount(data.player1.hand);
       opponent.deck = this.getCount(data.player1.deck);
       this.setState({player, opponent, message: data.player2.message});
     }
   }
   clickHandler = (e) => {
     if (this.state.turn !== this.state.playerName && this.state.afterFlip === "") {
-      this.setState({
-        modal: {
-          open: true,
-          message: "It is not your turn."
-        }
-      })
+      this.modalContent("closeButton", "It is not your turn.")
     } else if (this.state.turn === this.state.playerName && this.state.player.stagedCard !== "" && this.state.afterFlip === "") {
       this.setState({"message": "Element is already played, wait for opponent"})
     } else {
@@ -150,12 +145,7 @@ class Game extends Component {
           this.state.client.clickCard(e.currentTarget.className.split(" ")[2], this.state.room, this.state.afterFlip);
         }
       } else {
-        this.setState({
-          modal: {
-            open: true,
-            message: "You are unable to play this element."
-          }
-        })
+        this.modalContent("closeButton", "You are unable to play this element.")
       }
     }
   }
@@ -185,21 +175,9 @@ class Game extends Component {
       this.setState({message: data.message})
     } else {
       if (this.state.player.hand.water >= 1 && (this.state.player.hand.earth >= 1 || this.state.player.hand.shadow >= 1 || this.state.player.hand.light >= 1 || this.state.player.hand.fire >= 1)) {
-        this.setState({
-          modal: {
-            open: true,
-            message: "Would you like to counter? ",
-            buttonFlag: "choiceButton"
-          }
-        })
+        this.modalContent("choiceButton", "Would you like to counter?")
       } else if (this.state.player.hand.water === 0) {
-        this.setState({
-          modal: {
-            open: true,
-            message: "You are unable to counter at this time.",
-            buttonFlag: "noWaterButton"
-          }
-        })
+        this.modalContent("noWaterButton", "You are unable to counter at this time.")
       }
     }
   }
@@ -217,13 +195,8 @@ class Game extends Component {
     } else if (result.result === "counter") {
       if (result.player === this.state.playerName) {
         this.setState({
-          afterFlip: result.afterFlip,
-          modal: {
-            open: true,
-            message: "This is the counter modal",
-            buttonFlag: "closeButton"
-          }
-        })
+          afterFlip: result.afterFlip
+        }, this.modalContent("noButton", "This is the counter modal"))
       }
     } else {
       this.setState({"afterFlip": result.afterFlip})
@@ -276,23 +249,10 @@ class Game extends Component {
       }, function() {
         this.state.client.victoryCheck(this.state.room);
         if (this.state.afterFlip === "shadowAction") {
-          if (this.state.opponentsHand === 0) {
-            this.setState({
-              "modal": {
-                "open": true,
-                "message": "There are no elements in your hand to discard.",
-                "buttonFlag": "closeButton"
-              }
-            }, function() {
-              this.state.client.clickCard("none", this.state.room, this.state.afterFlip)
-            })
+          if (this.state.opponent.hand === 0) {
+            this.modalContent("closeButton", "There are no elements in your hand to discard.", this.state.client.clickCard.bind(this, "none", this.state.room, this.state.afterFlip))
           } else {
-            this.setState({
-              "modal": {
-                "open": true,
-                "buttonFlag": "noButton"
-              }
-            })
+            this.modalContent("noButton")
           }
         } else if (this.state.afterFlip !== "shadowAction" && this.state.afterFlip !== "lightAction" && this.state.afterFlip !== "fireAction") {
           this.state.client.switchTurn(this.state.room);
@@ -309,42 +269,16 @@ class Game extends Component {
         "message": data.message
       }, function() {
         if (this.state.afterFlip === "lightAction") {
-          if (this.getCount(this.state.playerDiscard) === 0) {
-            this.setState({
-              "modal": {
-                "open": true,
-                message: "There are no elements in your discard.",
-                "buttonFlag": "closeButton"
-              }
-            }, function() {
-              this.state.client.clickCard("none", this.state.room, this.state.afterFlip)
-            })
+          if (this.getCount(this.state.player.discard) === 0) {
+            this.modalContent("closeButton", "There are no elements in your discard.", this.state.client.clickCard.bind(this, "none", this.state.room, this.state.afterFlip))
           } else {
-            this.setState({
-              "modal": {
-                "open": true,
-                "buttonFlag": "noButton"
-              }
-            })
+            this.modalContent("noButton")
           }
         } else if (this.state.afterFlip === "fireAction") {
-          if (this.getCount(this.state.opponentsField) === 0) {
-            this.setState({
-              "modal": {
-                "open": true,
-                message: "There are no elements on the opponents field",
-                "buttonFlag": "closeButton"
-              }
-            }, function() {
-              this.state.client.clickCard("none", this.state.room, this.state.afterFlip)
-            })
+          if (this.getCount(this.state.opponent.field) === 0) {
+            this.modalContent("closeButton", "There are no elements on the opponents field", this.state.client.clickCard.bind(this, "none", this.state.room, this.state.afterFlip))
           } else {
-            this.setState({
-              "modal": {
-                "open": true,
-                "buttonFlag": "noButton"
-              }
-            })
+            this.modalContent("noButton")
           }
         }
       });
@@ -367,30 +301,29 @@ class Game extends Component {
       this.setState({opponent, "message": data.opponentsMessage})
     }
   }
+  modalContent = (buttonFlag, message = "", triggerFunction = null) => {
+    this.setState({
+      modal: {
+        open: true,
+        message: message,
+        buttonFlag: buttonFlag
+      }
+    }, function() {
+      if (triggerFunction !== null) {
+        triggerFunction()
+      }
+    })
+  }
   onVictoryCheck = (data) => {
     if (data.playerMessage !== "keep playing") {
       if (this.state.playerName === data.playerName) {
         this.setState({
-          afterFlip: "",
-          "modal": {
-            "open": true,
-            "message": data.playerMessage,
-            "buttonFlag": "homeButton"
-          }
-        }, function() {
-          this.state.client.disconnect();
-        });
+          afterFlip: ""
+        }, this.modalContent("homeButton", data.playerMessage, this.state.client.disconnect.bind(this)))
       } else {
         this.setState({
-          afterFlip: "",
-          "modal": {
-            "open": true,
-            "message": data.opponentsMessage,
-            "buttonFlag": "homeButton"
-          }
-        }, function() {
-          this.state.client.disconnect();
-        });
+          afterFlip: ""
+        }, this.modalContent("homeButton", data.opponentsMessage, this.state.client.disconnect.bind(this)))
       }
     }
   }
@@ -446,7 +379,7 @@ class Game extends Component {
           })
         } else {
           opponent.hand = this.getCount(data.hand);
-          discard : this.getCount(data.discard);
+          opponent.discard = this.getCount(data.discard);
           this.setState({afterFlip: data.afterFlip, opponent})
         }
         break;
@@ -465,7 +398,7 @@ class Game extends Component {
     }
   }
   getModalContent = () => {
-    if (this.state.afterFlip === "shadowAction" && this.state.opponentsHand > 0) {
+    if (this.state.afterFlip === "shadowAction" && this.state.opponent.hand > 0) {
       return (<div>
         <p>Please select an element in your hand to discard.</p>
         <CardDisplay onClick={this.clickHandler} className="shadowActionModal"/>
@@ -516,45 +449,15 @@ class Game extends Component {
         {this.getModalContent()}
       </CustomModal>
       <Grid container={true} direction="column" justify="space-evenly" alignItems="center">
-        <Grid container={true} direction="row" justify="space-around" alignItems="center">
-          <p>{
-              this.state.opponent.stagedCard === ""
-                ? "0"
-                : "1"
-            }</p>
-          <GameCard className="opponentsStack"/>
-          <p>{this.getCount(this.state.opponent.hand)}</p>
-          <Card className={classes.multicardDisplay}>
-            <CardDisplay className="opponentsHand"/>
-          </Card>
-          <p>{this.state.opponent.discard}</p>
-          <GameCard className="opponentsDiscard"/>
-          <p>{this.state.opponent.deck}</p>
-          <GameCard className="opponentsDeck"/>
-        </Grid>
+        <PlayArea playerName="opponent" playerInfo={this.state.opponent}/>
         <CardCount cards={this.state.opponent.field}/>
-        <CardDisplay className="opponentsField"/>
-        <Grid container={true} direction="row" justify="center">
-          <p>{this.state.message}</p>
+        <CardDisplay className="opponentField"/>
+        <Grid container={true} direction="row" justify="left">
+          <p className={classes.statusMessage}>{this.state.message}</p>
         </Grid>
         <CardDisplay className="playerField"/>
         <CardCount cards={this.state.player.field}/>
-        <Grid container={true} direction="row" justify="space-around" alignItems="center">
-          <p>{this.state.player.deck}</p>
-          <GameCard className="playerDeck"/>
-          <p>{this.getCount(this.state.player.discard)}</p>
-          <GameCard className="playerDiscard" onClick={this.clickHandler} cards={this.state.player.discard}/>
-          <Card className={classes.multicardDisplay}>
-            <CardDisplay className="playerHand" onClick={this.clickHandler}/>
-            <CardCount cards={this.state.player.hand}/>
-          </Card>
-          <p>{
-              this.state.player.stagedCard === ""
-                ? "0"
-                : "1"
-            }</p>
-          <GameCard className="playerStack"/>
-        </Grid>
+        <PlayArea clickHandler={this.clickHandler} playerName="player" playerInfo={this.state.player}/>
       </Grid>
     </Card>)
   }
