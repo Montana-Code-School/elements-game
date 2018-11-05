@@ -5,22 +5,70 @@
   width: inherit;
 }
 
-.landingButton {
+.container {
+  width: 51.2%;
+  height: 30%;
+  background: linear-gradient(to right, rgba(14, 43, 89, 0.8), 25%, rgba(79, 13, 13, 0.8), 75%, rgba(9, 43, 16, 0.8));
   position: absolute;
-  left: 40.1%;
-  top: 45%;
-  width: 20vw;
-  height: 10vh;
-  font-size: 4vw;
-  background-color: White;
-  text-align: center;
-  border-radius: 10%;
+  top: 30vh;
+  left: 24vw;
+  padding: 1% 1%;
+  border-radius: 25%;
 }
 
 .landingHeader {
-  position: absolute;
-  left: 32%;
-  top: 15%;
+  position: inherit;
+  margin-top: 0;
+  left: 8%;
   font-size: 8vw;
   color: white;
+  font-family: fantasy;
+  cursor: default;
+  text-shadow: 0 1px 0 #ccc,
+              0 2px 0 #c9c9c9,
+              0 3px 0 #bbb,
+              0 4px 0 #b9b9b9,
+              0 5px 0 #aaa,
+              0 6px 1px rgba(0,0,0,.1),
+              0 0 5px rgba(0,0,0,.1),
+              0 1px 3px rgba(0,0,0,.3),
+              0 3px 5px rgba(0,0,0,.2),
+              0 5px 10px rgba(0,0,0,.25),
+              0 10px 10px rgba(0,0,0,.2),
+              0 20px 20px rgba(0,0,0,.15);
+}
+
+.landingButton, .rulesButton{
+  position: relative;
+  top: 70%;
+  left: 19%;
+  width: 20vw;
+  height: 10vh;
+  font-size: 4vw;
+  background-color: none;
+  color: white;
+  text-align: center;
+  border-radius: 50%;
+  text-shadow: 0 1px 0 #ccc,
+              0 2px 0 #c9c9c9,
+              0 3px 0 #bbb,
+              0 4px 0 #b9b9b9,
+              0 5px 0 #aaa,
+              0 6px 1px rgba(0,0,0,.1),
+              0 0 5px rgba(0,0,0,.1),
+              0 1px 3px rgba(0,0,0,.3),
+              0 3px 5px rgba(0,0,0,.2),
+              0 5px 10px rgba(0,0,0,.25),
+              0 10px 10px rgba(0,0,0,.2),
+              0 20px 20px rgba(0,0,0,.15);
+  font-family: fantasy;
+  text-decoration: none;
+}
+
+.rulesButton:hover, .landingButton:hover {
+  color: silver;
+}
+
+.rulesButton {
+  margin-left: 10%;
 }
