@@ -260,7 +260,7 @@ io.on( "connection", function ( client ) {
 		const roomName = playingRoomManager.findRoomByClient( client.id );
 		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
 					" the Home Page." )
-	}, 45000 );
+	}, 120000 );
 
 	client.on( "error", function ( err ) {
 		console.log( "received error from client:", client.id );

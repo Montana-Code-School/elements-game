@@ -22,11 +22,9 @@ class PlayArea extends Component {
       alignItems="center">
         <p>{this.props.playerInfo.deck}</p>
         <GameCard className=`${this.props.playerName}Deck`/>
-        <p>{this.getCount(this.props.playerInfo.discard)}</p>
-        <GameCard
-          className=`${this.props.playerName}Discard`
-          onClick={this.clickHandler}
-          cards={this.props.playerInfo.discard}/>
+        <p>{this.props.playerName === "opponent"? this.props.playerInfo.discard : this.getCount(this.props.playerInfo.discard)}
+        </p>
+        <GameCard className=`${this.props.playerName}Discard` />
         <Card className={classes.multicardDisplay}>
           <CardDisplay
             className="playerHand"
