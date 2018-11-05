@@ -13,21 +13,25 @@ class DiscardPile extends Component {
   close = () => {
     this.setState({showModal: false});
   };
-
   open = () => {
     this.setState({showModal: true})
   };
   render() {
-    const {classes} = this.props;
+    const {classes, cards} = this.props;
     return (<div className={classes.card}>
-      <CardMedia onClick={this.open} component="img" alt={this.props.className} className={this.props.className} image={require(`../images/discard.png`)}/>
+      <CardMedia onClick={this.open} component="img" alt={this.props.className} className={this.props.className} image="https://s3-us-west-2.amazonaws.com/elements-photos/discard.png"/>
       <CustomModal isOpen={this.state.showModal} closeModal={this.close}>
         <CardDisplay onClick={this.props.onClick}/>
-        <CardCount cards={this.props.cards}/>
+        <Grid container={true} direction="row" justify="space-around" alignItems="center">
+          <p>{cards["water"]}</p>
+          <p>{cards["earth"]}</p>
+          <p>{cards["light"]}</p>
+          <p>{cards["shadow"]}</p>
+          <p>{cards["fire"]}</p>
+        </Grid>
       </CustomModal>
     </div>);
   }
-
 }
 
 export default withStyles(styles)(DiscardPile)

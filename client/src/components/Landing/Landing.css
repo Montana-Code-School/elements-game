@@ -1,5 +1,5 @@
 .landingContainer {
-  background: url("../../images/landing.png") no-repeat;
+  background: url("https://s3-us-west-2.amazonaws.com/elements-photos/landing.png") no-repeat;
   background-size: 100% 100%;
   height: inherit;
   width: inherit;
