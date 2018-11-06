@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
-import CustomModal from "./Modal";
 import { Grid, Card, withStyles, } from "@material-ui/core";
 import CardCount from "./CardCount"
+import {Card as styles} from "./AllStyles";
+
 
 class PlayArea extends Component {
   getCount = ( cards ) => {
@@ -14,32 +15,56 @@ class PlayArea extends Component {
     return count;
   };
   render () {
-    return(
-      <Grid
-        container={true}
-        direction="row"
-        justify="space-around"
-      alignItems="center">
-        <p>{this.props.playerInfo.deck}</p>
-        <GameCard className=`${this.props.playerName}Deck`/>
-        <p>{this.getCount(this.props.playerInfo.discard)}</p>
-        <GameCard
-          className=`${this.props.playerName}Discard`
-          onClick={this.clickHandler}
-          cards={this.props.playerInfo.discard}/>
-        <Card className={classes.multicardDisplay}>
-          <CardDisplay
-            className="playerHand"
-            onClick={this.clickHandler}/>
-          <CardCount cards={this.props.playerInfo.hand}/>
-        </Card>
+    const {classes} = this.props;
+    if (this.props.playerName === "opponent") {
+      return(
+        <Grid
+          container={true}
+          direction="row"
+          justify="space-around"
+        alignItems="center">
         <p>{
-            this.state.playerInfo.stagedCard === ""
+            this.props.playerInfo.stagedCard === ""
               ? "0"
               : "1"
         }</p>
-        <GameCard className="playerStack"/>
-      </Grid>
-    )
+        <GameCard className="opponentStack"/>
+        <p>{this.props.playerInfo.hand}</p>
+        <Card className={classes.multicardDisplay}>
+        <CardDisplay className="opponentHand"/>
+        </Card>
+        <p>{this.props.playerInfo.discard}</p>
+        <GameCard className="opponentDiscard"/>
+          <p>{this.props.playerInfo.deck}</p>
+          <GameCard className="opponentDeck"/>
+        </Grid>
+      )
+    } else {
+      return(
+        <Grid
+          container={true}
+          direction="row"
+          justify="space-around"
+        alignItems="center">
+          <p>{this.props.playerInfo.deck}</p>
+          <GameCard className="playerDeck"/>
+          <p>{this.getCount(this.props.playerInfo.discard)}
+          </p>
+          <GameCard className="playerDiscard" />
+          <Card className={classes.multicardDisplay}>
+          <CardDisplay className="playerHand" onClick={this.props.clickHandler}/>
+            <CardCount cards={this.props.playerInfo.hand}/>
+          </Card>
+          <p>{
+              this.props.playerInfo.stagedCard === ""
+                ? "0"
+                : "1"
+          }</p>
+          <GameCard className="playerStack"/>
+        </Grid>
+      )
+
+    }
   }
 }
+export default withStyles(styles)(PlayArea);

@@ -8,14 +8,14 @@ const modalStyle = {
 	top: 0,
 	bottom: 0,
 	left: 0,
-	right: 0
+	right: 0,
 };
 
 const backdropStyle = {
 	...modalStyle,
 	zIndex: "auto",
 	backgroundColor: "#000",
-	opacity: 0.5
+	opacity: 0.5,
 };
 
 const dialogStyle = {
@@ -27,47 +27,36 @@ const dialogStyle = {
 	border: "1px solid #e5e5e5",
 	backgroundColor: "white",
 	boxShadow: "0 5px 15px rgba(0,0,0,.5)",
-	padding: 20
+	padding: 20,
 };
 
 class CustomModal extends Component {
 
 	getButtonOptions() {
-		let buttonOptions = null
 		switch ( this.props.buttonFlag ) {
 			case "choiceButton":
-				buttonOptions = [
-					<button onClick={this.props.accept}>Yes</button>,
-					<button onClick={this.props.decline}>No</button>,
-				]
-				break;
+				return ( <div>
+					<button onClick={this.props.accept}>Yes</button>
+					<button onClick={this.props.decline}>No</button>
+				</div> );
 			case "homeButton":
-				buttonOptions = <Link to="/">
+				return ( <Link to="/">
 					<button>Ok</button>
-				</Link>
-				break;
+				</Link> );
 			case "noWaterButton":
-				buttonOptions = <button onClick={this.props.decline}>Ok</button>
-				break;
-			case "noButton":
-				buttonOptions = null
-				break;
+				return ( <button onClick={this.props.decline}>Ok</button> );
 			case "closeButton":
-				buttonOptions = <button onClick={this.props.closeModal}>Close</button>
-				break;
+				return ( <button onClick={this.props.closeModal}>Close</button> );
 			default:
-				break;
+				return null
 		}
-		return buttonOptions;
 	}
-
 	render() {
 		return ( <div>
 			<Modal
 				style={modalStyle}
 				backdropstyle={backdropStyle}
-				open={this.props.isOpen}
-				onClose={this.props.closeModal}>
+				open={this.props.isOpen}>
 				<div style={dialogStyle}>
 					{this.props.children}
 					{this.getButtonOptions()}

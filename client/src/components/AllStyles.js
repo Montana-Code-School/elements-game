@@ -27,6 +27,12 @@ const Card = theme => ( {
 		paddingLeft: "5%",
 		paddingRight: "5%"
 	},
+	statusMessage: {
+		backgroundColor: "#82ffa1",
+		padding: "0.5%",
+		border: "0.3vh solid #430089",
+		borderRadius: "10px"
+	}
 } );
 
 export {
