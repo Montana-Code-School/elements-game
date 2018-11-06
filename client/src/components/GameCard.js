@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {CardMedia, withStyles} from "@material-ui/core";
 import {Card as styles} from "./AllStyles";
+
+
 class GameCard extends Component {
   render() {
     const {classes} = this.props;
@@ -11,9 +13,9 @@ class GameCard extends Component {
     } else if (this.props.className === "playerDiscard") {
       return <CardMedia component="img" alt={this.props.className} className={`${this.props.className} ${classes.card}`} image="https://s3-us-west-2.amazonaws.com/elements-photos/discard.png"/>
     } else if (this.props.className === "playerStack") {
-      return <CardMedia component="img" alt={this.props.className} className={`${this.props.className} ${classes.card}`} image="https://s3-us-west-2.amazonaws.com/elements-photos/staged.png"/>
+      return <CardMedia component="img" className={`${this.props.className} ${classes.card}`} image={(this.props.isStaged !== "")? "https://s3-us-west-2.amazonaws.com/elements-photos/staged.png" : null}/>
     } else if (this.props.className === "opponentStack") {
-      return <CardMedia component="img" alt={this.props.className} className={`${this.props.className} ${classes.card}`} image="https://s3-us-west-2.amazonaws.com/elements-photos/opponentStaged.png"/>
+      return <CardMedia component="img" className={`${this.props.className} ${classes.card}`} image={(this.props.isStaged !== "")? "https://s3-us-west-2.amazonaws.com/elements-photos/opponentStaged.png" : null}/>
     } else if (this.props.className === "opponentDeck") {
       return <CardMedia component="img" alt={this.props.className} className={`${this.props.className} ${classes.card}`} image="https://s3-us-west-2.amazonaws.com/elements-photos/opponentDeck.png"/>
     } else if (this.props.parent === "field") {
