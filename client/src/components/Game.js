@@ -124,6 +124,7 @@ class Game extends Component {
 		} else if ( this.state.turn === this.state.playerName && this.state.player.stagedCard !== "" && this.state.afterFlip === "" ) {
 			this.setState( { "message": "Element is already played, wait for opponent" } )
 		} else {
+
 			let onClickedCardName = e.currentTarget.className.split( " " )[ 2 ];
 			let parent = e.target.parentElement.className.split( " " )[ 3 ];
 			console.log( parent, onClickedCardName );

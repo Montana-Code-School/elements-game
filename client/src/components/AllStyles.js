@@ -22,15 +22,15 @@ const Card = theme => ( {
 	page: {
 		width: "90%",
 		height: "98%",
-		background: "linear-gradient(to right bottom, #430089, #82ffa1)",
+		background: "radial-gradient(white, #2f4f4f)",
 		paddingTop: "1%",
 		paddingLeft: "5%",
 		paddingRight: "5%"
 	},
 	statusMessage: {
-		backgroundColor: "#82ffa1",
+		background: "inherit",
 		padding: "0.5%",
-		border: "0.3vh solid #430089",
+		boxShadow: "2px -2px 4px black",
 		borderRadius: "10px"
 	}
 } );
