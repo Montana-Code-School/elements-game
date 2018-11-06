@@ -32,6 +32,14 @@ const Card = theme => ( {
 		padding: "0.5%",
 		boxShadow: "2px -2px 4px black",
 		borderRadius: "10px"
+	},
+	emptyStaged: {
+		height: "30px",
+		width: "15px",
+		marginTop: "1%",
+		margin: ".1%",
+		backgroundColor: "inherit",
+		boxShadow: "2px -2px 4px black"
 	}
 } );
 
