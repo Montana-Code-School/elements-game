@@ -68,7 +68,7 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 
-	//message from client to make initialDraw
+	//message from the client to make initialDraw
 	client.on( "initialDraw", function ( roomName ) {
 		//find room object by room name that needs to be updated
 		let gameOnInitialDraw = playingRoomManager.getRoomById( roomName )
@@ -98,24 +98,27 @@ io.on( "connection", function ( client ) {
 		}
 	} );
 
-	//message from client that click event happened
+	//message from the client that click event happened
 	client.on( "click", ( cardType, roomName, afterFlip ) => {
-		// create variable that will keep track of which information
-		// needs to be passed back to the clients
-		let emitAction = "";
 		//find room object by room name that needs to be updated
 		let gameOnClick = playingRoomManager.getRoomById( roomName );
-		//update afterFlip flag
-		console.log( gameOnClick.afterFlip, afterFlip )
-		gameOnClick.afterFlip = afterFlip;
-		let res = onClick( cardType, gameOnClick, emitAction );
+		// trigger onClick function inside eventHandler.js and
+		// assign result to the res
+		let res = onClick( cardType, gameOnClick );
+		//assign updated game state to the gameOnClick
 		gameOnClick = res.game;
-		emitAction = res.emitAction
+		// assign emitAction flag depending on onClick function
+		// result
+		let emitAction = res.emitAction;
+		//zero out afterFlip flag
 		gameOnClick.afterFlip = "";
 		// pass updated room inforamtion to the rooms map inside
 		// playingRoomManager.js
 		playingRoomManager.updateRoom( gameOnClick );
+		// variable that assigns player1 or player2 depending on who
+		// made an emit
 		let currentPlayer = "";
+		let opponent = "";
 		if ( client.id === gameOnClick.player1.clientId ) {
 			currentPlayer = "player1";
 			opponent = "player2";
@@ -123,9 +126,11 @@ io.on( "connection", function ( client ) {
 			currentPlayer = "player2";
 			opponent = "player1";
 		}
+		//switch by emitAction flag
 		switch ( emitAction ) {
+				//if counter action was triggered
 			case "counterActionEmit":
-				// currentPlayer=player2 opponent=player1
+				//send updated game state after counter action
 				io.sockets. in ( roomName ).emit( "onCounterActionRes", {
 					"result": "counter",
 					"counteringPlayerDiscard": gameOnClick[ currentPlayer ].discard,
@@ -134,9 +139,11 @@ io.on( "connection", function ( client ) {
 					"playerDiscard": gameOnClick[ opponent ].discard,
 					"afterFlip": gameOnClick.afterFlip,
 					"player": client.id,
-				} )
+				} );
 				break;
+				//if fire action was triggered
 			case "fireActionEmit":
+				//send updated game state after fire action
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"field": gameOnClick[ opponent ].field,
 					"discard": gameOnClick[ opponent ].discard,
@@ -145,7 +152,9 @@ io.on( "connection", function ( client ) {
 					"currentPlayer": client.id
 				} );
 				break;
+				//if shadow action was triggered
 			case "shadowActionEmit":
+				//send updated game state after shadow action
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"discard": gameOnClick[ currentPlayer ].discard,
@@ -154,7 +163,9 @@ io.on( "connection", function ( client ) {
 					"currentPlayer": client.id
 				} );
 				break;
+				//if light action was triggered
 			case "lightActionEmit":
+				//send updated game state after light action
 				io.sockets. in ( roomName ).emit( "cardActionRes", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"discard": gameOnClick[ currentPlayer ].discard,
@@ -163,7 +174,10 @@ io.on( "connection", function ( client ) {
 					"currentPlayer": client.id,
 				} );
 				break;
+				//in case of regular click
 			default:
+				// send updated game state after card was clicked and
+				// afterFlip was assigned to an empty string
 				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"stagedCard": gameOnClick[ currentPlayer ].stagedCard,
@@ -172,18 +186,26 @@ io.on( "connection", function ( client ) {
 				break;
 		}
 	} );
+
+	// message from the client that counterOffer needs to be
+	// triggered
 	client.on( "counterOffer", function ( roomName ) {
+		//send counter offer to the both clients
 		io.sockets. in ( roomName ).emit( "getCounterOffer", {
 			"message": "Waiting for opponent...",
 			"currentPlayer": client.id,
 		} );
 	} );
+
+	//message from the client with the result of an offer
 	client.on( "sendCounterOfferRes", function ( roomName, result ) {
+		//if result equals to noCounter
 		if ( result === "noCounter" ) {
 			io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 				"result": result,
 				"player": client.id,
 			} )
+			//if user decided to counter
 		} else {
 			//find room object by room name that needs to be updated
 			let gameOnCounter = playingRoomManager.getRoomById( roomName );
@@ -191,25 +213,33 @@ io.on( "connection", function ( client ) {
 			// pass updated room inforamtion to the rooms map inside
 			// playingRoomManager.js
 			playingRoomManager.updateRoom( gameOnCounter );
+			//send updated game state to the both clients
 			io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
 				"afterFlip": "counterAction",
 				"result": result,
 				"player": client.id,
-			} )
+			} );
 		}
 	} );
+
+	//message from the client to move staged card to the field
 	client.on( "flipCard", function ( roomName ) {
 		//find room object by room name that needs to be updated
 		let gameOnFlipCard = playingRoomManager.getRoomById( roomName );
 		let opponent = "";
+		// depending on who send request to flip the card assign
+		// opponent variable
 		client.id === gameOnFlipCard.player1.clientId
 			? opponent = "player2"
 			: opponent = "player1";
+		//remember which card was staged
 		let card = gameOnFlipCard[ opponent ].stagedCard;
+		//get updated game state after card was moved to the field
 		flipCard( gameOnFlipCard, opponent );
 		// pass updated room inforamtion to the rooms map inside
 		// playingRoomManager.js
 		playingRoomManager.updateRoom( gameOnFlipCard );
+		//send updated game state to both clients
 		io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
 			"deck": gameOnFlipCard[ opponent ].deck,
 			"hand": gameOnFlipCard[ opponent ].hand,
@@ -220,10 +250,11 @@ io.on( "connection", function ( client ) {
 			"message": `${ card } was flipped`,
 		} );
 	} );
+
 	client.on( "switchTurn", function ( roomName ) {
 		//find room object by room name that needs to be updated
 		let gameOnSwitchTurn = playingRoomManager.getRoomById( roomName );
-		gameOnSwitchTurn = onSwitchTurn( gameOnSwitchTurn );
+		onSwitchTurn( gameOnSwitchTurn );
 		// pass updated room inforamtion to the rooms map inside
 		// playingRoomManager.js
 		playingRoomManager.updateRoom( gameOnSwitchTurn );
@@ -233,7 +264,8 @@ io.on( "connection", function ( client ) {
 			"playerMessage": "Your turn",
 			"opponnentsMessage": "Waiting for opponent...",
 		} )
-	} )
+	} );
+
 	client.on( "drawCard", function ( roomName ) {
 		let player = "player1";
 		//find room object by room name that needs to be updated
@@ -298,12 +330,14 @@ io.on( "connection", function ( client ) {
 		playingRoomManager.deleteRoom( roomName );
 	} );
 
+	//inactivity timeout
 	setTimeout( () => {
 		const roomName = playingRoomManager.findRoomByClient( client.id );
 		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
 					" the Home Page." )
-	}, 45000 );
+	}, 120000 );
 
+	//
 	client.on( "error", function ( err ) {
 		console.log( "received error from client:", client.id );
 		console.log( err );
@@ -311,16 +345,16 @@ io.on( "connection", function ( client ) {
 } );
 //if this production mode
 if ( process.env.NODE_ENV === "production" ) {
-	//path
+	//path to the
 	app.use( express.static( path.join( __dirname, "../client/build" ) ) );
 	app.get( "/", function ( req, res ) {
 		res.sendFile( path.join( __dirname, "../client/build", "index.html" ) );
 	} );
-}
+};
 //server listens to the specified port
 server.listen( port, function ( err ) {
 	if ( err ) {
 		console.log( "error", err )
 	}
 	console.log( "listening on port" + port );
-} )
+} );
