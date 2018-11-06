@@ -48,7 +48,6 @@ class CustomModal extends Component {
 				return ( <button onClick={this.props.decline}>Ok</button> );
 			case "closeButton":
 				return ( <button onClick={this.props.closeModal}>Close</button> );
-			case ""
 			default:
 				return null
 		}
