@@ -256,11 +256,11 @@ io.on( "connection", function ( client ) {
 		playingRoomManager.deleteRoom( roomName );
 	} );
 
-	setTimeout( () => {
-		const roomName = playingRoomManager.findRoomByClient( client.id );
-		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
-					" the Home Page." )
-	}, 120000 );
+// 	setTimeout( () => {
+// 		const roomName = playingRoomManager.findRoomByClient( client.id );
+// 		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
+// 					" the Home Page." )
+// 	}, 120000 );
 
 	client.on( "error", function ( err ) {
 		console.log( "received error from client:", client.id );
