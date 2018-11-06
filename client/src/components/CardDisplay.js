@@ -3,7 +3,7 @@ import GameCard from "./GameCard";
 import Grid from "@material-ui/core/Grid";
 export default class CardDisplay extends Component {
   render() {
-    if (this.props.className === "opponentsHand") {
+    if (this.props.className === "opponentHand") {
       return (<Grid container={true} direction="row" justify="space-around" alignItems="center">
         <GameCard className="cardBack"/>
         <GameCard className="cardBack"/>
