@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
 import { Grid, Card, withStyles, } from "@material-ui/core";
-import CardCount from "./CardCount"
+import CardCounts from "./CardCounts"
 import {Card as styles} from "./AllStyles";
 
 
@@ -53,7 +53,7 @@ class PlayArea extends Component {
           <GameCard className="playerDiscard" />
           <Card className={classes.multicardDisplay}>
           <CardDisplay className="playerHand" onClick={this.props.clickHandler}/>
-            <CardCount cards={this.props.playerInfo.hand}/>
+            <CardCounts cards={this.props.playerInfo.hand}/>
           </Card>
           <p>{
               this.props.playerInfo.stagedCard === ""

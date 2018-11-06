@@ -4,7 +4,7 @@ import CustomModal from "./Modal";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from "./socket";
-import CardCount from "./CardCount"
+import CardCounts from "./CardCounts"
 import PlayArea from "./PlayArea"
 
 class Game extends Component {
@@ -405,7 +405,7 @@ class Game extends Component {
 				<CardDisplay
 					onClick={this.clickHandler}
 					className="shadowActionModal"/>
-				<CardCount cards={this.state.player.hand}/>
+				<CardCounts cards={this.state.player.hand}/>
 			</div> )
 		} else if ( this.state.afterFlip === "lightAction" && this.getCount( this.state.player.discard ) > 0 ) {
 			return ( <div>
@@ -414,7 +414,7 @@ class Game extends Component {
 				<CardDisplay
 					onClick={this.clickHandler}
 					className="lightActionModal"/>
-				<CardCount cards={this.state.player.discard}/>
+				<CardCounts cards={this.state.player.discard}/>
 			</div> )
 		} else if ( this.state.afterFlip === "fireAction" && this.getCount( this.state.opponent.field ) > 0 ) {
 			return ( <div>
@@ -423,7 +423,7 @@ class Game extends Component {
 				<CardDisplay
 					onClick={this.clickHandler}
 					className="fireActionModal"/>
-				<CardCount cards={this.state.opponent.field}/>
+				<CardCounts cards={this.state.opponent.field}/>
 			</div> )
 		} else if ( this.state.afterFlip === "counterAction" && this.getCount( this.state.player.hand ) >= 2 ) {
 			return ( <div>
@@ -431,7 +431,7 @@ class Game extends Component {
 				<CardDisplay
 					onClick={this.clickHandler}
 					className="counterActionModal"/>
-				<CardCount cards={this.state.player.hand}/>
+				<CardCounts cards={this.state.player.hand}/>
 			</div> )
 		} else {
 			return <p>{this.state.modal.message}</p>
@@ -473,14 +473,14 @@ class Game extends Component {
 				<PlayArea
 					playerName="opponent"
 					playerInfo={this.state.opponent}/>
-				<CardCount cards={this.state.opponent.field}/>
+				<CardCounts cards={this.state.opponent.field}/>
 				<CardDisplay className="opponentField"/>
 				<Grid container={true} direction="row" justify="space-between" >
 					<p className={classes.statusMessage}>{this.state.message}</p>
           <p style={{textTransform: "capitalize"}} className={classes.statusMessage}>Last element played: {this.state.previousPlay}</p>
 				</Grid>
 				<CardDisplay className="playerField"/>
-				<CardCount cards={this.state.player.field}/>
+				<CardCounts cards={this.state.player.field}/>
 				<PlayArea
 					clickHandler={this.clickHandler}
 					playerName="player"

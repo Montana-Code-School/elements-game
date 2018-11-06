@@ -3,7 +3,7 @@ body,
 #root {
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right bottom, #430089, #82ffa1);
+  background: radial-gradient(white, #2f4f4f);
 }
 
 .App {
