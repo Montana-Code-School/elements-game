@@ -13,6 +13,7 @@ class Game extends Component {
 		this.state = {
 			client: socket(),
 			message: "Waiting for opponent to join the game.",
+      previousPlay: "None",
 			turn: "",
 			modal: {
 				open: false,
@@ -245,7 +246,7 @@ class Game extends Component {
 			this.setState( {
 				opponent,
 				"afterFlip": data.afterFlip,
-				"message": data.message,
+				"previousPlay": data.message,
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
@@ -266,7 +267,7 @@ class Game extends Component {
 			this.setState( {
 				player,
 				"afterFlip": data.afterFlip,
-				"message": data.message,
+				"previousPlay": data.message,
 			}, function () {
 				if ( this.state.afterFlip === "lightAction" ) {
 					if ( this.getCount( this.state.player.discard ) === 0 ) {
@@ -474,8 +475,9 @@ class Game extends Component {
 					playerInfo={this.state.opponent}/>
 				<CardCount cards={this.state.opponent.field}/>
 				<CardDisplay className="opponentField"/>
-				<Grid container={true} direction="row" justify="flex-start">
+				<Grid container={true} direction="row" justify="space-between" >
 					<p className={classes.statusMessage}>{this.state.message}</p>
+          <p style={{textTransform: "capitalize"}} className={classes.statusMessage}>Last element played: {this.state.previousPlay}</p>
 				</Grid>
 				<CardDisplay className="playerField"/>
 				<CardCount cards={this.state.player.field}/>

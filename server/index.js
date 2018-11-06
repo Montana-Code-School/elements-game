@@ -247,7 +247,7 @@ io.on( "connection", function ( client ) {
 			"field": gameOnFlipCard[ opponent ].field,
 			"playerName": client.id,
 			"afterFlip": gameOnFlipCard.afterFlip,
-			"message": `${ card } was flipped`
+			"message": `${ card }`
 		} );
 	} );
 
