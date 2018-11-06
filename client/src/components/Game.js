@@ -474,7 +474,7 @@ class Game extends Component {
 					playerInfo={this.state.opponent}/>
 				<CardCount cards={this.state.opponent.field}/>
 				<CardDisplay className="opponentField"/>
-				<Grid container={true} direction="row" justify="left">
+				<Grid container={true} direction="row" justify="flex-start">
 					<p className={classes.statusMessage}>{this.state.message}</p>
 				</Grid>
 				<CardDisplay className="playerField"/>
