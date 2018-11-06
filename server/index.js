@@ -15,13 +15,12 @@ const clientManager = ClientManager();
 const playingRoomManager = RoomHandler();
 
 io.on( "connection", function ( client ) {
-	// create  variable rooms that have information about all
-	// existing rooms
+	// create  variable rooms that have information about all existing rooms
 	const { rooms } = io.sockets.adapter;
 	//import class player from  roomAndPlayerClasses.js
 	const { Player } = classes;
-	// import all functions from eventHandler.js and pass them
-	// infromation about current client and availbale rooms
+	// import all functions from eventHandler.js and pass them infromation about
+	// current client and availbale rooms
 	const {
 		handleJoin,
 		getVictory,
@@ -30,12 +29,11 @@ io.on( "connection", function ( client ) {
 		onClick,
 		onSwitchTurn
 	} = makeHandlers( client, rooms );
-	// after user connected add client to the map of clients in
-	// clientManager.js
+	// after user connected add client to the map of clients in clientManager.js
 	clientManager.addClient( client );
 
 	//message from client to join the room
-	client.on( "join", function () {
+	client.on( "join", () => {
 		//generate room name that client needs to join
 		roomName = handleJoin();
 		//find room object by room name that needs to be updated
@@ -44,32 +42,29 @@ io.on( "connection", function ( client ) {
 		if ( gameOnJoin === undefined ) {
 			//create new room with generated name
 			gameOnJoin = playingRoomManager.addRoom( roomName, client );
-			// pass information to client with room name,turn and client
-			// id
+			// pass information to client with room name,turn and client id
 			client.emit( "roomJoin", {
 				"roomName": gameOnJoin.name,
 				"playerName": client.id,
-				"turn": gameOnJoin.turn,
+				"turn": gameOnJoin.turn
 			} );
 			//if room exist,but there is only one player
 		} else if ( gameOnJoin.player2 === null ) {
 			//add second player to the room
 			gameOnJoin.player2 = new Player( client, client.id );
-			// pass updated room inforamtion to the rooms map inside
-			// playingRoomManager.js
+			// pass updated room inforamtion to the rooms map inside playingRoomManager.js
 			playingRoomManager.updateRoom( gameOnJoin );
-			// pass information to client with room name,turn and client
-			// id
+			// pass information to client with room name,turn and client id
 			client.emit( "roomJoin", {
 				"roomName": gameOnJoin.name,
 				"playerName": client.id,
-				"turn": gameOnJoin.turn,
+				"turn": gameOnJoin.turn
 			} );
 		}
 	} );
 
 	//message from the client to make initialDraw
-	client.on( "initialDraw", function ( roomName ) {
+	client.on( "initialDraw", ( roomName ) => {
 		//find room object by room name that needs to be updated
 		let gameOnInitialDraw = playingRoomManager.getRoomById( roomName )
 		//check if both users in the room
@@ -78,21 +73,19 @@ io.on( "connection", function ( client ) {
 			drawCard( 4, gameOnInitialDraw.player1.deck, gameOnInitialDraw.player1.hand );
 			//draw 4 card for player2
 			drawCard( 4, gameOnInitialDraw.player2.deck, gameOnInitialDraw.player2.hand );
-			// pass updated room inforamtion to the rooms map inside
-			// playingRoomManager.js
+			// pass updated room inforamtion to the rooms map inside playingRoomManager.js
 			playingRoomManager.updateRoom( gameOnInitialDraw );
-			// pass updated room information back to both users in the
-			// room
+			// pass updated room information back to both users in the room
 			io.sockets. in ( roomName ).emit( "initialDrawRes", {
 				"player1": {
 					"deck": gameOnInitialDraw.player1.deck,
 					"hand": gameOnInitialDraw.player1.hand,
-					"message": "Your turn",
+					"message": "Your turn"
 				},
 				"player2": {
 					"deck": gameOnInitialDraw.player2.deck,
 					"hand": gameOnInitialDraw.player2.hand,
-					"message": "Waiting for opponent...",
+					"message": "Waiting for opponent..."
 				}
 			} );
 		}
@@ -102,21 +95,19 @@ io.on( "connection", function ( client ) {
 	client.on( "click", ( cardType, roomName, afterFlip ) => {
 		//find room object by room name that needs to be updated
 		let gameOnClick = playingRoomManager.getRoomById( roomName );
-		// trigger onClick function inside eventHandler.js and
-		// assign result to the res
+		//update afterFlip fflag in our gameState
+		gameOnClick.afterFlip = afterFlip;
+		// trigger onClick function inside eventHandler.js and assign result to the res
 		let res = onClick( cardType, gameOnClick );
 		//assign updated game state to the gameOnClick
 		gameOnClick = res.game;
-		// assign emitAction flag depending on onClick function
-		// result
+		// assign emitAction flag depending on onClick function result
 		let emitAction = res.emitAction;
 		//zero out afterFlip flag
 		gameOnClick.afterFlip = "";
-		// pass updated room inforamtion to the rooms map inside
-		// playingRoomManager.js
+		// pass updated room inforamtion to the rooms map inside playingRoomManager.js
 		playingRoomManager.updateRoom( gameOnClick );
-		// variable that assigns player1 or player2 depending on who
-		// made an emit
+		// variable that assigns player1 or player2 depending on who made an emit
 		let currentPlayer = "";
 		let opponent = "";
 		if ( client.id === gameOnClick.player1.clientId ) {
@@ -149,7 +140,7 @@ io.on( "connection", function ( client ) {
 					"discard": gameOnClick[ opponent ].discard,
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
-					"currentPlayer": client.id,
+					"currentPlayer": client.id
 				} );
 				break;
 				//if shadow action was triggered
@@ -160,7 +151,7 @@ io.on( "connection", function ( client ) {
 					"discard": gameOnClick[ currentPlayer ].discard,
 					"emitAction": emitAction,
 					"afterFlip": gameOnClick.afterFlip,
-					"currentPlayer": client.id,
+					"currentPlayer": client.id
 				} );
 				break;
 				//if light action was triggered
@@ -176,20 +167,19 @@ io.on( "connection", function ( client ) {
 				break;
 				//in case of regular click
 			default:
-				// send updated game state after card was clicked and
-				// afterFlip was assigned to an empty string
+				// send updated game state after card was clicked and afterFlip was assigned to
+				// an empty string
 				io.sockets. in ( roomName ).emit( "cardClicked", {
 					"hand": gameOnClick[ currentPlayer ].hand,
 					"stagedCard": gameOnClick[ currentPlayer ].stagedCard,
-					"playerName": client.id,
+					"playerName": client.id
 				} );
 				break;
 		}
 	} );
 
-	// message from the client that counterOffer needs to be
-	// triggered
-	client.on( "counterOffer", function ( roomName ) {
+	// message from the client that counterOffer needs to be triggered
+	client.on( "counterOffer", ( roomName ) => {
 		//send counter offer to the both clients
 		io.sockets. in ( roomName ).emit( "getCounterOffer", {
 			"message": "Waiting for opponent...",
@@ -198,7 +188,7 @@ io.on( "connection", function ( client ) {
 	} );
 
 	//message from the client with the result of an offer
-	client.on( "sendCounterOfferRes", function ( roomName, result ) {
+	client.on( "sendCounterOfferRes", ( roomName, result ) => {
 		//if result equals to noCounter
 		if ( result === "noCounter" ) {
 			io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
@@ -210,8 +200,7 @@ io.on( "connection", function ( client ) {
 			//find room object by room name that needs to be updated
 			let gameOnCounter = playingRoomManager.getRoomById( roomName );
 			gameOnCounter.afterFlip = result;
-			// pass updated room inforamtion to the rooms map inside
-			// playingRoomManager.js
+			// pass updated room inforamtion to the rooms map inside playingRoomManager.js
 			playingRoomManager.updateRoom( gameOnCounter );
 			//send updated game state to the both clients
 			io.sockets. in ( roomName ).emit( "getCounterOfferRes", {
@@ -223,12 +212,11 @@ io.on( "connection", function ( client ) {
 	} );
 
 	//message from the client to move staged card to the field
-	client.on( "flipCard", function ( roomName ) {
+	client.on( "flipCard", ( roomName ) => {
 		//find room object by room name that needs to be updated
 		let gameOnFlipCard = playingRoomManager.getRoomById( roomName );
 		let opponent = "";
-		// depending on who send request to flip the card assign
-		// opponent variable
+		// depending on who send request to flip the card assign opponent variable
 		client.id === gameOnFlipCard.player1.clientId
 			? opponent = "player2"
 			: opponent = "player1";
@@ -236,8 +224,7 @@ io.on( "connection", function ( client ) {
 		let card = gameOnFlipCard[ opponent ].stagedCard;
 		//get updated game state after card was moved to the field
 		flipCard( gameOnFlipCard, opponent );
-		// pass updated room inforamtion to the rooms map inside
-		// playingRoomManager.js
+		// pass updated room inforamtion to the rooms map inside playingRoomManager.js
 		playingRoomManager.updateRoom( gameOnFlipCard );
 		//send updated game state to both clients
 		io.sockets. in ( roomName ).emit( "onFlippedCardRes", {
@@ -252,13 +239,12 @@ io.on( "connection", function ( client ) {
 	} );
 
 	//message from the client to switch turns
-	client.on( "switchTurn", function ( roomName ) {
+	client.on( "switchTurn", ( roomName ) => {
 		//find room object by room name that needs to be updated
 		let gameOnSwitchTurn = playingRoomManager.getRoomById( roomName );
 		//pass game state to the function that switches turns
 		onSwitchTurn( gameOnSwitchTurn );
-		// pass updated room inforamtion to the rooms map inside
-		// playingRoomManager.js
+		// pass updated room inforamtion to the rooms map inside playingRoomManager.js
 		playingRoomManager.updateRoom( gameOnSwitchTurn );
 		//pass updated game state to both clients
 		io.sockets. in ( roomName ).emit( "getNewTurn", {
@@ -270,12 +256,12 @@ io.on( "connection", function ( client ) {
 	} );
 
 	//message from the client to draw  single card
-	client.on( "drawCard", function ( roomName ) {
+	client.on( "drawCard", ( roomName ) => {
 		let player = "player1";
 		//find room object by room name that needs to be updated
 		let gameOnCardDraw = playingRoomManager.getRoomById( roomName );
-		// if player1 made an emit to draw card,assign player1 to
-		// player otherwise assign player2
+		// if player1 made an emit to draw card,assign player1 to player otherwise
+		// assign player2
 		gameOnCardDraw.player1.clientId === client.id
 			? player = "player1"
 			: player = "player2";
@@ -292,8 +278,7 @@ io.on( "connection", function ( client ) {
 			//drawCard for the player who send an emit
 			drawCard( 1, gameOnCardDraw[ player ].deck, gameOnCardDraw[ player ].hand );
 		}
-		// pass updated room inforamtion to the rooms map inside
-		// playingRoomManager.js
+		// pass updated room inforamtion to the rooms map inside playingRoomManager.js
 		playingRoomManager.updateRoom( gameOnCardDraw );
 		//pass updated game state to both clients
 		io.sockets. in ( roomName ).emit( "drawCardRes", {
@@ -305,11 +290,11 @@ io.on( "connection", function ( client ) {
 		} );
 	} );
 
-	client.on( "victoryCheck", function ( roomName ) {
+	client.on( "victoryCheck", ( roomName ) => {
 		//find room object by room name that needs to be updated
 		let gameOnVictoryCheck = playingRoomManager.getRoomById( roomName );
-		// if one of the players won send message to oth players
-		// about the end of the game
+		// if one of the players won send message to oth players about the end of the
+		// game
 		if ( getVictory( gameOnVictoryCheck.player1.field ) === "victory" ) {
 			io.sockets. in ( roomName ).emit( "onVictoryCheck", {
 				"playerMessage": "YOU WON!",
@@ -333,29 +318,23 @@ io.on( "connection", function ( client ) {
 	} );
 
 	//when client is being disconnected
-	client.on( "disconnect", function () {
+	client.on( "disconnect", () => {
 		console.log( "client disconnect...", client.id );
 		//find room name that user is in
 		const roomName = playingRoomManager.findRoomByClient( client.id );
 		//send message to the other user in the same room
-		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game.You will now be redirected to " +
-					"the Home Page." );
+		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game.You will now be redirected to the Home Page." );
 		//delete client from clients map
 		clientManager.deleteClient( client );
 		//delete room from rooms map
 		playingRoomManager.deleteRoom( roomName );
 	} );
 
-	//inactivity timeout
-	setTimeout( () => {
-		//find room name that user is in
-		const roomName = playingRoomManager.findRoomByClient( client.id );
-		//send message to both clients
-		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to" +
-					" the Home Page." )
-	}, 120000 );
-
-	//error message from the client
+	// inactivity timeout setTimeout( () => {  find room name that user is in 	const
+	// roomName = playingRoomManager.findRoomByClient( client.id );  send message to
+	// both clients 	client.broadcast.to( roomName ).emit( "getDisconnect", "Your
+	// opponent left the game. You will now be redirected to the Home Page." ) },
+	// 120000 ); error message from the client
 	client.on( "error", function ( err ) {
 		console.log( "received error from client:", client.id );
 		console.log( err );
