@@ -8,7 +8,7 @@ export default class CardCounts extends Component {
 			container={true}
 			direction="row"
 			justify="space-around"
-           alignItems="center">
+			alignItems="center">
 			<CardCount>{this.props.cards.water}</CardCount>
 			<CardCount>{this.props.cards.earth}</CardCount>
 			<CardCount>{this.props.cards.light}</CardCount>
