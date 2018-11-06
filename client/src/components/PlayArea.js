@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
 import { Grid, Card, withStyles, } from "@material-ui/core";
-import CardCount from "./CardCount"
+import CardCounts from "./CardCounts"
 import {Card as styles} from "./AllStyles";
 
 
@@ -23,12 +23,7 @@ class PlayArea extends Component {
           direction="row"
           justify="space-around"
         alignItems="center">
-        <p>{
-            this.props.playerInfo.stagedCard === ""
-              ? "0"
-              : "1"
-        }</p>
-        <GameCard className="opponentStack"/>
+        <GameCard isStaged={this.props.playerInfo.stagedCard} className="opponentStack"/>
         <p>{this.props.playerInfo.hand}</p>
         <Card className={classes.multicardDisplay}>
         <CardDisplay className="opponentHand"/>
@@ -53,14 +48,9 @@ class PlayArea extends Component {
           <GameCard className="playerDiscard" />
           <Card className={classes.multicardDisplay}>
           <CardDisplay className="playerHand" onClick={this.props.clickHandler}/>
-            <CardCount cards={this.props.playerInfo.hand}/>
+            <CardCounts cards={this.props.playerInfo.hand}/>
           </Card>
-          <p>{
-              this.props.playerInfo.stagedCard === ""
-                ? "0"
-                : "1"
-          }</p>
-          <GameCard className="playerStack"/>
+          <GameCard isStaged={this.props.playerInfo.stagedCard} className="playerStack"/>
         </Grid>
       )
 

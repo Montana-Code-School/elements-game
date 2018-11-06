@@ -41,9 +41,9 @@ module.exports = function ( client, rooms ) {
 		//function that drawing single card from the deck
 		function drawSingleCard() {
 			//if there is no keys in keys array
-			if ( keys.length === 0 ) 
+			if ( keys.length === 0 )
 				return;
-			
+
 			//generate random index number in keys array
 			const randomIndex = Math.floor( Math.random() * keys.length );
 			//access element in keys array using random generated index
@@ -108,7 +108,9 @@ module.exports = function ( client, rooms ) {
 	// function that depending on which card was clicked and
 	// what afterFlip flag is set to, moving one card from one
 	// pile to another or just move it to the staged card
-	onClick = ( cardType, gameOnClick, emitAction ) => {
+	onClick = ( cardType, gameOnClick) => {
+		//variable to track which information is sent back to client
+		let emitAction = "";
 		//create variables for current player and opponent
 		let currentPlayer = "player1";
 		let opponent = "player2";
