@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import CardDisplay from "./CardDisplay";
-import CardCount from "./CardCount";
+import CardCounts from "./CardCounts";
 
 export default class ModalContentStyle extends Component {
 
@@ -8,7 +8,7 @@ export default class ModalContentStyle extends Component {
 		return ( <div>
 			<p>{this.props.message}</p>
 			<CardDisplay onClick={this.props.onClick} className={this.props.className}/>
-			<CardCount cards={this.props.field}/>
+			<CardCounts cards={this.props.field}/>
 		</div> )
 	}
 }

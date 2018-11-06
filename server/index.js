@@ -330,15 +330,11 @@ io.on( "connection", function ( client ) {
 		playingRoomManager.deleteRoom( roomName );
 	} );
 
-	//inactivity timeout
-	setTimeout( () => {
-		//find room name that user is in
-		const roomName = playingRoomManager.findRoomByClient( client.id );
-		//send message to both clients
-		client.broadcast.to( roomName ).emit( "getDisconnect", "Your opponent left the game. You will now be redirected to the Home Page." )
-	}, 120000 );
-
-	//error message from the client
+	// inactivity timeout setTimeout( () => {  find room name that user is in 	const
+	// roomName = playingRoomManager.findRoomByClient( client.id );  send message to
+	// both clients 	client.broadcast.to( roomName ).emit( "getDisconnect", "Your
+	// opponent left the game. You will now be redirected to the Home Page." ) },
+	// 120000 ); error message from the client
 	client.on( "error", function ( err ) {
 		console.log( "received error from client:", client.id );
 		console.log( err );

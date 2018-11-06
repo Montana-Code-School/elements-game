@@ -4,7 +4,7 @@ import CustomModal from "./Modal";
 import { Grid, Card, withStyles } from "@material-ui/core";
 import { Card as styles } from "./AllStyles";
 import socket from "./socket";
-import CardCount from "./CardCount";
+import CardCounts from "./CardCounts";
 import PlayArea from "./PlayArea";
 
 class Game extends Component {
@@ -13,6 +13,7 @@ class Game extends Component {
 		this.state = {
 			client: socket(),
 			message: "Waiting for opponent to join the game.",
+			previousPlay: "None",
 			turn: "",
 			modal: {
 				open: false,
@@ -118,33 +119,44 @@ class Game extends Component {
 		}
 	}
 	clickHandler = ( e ) => {
-		console.log( this.state.afterFlip )
+		let onClickedCardName = e.currentTarget.className.split( " " )[ 2 ];
+		let parent = e.target.parentElement.className.split( " " )[ 3 ];
 		if ( this.state.turn !== this.state.playerName && this.state.afterFlip === "" ) {
 			this.modalContent( "closeButton", "It is not your turn." )
-		} else if ( this.state.turn === this.state.playerName && this.state.player.stagedCard !== "" && this.state.afterFlip === "" ) {
-			this.setState( { "message": "Element is already played, wait for opponent" } )
-		} else {
+		} else if ( this.state.turn === this.state.playerName ) {
 
-			let onClickedCardName = e.currentTarget.className.split( " " )[ 2 ];
-			let parent = e.target.parentElement.className.split( " " )[ 3 ];
-			console.log( parent, onClickedCardName );
-			if ( ( ( parent === "playerHand" || parent === "shadowActionModal" ) && this.state.player.hand[ onClickedCardName ] > 0 ) || ( parent === "fireActionModal" && this.state.opponent.field[ onClickedCardName ] > 0 ) || ( parent === "lightActionModal" && this.state.player.discard[ onClickedCardName ] > 0 ) ) {
+			if ( this.state.player.stagedCard !== "" && this.state.afterFlip === "" ) {
+				this.setState( { "message": "Element is already played, wait for opponent" } );
+			} else if ( this.state.afterFlip === "" ) {
+				if ( parent === "playerHand" && this.state.player.hand[ onClickedCardName ] > 0 ) {
+					this.closeModal();
+					this.state.client.clickCard( onClickedCardName, this.state.room, this.state.afterFlip );
+				} else if ( parent === "playerHand" ) {
+					this.modalContent( "closeButton", "You are unable to play this element." )
+				}
+			} else if ( this.state.afterFlip === "fireAction" && parent === "fireActionModal" && this.state.opponent.field[ onClickedCardName ] > 0 ) {
 				this.closeModal();
-				this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
-			} else if ( parent === "counterActionModal" ) {
+				this.state.client.clickCard( onClickedCardName, this.state.room, this.state.afterFlip );
+			} else if ( this.state.afterFlip === "lightAction" && parent === "lightActionModal" && this.state.player.discard[ onClickedCardName ] > 0 ) {
+				this.closeModal();
+				this.state.client.clickCard( onClickedCardName, this.state.room, this.state.afterFlip );
+			}
+		} else if ( this.state.turn !== this.state.playerName && ( this.state.afterFlip === "counterAction" || this.state.afterFlip === "shadowAction" ) ) {
+			if ( parent === "counterActionModal" ) {
 				if ( onClickedCardName === "water" && this.state.player.hand[ onClickedCardName ] >= 2 ) {
 					this.closeModal();
-					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+					this.state.client.clickCard( onClickedCardName, this.state.room, this.state.afterFlip );
 				} else if ( onClickedCardName !== "water" && this.state.player.hand[ onClickedCardName ] > 0 ) {
 					this.closeModal();
-					this.state.client.clickCard( e.currentTarget.className.split( " " )[2], this.state.room, this.state.afterFlip );
+					this.state.client.clickCard( onClickedCardName, this.state.room, this.state.afterFlip );
 				}
-
-			} else {
-				this.modalContent( "closeButton", "You are unable to play this element." )
+			} else if ( parent === "shadowActionModal" && this.state.player.hand[ onClickedCardName ] > 0 ) {
+				this.closeModal();
+				this.state.client.clickCard( onClickedCardName, this.state.room, this.state.afterFlip );
 			}
 		}
 	}
+
 	onClickedCard = ( data ) => {
 		const player = {
 			...this.state.player
@@ -237,7 +249,7 @@ class Game extends Component {
 			this.setState( {
 				opponent,
 				"afterFlip": data.afterFlip,
-				"message": data.message
+				"previousPlay": data.message
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
@@ -258,7 +270,7 @@ class Game extends Component {
 			this.setState( {
 				player,
 				"afterFlip": data.afterFlip,
-				"message": data.message
+				"previousPlay": data.message
 			}, function () {
 				if ( this.state.afterFlip === "lightAction" ) {
 					if ( this.getCount( this.state.player.discard ) === 0 ) {
@@ -390,6 +402,7 @@ class Game extends Component {
 		}
 	}
 	getModalContent = () => {
+		console.log( this.state.afterFlip )
 		if ( this.state.afterFlip === "shadowAction" && this.getCount( this.state.player.hand ) > 0 ) {
 			return {
 				...this.state.player.hand
@@ -446,13 +459,18 @@ class Game extends Component {
 				justify="space-evenly"
 				alignItems="center">
 				<PlayArea playerName="opponent" playerInfo={this.state.opponent}/>
-				<CardCount cards={this.state.opponent.field}/>
+				<CardCounts cards={this.state.opponent.field}/>
 				<CardDisplay className="opponentField"/>
-				<Grid container={true} direction="row" justify="flex-start">
+				<Grid container={true} direction="row" justify="space-between">
 					<p className={classes.statusMessage}>{this.state.message}</p>
+					<p
+						style={{
+							textTransform: "capitalize"
+						}}
+						className={classes.statusMessage}>Last element played: {this.state.previousPlay}</p>
 				</Grid>
 				<CardDisplay className="playerField"/>
-				<CardCount cards={this.state.player.field}/>
+				<CardCounts cards={this.state.player.field}/>
 				<PlayArea
 					clickHandler={this.clickHandler}
 					playerName="player"
