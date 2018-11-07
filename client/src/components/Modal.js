@@ -19,16 +19,20 @@ const backdropStyle = {
 	opacity: 0.5
 };
 const buttonStyle = {
-	margin: "1%"
+	margin: "1%",
+	fontWeight: "bold"
 };
 const dialogStyle = {
+	fontWeight: "bold",
+
 	textAlign: "center",
 	position: "absolute",
 	top: "45%",
 	left: "50%",
 	transform: "translate(-45%, -50%)",
 	border: "1px solid #e5e5e5",
-	backgroundColor: "white",
+	borderRadius: "5%",
+	background: "radial-gradient(white, #2f4f4f)",
 	boxShadow: "0 5px 15px rgba(0,0,0,.5)",
 	padding: 20
 };

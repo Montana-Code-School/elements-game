@@ -7,6 +7,7 @@ import socket from "./socket";
 import CardCounts from "./CardCounts";
 import PlayArea from "./PlayArea";
 
+//main component
 class Game extends Component {
 	constructor() {
 		super();
@@ -23,6 +24,7 @@ class Game extends Component {
 			room: null,
 			afterFlip: "",
 			playerName: null,
+			//object that contains information about opponent
 			opponent: {
 				deck: 25,
 				discard: 0,
@@ -36,6 +38,7 @@ class Game extends Component {
 					earth: 0
 				}
 			},
+			//object that contains information about player
 			player: {
 				deck: 25,
 				hand: {
@@ -62,7 +65,7 @@ class Game extends Component {
 				stagedCard: ""
 			}
 		};
-		//set all listeners to the server messages
+		//set listeners to the all messages from server
 		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
 		this.state.client.getInitialDrawRes( this.onInitialDrawRes );
@@ -77,7 +80,8 @@ class Game extends Component {
 		this.state.client.getNewTurn( this.onNewTurn );
 		this.state.client.getDisconnect( this.onDisconnect );
 	};
-	//
+
+	//function that returns sum of all field values in the object
 	getCount = ( cards ) => {
 		let count = 0;
 		for ( let cardType in cards ) {
@@ -85,21 +89,33 @@ class Game extends Component {
 		}
 		return count;
 	};
+
+	//in case if your opponent disconnected
 	onDisconnect = ( data ) => {
+		// open modal  with message about opponent being disconnected and button that
+		// will take player back to the home screen
 		this.modalContent( "homeButton", data, this.state.client.disconnect.bind( this ) );
-	}
+	};
+
+	//after player joined playing room
 	onRoomJoin = ( data ) => {
+		//set room name,player name and turn inside of state
 		this.setState( {
 			room: data.roomName,
 			playerName: data.playerName,
 			turn: data.turn
 		}, function () {
+			//if this is the second player who joined the room
 			if ( this.state.playerName !== this.state.turn ) {
+				//make request to the server for initial draw
 				this.state.client.initialDraw( this.state.room );
 			}
 		} );
-	}
+	};
+
+	//function that being triggered when server sent back initial draw result
 	onInitialDrawRes = ( data ) => {
+		//export player and opponent objects from this.state
 		const player = {
 			...this.state.player
 		};
@@ -183,8 +199,8 @@ class Game extends Component {
 		if ( data.currentPlayer === this.state.playerName ) {
 			this.setState( { message: data.message } )
 		} else {
-			console.log( "counterOffer" )
-			if ( this.state.player.hand.water >= 1 && ( this.state.player.hand.earth >= 1 || this.state.player.hand.shadow >= 1 || this.state.player.hand.light >= 1 || this.state.player.hand.fire >= 1 ) ) {
+			console.log( "counterOffer", this.state.player.hand )
+			if ( this.state.player.hand.water > 0 && Object.values( this.state.player.hand ).reduce( ( a, b ) => a + b ) > 1 ) {
 				console.log( "choice" )
 				this.modalContent( "choiceButton", "Would you like to counter?" )
 			} else if ( this.state.player.hand.water === 0 ) {
@@ -199,45 +215,45 @@ class Game extends Component {
 	acceptCounter = () => {
 		this.closeModal( "counter" );
 	}
-	onCounterOfferRes = ( result ) => {
-		if ( result.result === "noCounter" ) {
-			if ( result.player === this.state.playerName ) {
+	onCounterOfferRes = ( data ) => {
+		if ( data.result === "noCounter" ) {
+			if ( data.player === this.state.playerName ) {
 				this.state.client.flipCard( this.state.room );
 			}
-		} else if ( result.result === "counter" ) {
-			if ( result.player === this.state.playerName ) {
+		} else if ( data.result === "counter" ) {
+			if ( data.player === this.state.playerName ) {
 				this.setState( {
-					afterFlip: result.afterFlip
+					afterFlip: data.afterFlip
 				}, this.modalContent( "noButton", "This is the counter modal" ) )
 			}
 		} else {
-			this.setState( { "afterFlip": result.afterFlip } )
+			this.setState( { "afterFlip": data.afterFlip } )
 		}
 	}
-	onCounterActionRes = ( result ) => {
+	onCounterActionRes = ( data ) => {
 		const player = {
 			...this.state.player
 		};
 		const opponent = {
 			...this.state.opponent
 		};
-		if ( result.player === this.state.playerName ) {
-			player.hand = result.counteringPlayerHand;
-			player.discard = result.counteringPlayerDiscard;
-			opponent.stagedCard = result.playerStagedCard;
-			opponent.discard = this.getCount( result.playerDiscard );
+		if ( data.player === this.state.playerName ) {
+			player.hand = data.counteringPlayerHand;
+			player.discard = data.counteringPlayerDiscard;
+			opponent.stagedCard = data.playerStagedCard;
+			opponent.discard = this.getCount( data.playerDiscard );
 			this.setState( {
 				message: "Your opponent countered.",
 				player,
 				opponent,
-				afterFlip: result.afterFlip
+				afterFlip: data.afterFlip
 			}, this.state.client.switchTurn( this.state.room ) )
 		} else {
-			player.stagedCard = result.playerStagedCard;
-			player.discard = result.playerDiscard;
-			opponent.hand = this.getCount( result.counteringPlayerHand );
-			opponent.discard = this.getCount( result.counteringPlayerDiscard );
-			this.setState( { opponent, player, afterFlip: result.afterFlip } )
+			player.stagedCard = data.playerStagedCard;
+			player.discard = data.playerDiscard;
+			opponent.hand = this.getCount( data.counteringPlayerHand );
+			opponent.discard = this.getCount( data.counteringPlayerDiscard );
+			this.setState( { opponent, player, afterFlip: data.afterFlip } )
 		}
 	}
 	onFlippedCardRes = ( data ) => {
@@ -312,6 +328,7 @@ class Game extends Component {
 		}
 	}
 	modalContent = ( buttonFlag, message = "", triggerFunction = null ) => {
+		console.log( "button", buttonFlag, "message", message, triggerFunction )
 		this.setState( {
 			modal: {
 				open: true,
