@@ -19,8 +19,8 @@ io.on( "connection", function ( client ) {
 	const { rooms } = io.sockets.adapter;
 	//import class player from  roomAndPlayerClasses.js
 	const { Player } = classes;
-	// import all functions from eventHandler.js and pass them infromation about
-	// current client and availbale rooms
+	// import all functions from eventHandler.js and pass them information about
+	// current client and available rooms
 	const {
 		handleJoin,
 		getVictory,
