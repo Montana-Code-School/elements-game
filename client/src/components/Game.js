@@ -62,6 +62,7 @@ class Game extends Component {
 				stagedCard: ""
 			}
 		};
+		//set all listeners to the server messages
 		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
 		this.state.client.getInitialDrawRes( this.onInitialDrawRes );
@@ -75,7 +76,8 @@ class Game extends Component {
 		this.state.client.getCardActionRes( this.onCardActionRes );
 		this.state.client.getNewTurn( this.onNewTurn );
 		this.state.client.getDisconnect( this.onDisconnect );
-	}
+	};
+	//
 	getCount = ( cards ) => {
 		let count = 0;
 		for ( let cardType in cards ) {

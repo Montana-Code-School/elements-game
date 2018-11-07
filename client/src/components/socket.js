@@ -4,7 +4,7 @@ const io = require( 'socket.io-client' )
 export default function () {
 	// http://192.168.137.112:5000/ opening socket and specifiying address it should
 	// listen to https://elements-game.herokuapp.com/"
-	const socket = io.connect( "http://localhost:5000" );
+	const socket = io.connect( "https://elements-game.herokuapp.com/" );
 
 	function join() {
 		// sending message to server about client wanting to join the room
