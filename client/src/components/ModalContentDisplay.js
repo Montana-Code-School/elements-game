@@ -1,9 +1,9 @@
 import React, { Component } from "react";
+//import custom components
 import CardDisplay from "./CardDisplay";
 import CardCounts from "./CardCounts";
 
 export default class ModalContentStyle extends Component {
-
 	render() {
 		return ( <div>
 			<p>{this.props.message}</p>
