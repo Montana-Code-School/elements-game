@@ -3,6 +3,7 @@ import ModalContentDisplay from "./ModalContentDisplay";
 import { Modal } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
+//Lines 7 through 40 are styles for all modals.
 const modalStyle = {
 	position: "fixed",
 	zIndex: 1040,
@@ -18,23 +19,32 @@ const backdropStyle = {
 	backgroundColor: "#000",
 	opacity: 0.5
 };
+
 const buttonStyle = {
-	margin: "1%"
+	margin: "1%",
+	fontWeight: "bold"
 };
+
 const dialogStyle = {
+	fontWeight: "bold",
 	textAlign: "center",
 	position: "absolute",
 	top: "45%",
 	left: "50%",
 	transform: "translate(-45%, -50%)",
 	border: "1px solid #e5e5e5",
-	backgroundColor: "white",
+	borderRadius: "5%",
+	background: "radial-gradient(white, #2f4f4f)",
 	boxShadow: "0 5px 15px rgba(0,0,0,.5)",
 	padding: 20
 };
 
+// Component determines which modal to create depending on
+// which action is triggered.
 class CustomModal extends Component {
 
+	// Function to determine what buttons need to be displayed
+	// on the modal.
 	getButtonOptions = () => {
 		switch ( this.props.buttonFlag ) {
 			case "choiceButton":
@@ -53,18 +63,25 @@ class CustomModal extends Component {
 			default:
 				return null
 		}
-	}
+	};
+
+	// Function that determines which message to display inside
+	// of modal.
 	getMessage = () => {
 		if ( this.props.afterFlip === "lightAction" ) {
-			return "Please select an element in your discard to put in your hand."
+			return "Please select an element in your discard to put in your ha" +
+					"nd."
 		} else if ( this.props.afterFlip === "fireAction" ) {
-			return "Please select one of your opponent's elements on the field to discard.";
+			return "Please select one of your opponent's elements on the field" +
+					" to discard.";
 		} else if ( this.props.afterFlip === "shadowAction" ) {
 			return "Please select an element in your hand to discard.";
 		} else if ( ( this.props.afterFlip === "counterAction" ) ) {
 			return "Please select another element to discard along with water.";
 		}
-	}
+	};
+
+	//renders modal Component
 	render() {
 		return ( <Modal
 			style={modalStyle}
@@ -83,8 +100,8 @@ class CustomModal extends Component {
 								field={this.props.field}/>
 						</div>
 			}
-		</Modal> );
-	}
-}
+		</Modal> )
+	};
+};
 
 export default CustomModal;
