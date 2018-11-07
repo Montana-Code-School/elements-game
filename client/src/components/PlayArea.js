@@ -1,53 +1,55 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import CardDisplay from "./CardDisplay";
 import GameCard from "./GameCard";
-import { Grid, Card, withStyles, } from "@material-ui/core";
+import {Grid, Card, withStyles} from "@material-ui/core";
 import CardCounts from "./CardCounts"
 import {Card as styles} from "./AllStyles";
-
+import CardCount from "./CardCount"
 
 class PlayArea extends Component {
-  getCount = ( cards ) => {
+  getCount = (cards) => {
     let count = 0;
-    for ( let cardType in cards ) {
-      count += cards[ cardType ];
+    for (let cardType in cards) {
+      count += cards[cardType];
     }
     return count;
   };
-  render () {
+  render() {
     const {classes} = this.props;
     if (this.props.playerName === "opponent") {
-      return(
+      return (
         <Grid
           container={true}
           direction="row"
           justify="space-around"
-        alignItems="center">
-        <GameCard isStaged={this.props.playerInfo.stagedCard} className="opponentStack"/>
-        <p>{this.props.playerInfo.hand}</p>
-        <Card className={classes.multicardDisplay}>
-        <CardDisplay className="opponentHand"/>
-        </Card>
-        <p>{this.props.playerInfo.discard}</p>
-        <GameCard className="opponentDiscard"/>
-          <p>{this.props.playerInfo.deck}</p>
+          alignItems="center">
+          <GameCard
+            isStaged={this.props.playerInfo.stagedCard}
+            className="opponentStack"/>
+          <CardCount>{this.props.playerInfo.hand}</CardCount>
+          <Card className={classes.multicardDisplay}>
+            <CardDisplay className="opponentHand"/>
+          </Card>
+          <CardCount>{this.props.playerInfo.discard}</CardCount>
+          <GameCard className="opponentDiscard"/>
+          <CardCount>{this.props.playerInfo.deck}</CardCount>
           <GameCard className="opponentDeck"/>
         </Grid>
       )
     } else {
-      return(
+      return (
         <Grid
           container={true}
           direction="row"
           justify="space-around"
-        alignItems="center">
-          <p>{this.props.playerInfo.deck}</p>
+          alignItems="center">
+          <CardCount>{this.props.playerInfo.deck}</CardCount>
           <GameCard className="playerDeck"/>
-          <p>{this.getCount(this.props.playerInfo.discard)}
-          </p>
-          <GameCard className="playerDiscard" />
+          <CardCount>{this.getCount(this.props.playerInfo.discard)}
+          </CardCount>
+          <GameCard className="playerDiscard"/>
           <Card className={classes.multicardDisplay}>
-          <CardDisplay className="playerHand" onClick={this.props.clickHandler}/>
+            <CardDisplay className="playerHand" onClick={this.props.clickHandler}/>
             <CardCounts cards={this.props.playerInfo.hand}/>
           </Card>
           <GameCard isStaged={this.props.playerInfo.stagedCard} className="playerStack"/>
