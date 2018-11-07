@@ -18,10 +18,12 @@ const backdropStyle = {
 	backgroundColor: "#000",
 	opacity: 0.5
 };
-
+const buttonStyle = {
+	margin: "1%"
+};
 const dialogStyle = {
+	textAlign: "center",
 	position: "absolute",
-	width: 400,
 	top: "45%",
 	left: "50%",
 	transform: "translate(-45%, -50%)",
@@ -37,17 +39,17 @@ class CustomModal extends Component {
 		switch ( this.props.buttonFlag ) {
 			case "choiceButton":
 				return ( <div>
-					<button onClick={this.props.accept}>Yes</button>
-					<button onClick={this.props.decline}>No</button>
+					<button style={buttonStyle} onClick={this.props.accept}>Yes</button>
+					<button style={buttonStyle} onClick={this.props.decline}>No</button>
 				</div> );
 			case "homeButton":
 				return ( <Link to="/">
-					<button>Ok</button>
+					<button style={buttonStyle}>Ok</button>
 				</Link> );
 			case "noWaterButton":
-				return ( <button onClick={this.props.decline}>Ok</button> );
+				return ( <button style={buttonStyle} onClick={this.props.decline}>Ok</button> );
 			case "closeButton":
-				return ( <button onClick={this.props.closeModal}>Close</button> );
+				return ( <button style={buttonStyle} onClick={this.props.closeModal}>Close</button> );
 			default:
 				return null
 		}

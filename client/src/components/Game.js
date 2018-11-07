@@ -62,6 +62,7 @@ class Game extends Component {
 				stagedCard: ""
 			}
 		};
+		//set all listeners to the server messages
 		this.state.client.join();
 		this.state.client.getRoomJoin( this.onRoomJoin );
 		this.state.client.getInitialDrawRes( this.onInitialDrawRes );
@@ -75,7 +76,8 @@ class Game extends Component {
 		this.state.client.getCardActionRes( this.onCardActionRes );
 		this.state.client.getNewTurn( this.onNewTurn );
 		this.state.client.getDisconnect( this.onDisconnect );
-	}
+	};
+	//
 	getCount = ( cards ) => {
 		let count = 0;
 		for ( let cardType in cards ) {
@@ -177,12 +179,16 @@ class Game extends Component {
 		}
 	}
 	onCounterOffer = ( data ) => {
+		console.log( "inside function" )
 		if ( data.currentPlayer === this.state.playerName ) {
 			this.setState( { message: data.message } )
 		} else {
+			console.log( "counterOffer" )
 			if ( this.state.player.hand.water >= 1 && ( this.state.player.hand.earth >= 1 || this.state.player.hand.shadow >= 1 || this.state.player.hand.light >= 1 || this.state.player.hand.fire >= 1 ) ) {
+				console.log( "choice" )
 				this.modalContent( "choiceButton", "Would you like to counter?" )
 			} else if ( this.state.player.hand.water === 0 ) {
+				console.log( "no ability to counter" )
 				this.modalContent( "noWaterButton", "You are unable to counter at this time." )
 			}
 		}
@@ -253,7 +259,7 @@ class Game extends Component {
 			}, function () {
 				this.state.client.victoryCheck( this.state.room );
 				if ( this.state.afterFlip === "shadowAction" ) {
-					if ( this.state.opponent.hand === 0 ) {
+					if ( this.getCount( this.state.player.hand ) === 0 ) {
 						this.modalContent( "closeButton", "There are no elements in your hand to discard.", this.state.client.clickCard.bind( this, "none", this.state.room, this.state.afterFlip ) )
 					} else {
 						this.modalContent( "noButton" )

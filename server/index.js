@@ -330,11 +330,12 @@ io.on( "connection", function ( client ) {
 		playingRoomManager.deleteRoom( roomName );
 	} );
 
-// error message from the client
+	//error message from the client
 	client.on( "error", function ( err ) {
 		console.log( "received error from client:", client.id );
 		console.log( err );
 	} )
+
 } );
 //if this production mode
 if ( process.env.NODE_ENV === "production" ) {

@@ -2,14 +2,12 @@
 const io = require( 'socket.io-client' )
 
 export default function () {
-	// http://192.168.137.112:5000/ opening socket and
-	// specifiying address it should listen to
-	// https://elements-game.herokuapp.com/"
+	// http://192.168.137.112:5000/ opening socket and specifiying address it should
+	// listen to https://elements-game.herokuapp.com/"
 	const socket = io.connect( "https://elements-game.herokuapp.com/" );
 
 	function join() {
-		// sending message to server about client wanting to join
-		// the room
+		// sending message to server about client wanting to join the room
 		socket.emit( "join" );
 	};
 
@@ -24,26 +22,22 @@ export default function () {
 	};
 
 	function getInitialDrawRes( onInitialDrawRes ) {
-		// listener to the game state from server after initial draw
-		// result
+		// listener to the game state from server after initial draw result
 		socket.on( "initialDrawRes", onInitialDrawRes );
 	};
 
 	function clickCard( card, roomName, afterFlip ) {
-		// sending message to the server about the click that was
-		// made
+		// sending message to the server about the click that was made
 		socket.emit( "click", card, roomName, afterFlip );
 	};
 
 	function getClickedCard( onClickedCard ) {
-		// listener to the game state from the server after card was
-		// clicked
+		// listener to the game state from the server after card was clicked
 		socket.on( "cardClicked", onClickedCard );
 	};
 
 	function counterOffer( roomName ) {
-		// sending message to the server to trigger counter offer
-		// for opponent
+		// sending message to the server to trigger counter offer for opponent
 		socket.emit( "counterOffer", roomName );
 	};
 
@@ -53,14 +47,13 @@ export default function () {
 	};
 
 	function sendCounterOfferRes( roomName, result ) {
-		// sending message to the server about players decision to
-		// counter
+		// sending message to the server about players decision to counter
 		socket.emit( "sendCounterOfferRes", roomName, result );
 	};
 
 	function getCounterOfferRes( onCounterOfferRes ) {
-		// listener to the information from server depending on
-		// players decisions to counter
+		// listener to the information from server depending on players decisions to
+		// counter
 		socket.on( "getCounterOfferRes", onCounterOfferRes );
 	};
 
@@ -80,8 +73,7 @@ export default function () {
 	};
 
 	function getCardActionRes( onCardActionRes ) {
-		// listener to the game state after card effect was
-		// triggered
+		// listener to the game state after card effect was triggered
 		socket.on( "cardActionRes", onCardActionRes );
 	}
 	function drawCard( roomName ) {
